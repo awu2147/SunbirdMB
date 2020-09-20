@@ -151,8 +151,21 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Ribbon Grid.Row="0">
-        </Ribbon>
+        <DockPanel Grid.Row="0" Background="#252526">
+            <Menu Background="#252526" BorderBrush="#3e3e42" BorderThickness="1" Padding="2" Margin="1">
+                <MenuItem Background="#3e3e42" BorderBrush="#3e3e42" BorderThickness="1">
+                    <MenuItem.Header>
+                        <TextBlock Text="File" HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" TextAlignment="Center" Padding="2,1,2,1"
+                                   Foreground="WhiteSmoke"/>
+                    </MenuItem.Header>
+                    <MenuItem Header="New"/>
+                    <MenuItem Header="Open"/>
+                    <MenuItem Header="Save"/>
+                    <Separator />
+                    <MenuItem Header="Exit" />
+                </MenuItem>
+            </Menu>
+        </DockPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
@@ -165,7 +178,24 @@
                 </Grid.RowDefinitions>
                 <DockPanel Grid.Row="0" Background="#252526">
                     <Border BorderBrush="#3e3e42" BorderThickness="1" Margin="1">
-                        
+                        <ScrollViewer>
+                            <ItemsControl ItemsSource="{Binding ActorList}" Margin="0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image Height="75" MouseDown="Image_MouseDown">
+                                            <Image.Source>
+                                                <CroppedBitmap Source="{Binding Image}" SourceRect="{Binding SourceRect}"/>
+                                            </Image.Source>
+                                        </Image>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </Border>
                 </DockPanel>
                 <DockPanel Grid.Row="1" Background="#252526">
@@ -181,7 +211,8 @@
                                     <ColumnDefinition Width="50"/>
                                 </Grid.ColumnDefinitions>
                                 <Border BorderBrush="#3e3e42" BorderThickness="1" Grid.Column="0">
-                                    <TextBlock Text="Logger" Grid.Row="0" Padding="2" Foreground="WhiteSmoke" Margin="1" Background="#3e3e42"/>
+                                    <TextBlock Text="Logger" Grid.Row="0" Padding="3,1,2,3" Foreground="WhiteSmoke" Margin="1" Background="#3e3e42"
+                                               VerticalAlignment="Center"/>
                                 </Border>
                                 <Button Content="Clear" Click="Clear_Log_Click" DockPanel.Dock="Right" Grid.Column="1"></Button>
                             </Grid>
