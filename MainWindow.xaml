@@ -1,0 +1,13 @@
+﻿<Window x:Class="SunbirdMB.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SunbirdMB"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <local:MainGame x:Name="MainGame" Margin="163,88,76,28" />
+        <Button Content="Button" HorizontalAlignment="Left" Margin="53,47,0,0" VerticalAlignment="Top" Width="75"/>
+    </Grid>
+</Window>
