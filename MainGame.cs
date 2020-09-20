@@ -5,6 +5,7 @@ using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
 using Sunbird.Core;
 using SunbirdMB.Core;
+using SunbirdMB.Framework;
 using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
@@ -38,6 +39,8 @@ namespace SunbirdMB
         internal WpfKeyboard Keyboard { get { return _keyboard; } }
         internal WpfMouse Mouse{ get { return _mouse; } }
 
+        public bool cleanLoad = false;
+
         //public event EventHandler Loaded;
 
         protected override void Initialize()
@@ -57,16 +60,42 @@ namespace SunbirdMB
             Content = new Microsoft.Xna.Framework.Content.ContentManager(_services);
             Content.RootDirectory = "Content";
 
+            Serializer.ExtraTypes = new Type[]
+            {
+                typeof(Cube),
+                typeof(Deco),
+            };
+
             Camera = new Camera(this);
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            AssetLibraries.RebuildLibraries(this);
+            if (cleanLoad == true)
+            {
+                AssetLibraries.RebuildLibraries(this);
+            }
+            else
+            {
+                AssetLibraries.ImportLibraries(this);
+            }
+
             // must be called after the WpfGraphicsDeviceService instance was created
             base.Initialize();
 
             // content loading now possible
 
             CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
+        }
+
+        public void OnExit()
+        {
+            CurrentState.OnExit();
+            var cubeFactoryData = new CubeFactoryData();
+            cubeFactoryData.SyncIn();
+            cubeFactoryData.Serialize();
+
+            var decoFactoryData = new DecoFactoryData();
+            decoFactoryData.SyncIn();
+            decoFactoryData.Serialize();
         }
 
         public void SetCameraTransformMatrix(int width, int height)

@@ -42,6 +42,8 @@ namespace SunbirdMB.Core
             handler?.Invoke(this, null);
         }
 
+        public abstract void OnExit();
+
         public abstract void Update(GameTime gameTime);
 
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);

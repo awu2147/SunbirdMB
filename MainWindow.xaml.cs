@@ -25,6 +25,12 @@ namespace SunbirdMB
         {
             InitializeComponent();
             MainGameWindow.Loaded += MainGameWindow_Loaded;
+            Closed += MainWindow_Closed;
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            MainGameWindow.OnExit();
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)

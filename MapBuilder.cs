@@ -59,7 +59,14 @@ namespace SunbirdMB
             : base(mainGame, graphicsDevice, content)
         {
             this.saveFilePath = path;
-            CreateContent();
+            if (mainGame.cleanLoad)
+            {
+                CreateContent();
+            }
+            else
+            {
+                LoadContentFromFile();
+            }
         }
 
         private void CreateContent()
@@ -74,6 +81,29 @@ namespace SunbirdMB
             Peripherals.ScrollWheelUp += Peripherals_ScrollWheelUp;
             Peripherals.ScrollWheelDown += Peripherals_ScrollWheelDown;
 
+        }
+
+        private void LoadContentFromFile()
+        {
+            IsLoading = true;
+            // Most time is spent here...
+            var XmlData = Serializer.ReadXML<MapBuilder>(MapBuilderSerializer, saveFilePath);
+            Altitude = XmlData.Altitude;
+            BuildMode = XmlData.BuildMode;
+            LayerMap = XmlData.LayerMap;
+            foreach (var layer in LayerMap)
+            {
+                foreach (var sprite in layer.Value)
+                {
+                    sprite.LoadContent(MainGame, GraphicsDevice, Content);
+                }
+            }
+
+            IsLoading = false;
+            MainGame.CurrentState = this;
+
+            Peripherals.ScrollWheelUp += Peripherals_ScrollWheelUp;
+            Peripherals.ScrollWheelDown += Peripherals_ScrollWheelDown;
         }
 
         // Should this have both generic and state specific components?
@@ -126,6 +156,11 @@ namespace SunbirdMB
                     }
                 }
             }
+        }
+
+        public override void OnExit()
+        {
+            Serializer.WriteXML<MapBuilder>(MapBuilderSerializer, this, saveFilePath);
         }
 
         public override void Update(GameTime gameTime)
