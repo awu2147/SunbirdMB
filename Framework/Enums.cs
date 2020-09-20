@@ -39,4 +39,10 @@ namespace SunbirdMB.Framework
         Remove,
     }
 
+    public enum Authorization
+    {
+        None,
+        Builder
+    }
+
 }

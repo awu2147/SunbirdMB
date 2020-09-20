@@ -46,6 +46,7 @@ namespace SunbirdMB
         public int Altitude { get; set; }
         public Cube CubePreview { get; set; }
         public Deco DecoPreview { get; set; }
+        public Authorization Authorization { get; set; }
         public BuildMode BuildMode { get; set; } = BuildMode._Cube;
 
         public static string ClickedSpriteName = string.Empty;
@@ -67,6 +68,7 @@ namespace SunbirdMB
             {
                 LoadContentFromFile();
             }
+            CubeFactory.IsRandomTop = true;
         }
 
         private void CreateContent()
@@ -119,7 +121,6 @@ namespace SunbirdMB
                     {
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
                     }
-                    Debug.Print($"{Peripherals.GetMouseWindowPosition(MainGame)}");
                 }
                 else if (!Peripherals.KeyPressed(Keys.LeftControl))
                 {
@@ -145,7 +146,6 @@ namespace SunbirdMB
                     {
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
                     }
-                    Debug.Print($"{Peripherals.GetMouseWindowPosition(MainGame)}");
                 }
                 else if (!Peripherals.KeyPressed(Keys.LeftControl))
                 {
@@ -171,31 +171,49 @@ namespace SunbirdMB
                 var relativeTopFaceCoords = World.TopFace_PointToRelativeCoord(MainGame, Altitude);
                 var topFaceCoords = World.TopFace_PointToCoord(MainGame);
 
-                if (Peripherals.LeftButtonPressed() && MainGame.IsActive)
+                // User input actions.
+                if (Peripherals.KeyTapped(Keys.Q) && MainGame.IsActive)
                 {
-                    if (BuildMode == BuildMode._Cube)
-                    {
-                        var cube = CubeFactory.CreateCurrentCube(MainGame, topFaceCoords, relativeTopFaceCoords, Altitude);
-                        LayerMap[Altitude].AddCheck(cube, Altitude);
-                    }
+                    var i = (int)Authorization + 1;
+                    if (i >= Enum.GetNames(typeof(Authorization)).Length) { i = 0; }
+                    Authorization = (Authorization)(i);
                 }
 
-                if (Peripherals.RightButtonPressed() && MainGame.IsActive)
+                if (Peripherals.KeyTapped(Keys.L) && MainGame.IsActive)
                 {
-                    //var rect = new Rectangle(Peripherals.GetScaledMouseWorldPosition(MainGame.Camera), new Point(200,200));
-                    if (BuildMode == BuildMode._Cube)
+                    $"Window Position = {Peripherals.GetMouseWindowPosition(MainGame)}".Log();
+                    $"World Position = {Peripherals.GetMouseWorldPosition(MainGame)}".Log();
+                    $"Altitude = {Altitude}".Log();
+                }
+
+                if (Authorization == Authorization.Builder)
+                {
+                    if (Peripherals.LeftButtonPressed() && MainGame.IsActive)
                     {
-                        for (int i = 0; i < LayerMap[Altitude].Count(); i++)
+                        if (BuildMode == BuildMode._Cube)
                         {
-                            var sprite = LayerMap[Altitude][i];
-                            if (sprite is Cube && sprite.Coords == relativeTopFaceCoords)
+                            var cube = CubeFactory.CreateCurrentCube(MainGame, topFaceCoords, relativeTopFaceCoords, Altitude);
+                            LayerMap[Altitude].AddCheck(cube, Altitude);
+                        }
+                    }
+
+                    if (Peripherals.RightButtonPressed() && MainGame.IsActive)
+                    {
+                        //var rect = new Rectangle(Peripherals.GetScaledMouseWorldPosition(MainGame.Camera), new Point(200,200));
+                        if (BuildMode == BuildMode._Cube)
+                        {
+                            for (int i = 0; i < LayerMap[Altitude].Count(); i++)
                             {
-                                LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
+                                var sprite = LayerMap[Altitude][i];
+                                if (sprite is Cube && sprite.Coords == relativeTopFaceCoords)
+                                {
+                                    LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
+                                }
+                                //if (sprite is Cube && rect.Contains(sprite.Position.ToPoint()))
+                                //{
+                                //    LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
+                                //}
                             }
-                            //if (sprite is Cube && rect.Contains(sprite.Position.ToPoint()))
-                            //{
-                            //    LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
-                            //}
                         }
                     }
                 }
@@ -267,12 +285,12 @@ namespace SunbirdMB
                 foreach (var sprite in World.Sort(LayerMap))
                 {
                     // Game
-                    if (Altitude != sprite.Altitude && sprite is IWorldObject)
+                    if (Altitude != sprite.Altitude && sprite is IWorldObject && Authorization == Authorization.Builder)
                     {
                         sprite.Alpha = 0.1f;
                         sprite.Draw(gameTime, spriteBatch);
                     }
-                    else if ((Altitude == sprite.Altitude) && sprite is IWorldObject)
+                    else if ((Altitude == sprite.Altitude || Authorization == Authorization.None) && sprite is IWorldObject)
                     {
                         sprite.Alpha = 1f;
                         sprite.Draw(gameTime, spriteBatch);

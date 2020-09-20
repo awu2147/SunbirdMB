@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SunbirdMB.Gui;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace SunbirdMB
         public MainWindow()
         {
             InitializeComponent();
+            Logger.DataContext = new LoggerViewModel();
             MainGameWindow.Loaded += MainGameWindow_Loaded;
             Closed += MainWindow_Closed;
         }
@@ -46,5 +48,9 @@ namespace SunbirdMB
             SizeChanged += MainWindow_SizeChanged;
         }
 
+        private void Clear_Log_Click(object sender, RoutedEventArgs e)
+        {
+            LoggerViewModel.Log.Clear();
+        }
     }
 }

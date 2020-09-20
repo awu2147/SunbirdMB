@@ -123,7 +123,7 @@ namespace SunbirdMB
             // get and cache the wpf rendertarget (there is always a default rendertarget)
             var wpfRenderTarget = (RenderTarget2D)GraphicsDevice.GetRenderTargets()[0].RenderTarget;
             GraphicsDevice.SetRenderTarget(wpfRenderTarget);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.LightGray);
             _spriteBatch.Begin(transformMatrix: Camera.CurrentTransform, samplerState: SamplerState);
             CurrentState.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
