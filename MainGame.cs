@@ -69,6 +69,16 @@ namespace SunbirdMB
             CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
         }
 
+        public void SetCameraTransformMatrix(int width, int height)
+        {
+            GraphicsDevice.PresentationParameters.BackBufferWidth = width;
+            GraphicsDevice.PresentationParameters.BackBufferHeight = height;
+            if (Camera.CurrentMode == CameraMode.Drag)
+            {
+                Camera.RecreateDragTransform();
+            }
+        }
+
         protected override void Update(GameTime gameTime)
         {
             Peripherals.PreUpdate(this);

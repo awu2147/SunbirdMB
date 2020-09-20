@@ -24,21 +24,21 @@ namespace SunbirdMB
         public MainWindow()
         {
             InitializeComponent();
-            MainGame.Loaded += MainGame_Initialized;
-
+            MainGameWindow.Loaded += MainGameWindow_Loaded;
         }
 
-        private void MainGame_Initialized(object sender, EventArgs e)
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MainGameWindow.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
+        }
+
+        private void MainGameWindow_Loaded(object sender, EventArgs e)
         {
             Debug.Print(MainGamePanel.ActualWidth.ToString());
             Debug.Print(MainGamePanel.ActualHeight.ToString());
-            MainGame.GraphicsDevice.PresentationParameters.BackBufferWidth = (int)MainGamePanel.ActualWidth;
-            MainGame.GraphicsDevice.PresentationParameters.BackBufferHeight = (int)MainGamePanel.ActualHeight;
+            MainGameWindow.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
+            SizeChanged += MainWindow_SizeChanged;
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            MainGame.Loaded += MainGame_Initialized;
-        }
     }
 }

@@ -35,7 +35,6 @@ namespace SunbirdMB.Core
         public Camera(MainGame sender)
         {
             MainGame = sender;
-            DragTransform = CreateDragTransform();
         }
 
         public void Update(MainGame mainGame)
@@ -53,7 +52,6 @@ namespace SunbirdMB.Core
             if (Peripherals.MiddleButtonPressed() && MainGame.IsActive == true)
             {
                 CurrentMode = CameraMode.Drag;
-                MainGame.SamplerState = SamplerState.AnisotropicClamp;
                 if (Peripherals.MiddleButtonTapped())
                 {
                     Peripherals.MiddleButtonReleased += peripherals_MiddleButtonReleased;
@@ -63,10 +61,6 @@ namespace SunbirdMB.Core
                 DragPositionChange = (currentPosition - Anchor) * new Point(World.Scale, World.Scale) / new Point(World.Zoom, World.Zoom);
                 DragTransform = CreateDragTransform();
             }
-            else
-            {
-                MainGame.SamplerState = SamplerState.PointClamp;
-            }
             //Wrap this in else block if toggling.
         }
 
@@ -75,6 +69,11 @@ namespace SunbirdMB.Core
             DragTargetPosition -= DragPositionChange.ToVector2();
             DragPositionChange = Point.Zero;
             Peripherals.MiddleButtonReleased -= peripherals_MiddleButtonReleased;
+        }
+
+        public void RecreateDragTransform()
+        {
+            DragTransform = CreateDragTransform();
         }
 
         public Matrix CreateDragTransform()
