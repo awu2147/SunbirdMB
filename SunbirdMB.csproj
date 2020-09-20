@@ -98,6 +98,25 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AssetLibraries.cs" />
+    <Compile Include="Core\Animator.cs" />
+    <Compile Include="Core\Camera.cs" />
+    <Compile Include="Core\Cube.cs" />
+    <Compile Include="Core\Peripherals.cs" />
+    <Compile Include="Core\SpriteList.cs" />
+    <Compile Include="Core\World.cs" />
+    <Compile Include="Framework\Coord.cs" />
+    <Compile Include="Core\Deco.cs" />
+    <Compile Include="Framework\Dimension.cs" />
+    <Compile Include="Core\GraphicsHelper.cs" />
+    <Compile Include="Framework\Enums.cs" />
+    <Compile Include="Framework\Serializer.cs" />
+    <Compile Include="Core\Sprite.cs" />
+    <Compile Include="Core\SpriteSheet.cs" />
+    <Compile Include="Core\State.cs" />
+    <Compile Include="Core\Timer.cs" />
+    <Compile Include="Framework\XDictionary.cs" />
+    <Compile Include="Interfaces\IWorldObject.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -105,6 +124,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MapBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

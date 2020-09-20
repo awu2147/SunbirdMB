@@ -7,7 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <local:MainGame x:Name="MainGame" Margin="163,88,76,28" />
+        <DockPanel x:Name="MainGamePanel" Width="520" Height="300" Margin="185,70,87,49">
+            <local:MainGame x:Name="MainGame"/>
+        </DockPanel>
         <Button Content="Button" HorizontalAlignment="Left" Margin="53,47,0,0" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </Window>

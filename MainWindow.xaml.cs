@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,21 @@ namespace SunbirdMB
         public MainWindow()
         {
             InitializeComponent();
+            MainGame.Loaded += MainGame_Initialized;
+
+        }
+
+        private void MainGame_Initialized(object sender, EventArgs e)
+        {
+            Debug.Print(MainGamePanel.ActualWidth.ToString());
+            Debug.Print(MainGamePanel.ActualHeight.ToString());
+            MainGame.GraphicsDevice.PresentationParameters.BackBufferWidth = (int)MainGamePanel.ActualWidth;
+            MainGame.GraphicsDevice.PresentationParameters.BackBufferHeight = (int)MainGamePanel.ActualHeight;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainGame.Loaded += MainGame_Initialized;
         }
     }
 }

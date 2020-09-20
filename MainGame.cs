@@ -3,7 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
+using Sunbird.Core;
+using SunbirdMB.Core;
 using System;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 
 namespace SunbirdMB
@@ -11,10 +14,31 @@ namespace SunbirdMB
     public class MainGame : WpfGame
     {
         private IGraphicsDeviceService _graphicsDeviceManager;
+        private IServiceContainer _services;
         private SpriteBatch _spriteBatch;
         private WpfKeyboard _keyboard;
         private WpfMouse _mouse;
         public Color renderColor = Color.CornflowerBlue;
+
+        private State currentState;
+        public State CurrentState
+        {
+            get { return currentState; }
+            set
+            {
+                if (currentState != null && currentState != value) { currentState.OnStateChanged(); }
+                currentState = value;
+            }
+        }
+
+        public int BackBufferWidth { get { return GraphicsDevice.PresentationParameters.BackBufferWidth; } }
+        public int BackBufferHeight { get { return GraphicsDevice.PresentationParameters.BackBufferHeight; } }
+        public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
+        public Camera Camera { get; set; }
+        internal WpfKeyboard Keyboard { get { return _keyboard; } }
+        internal WpfMouse Mouse{ get { return _mouse; } }
+
+        //public event EventHandler Loaded;
 
         protected override void Initialize()
         {
@@ -28,32 +52,42 @@ namespace SunbirdMB
             _keyboard = new WpfKeyboard(this);
             _mouse = new WpfMouse(this);
 
+            _services = new ServiceContainer();
+            _services.AddService(typeof(IGraphicsDeviceService), _graphicsDeviceManager);
+            Content = new Microsoft.Xna.Framework.Content.ContentManager(_services);
+            Content.RootDirectory = "Content";
+
+            Camera = new Camera(this);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            AssetLibraries.RebuildLibraries(this);
             // must be called after the WpfGraphicsDeviceService instance was created
             base.Initialize();
 
             // content loading now possible
+
+            CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
         }
 
-        protected override void Update(GameTime time)
+        protected override void Update(GameTime gameTime)
         {
-            // every update we can now query the keyboard & mouse for our WpfGame
-            var mouseState = _mouse.GetState();
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                Debug.Print("down");
-            }
-            var keyboardState = _keyboard.GetState();
+            Peripherals.PreUpdate(this);
+
+            CurrentState.Update(gameTime);
+            Camera.Update(this);
+
+            Peripherals.PostUpdate();
         }
 
-        protected override void Draw(GameTime time)
+        protected override void Draw(GameTime gameTime)
         {
             // get and cache the wpf rendertarget (there is always a default rendertarget)
             var wpfRenderTarget = (RenderTarget2D)GraphicsDevice.GetRenderTargets()[0].RenderTarget;
             GraphicsDevice.SetRenderTarget(wpfRenderTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            //_spriteBatch.Begin();
-            //_spriteBatch.Draw(this.rendertarget, Vector2.Zero, Color.White);
-            //_spriteBatch.End();
+            _spriteBatch.Begin(transformMatrix: Camera.CurrentTransform, samplerState: SamplerState);
+            CurrentState.Draw(gameTime, _spriteBatch);
+            _spriteBatch.End();
         }
     }
 }
