@@ -9,6 +9,7 @@ using SunbirdMB.Framework;
 using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace SunbirdMB
 {
@@ -123,7 +124,10 @@ namespace SunbirdMB
             // get and cache the wpf rendertarget (there is always a default rendertarget)
             var wpfRenderTarget = (RenderTarget2D)GraphicsDevice.GetRenderTargets()[0].RenderTarget;
             GraphicsDevice.SetRenderTarget(wpfRenderTarget);
-            GraphicsDevice.Clear(Color.LightGray);
+            string colorcode = "#1e1e1e";
+            int argb = Int32.Parse(colorcode.Replace("#", ""), NumberStyles.HexNumber);
+            System.Drawing.Color clr = System.Drawing.Color.FromArgb(argb);
+            GraphicsDevice.Clear(new Microsoft.Xna.Framework.Color(clr.R, clr.G, clr.B));
             _spriteBatch.Begin(transformMatrix: Camera.CurrentTransform, samplerState: SamplerState);
             CurrentState.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();

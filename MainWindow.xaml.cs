@@ -10,6 +10,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.IO;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace SunbirdMB
 {
@@ -55,6 +57,10 @@ namespace SunbirdMB
             ActorList.Add(new Actor(test, new Int32Rect(0, 75, 72, 75)));
             ActorList.Add(new Actor(test, new Int32Rect(72, 0, 72, 75)));
             ActorList.Add(new Actor(test, new Int32Rect(72, 75, 72, 75)));
+            ActorList.Add(new Actor(test, new Int32Rect(0, 0, 72, 75)));
+            ActorList.Add(new Actor(test, new Int32Rect(0, 75, 72, 75)));
+            ActorList.Add(new Actor(test, new Int32Rect(72, 0, 72, 75)));
+            ActorList.Add(new Actor(test, new Int32Rect(72, 75, 72, 75)));
         }
 
         private void Clear_Log_Click(object sender, RoutedEventArgs e)
@@ -65,6 +71,11 @@ namespace SunbirdMB
         private void Image_MouseDown(object sender, MouseButtonEventArgs e)
         {
             "clicked".Log();
+            sender.GetType().ToString().Log();
+
+            Image image = sender as Image;
+            var bmi = image.Source as CroppedBitmap;
+            bmi.Source.ToString().Log();
         }
     }
 
