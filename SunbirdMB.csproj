@@ -93,6 +93,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Gui\CatalogItemBase.cs" />
+    <Compile Include="Gui\CubeDesignerViewModel.cs" />
     <Compile Include="Tools\ContentBuilder.cs" />
     <Page Include="Gui\ResourceDictionaries\Colors.xaml">
       <SubType>Designer</SubType>

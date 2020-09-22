@@ -70,7 +70,7 @@
                             </Grid.RowDefinitions>
                             <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                     BorderThickness="1">
-                                <TextBlock Text="Catalog"
+                                <TextBlock Text="Cube Designer"
                                            Padding="3,2,3,2" 
                                            Foreground="{StaticResource VSText}" 
                                            Margin="1" 
@@ -80,10 +80,36 @@
                             <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                     BorderThickness="1" 
                                     Grid.Row="1">
-                                <TabControl Background="{StaticResource VSDark3Brush}" 
+                                <TabControl x:Name="CubeDesigner" Background="{StaticResource VSDark3Brush}" 
                                             BorderThickness="0">
-                                    <TabItem Header="Cube Base"
-                                             Foreground="{StaticResource VSText}">
+                                    <TabItem Header="Top" 
+                                             Foreground="{StaticResource VSText}"
+                                             Width="76">
+                                        <ScrollViewer Style="{StaticResource LeftScrollViewer}">
+                                            <ItemsControl ItemsSource="{Binding CubeTopCollection}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Command="{Binding C_MouseDown}">
+                                                            <Image Height="75">
+                                                                <Image.Source>
+                                                                    <CroppedBitmap Source="{Binding Image}" 
+                                                                                   SourceRect="{Binding SourceRect}"/>
+                                                                </Image.Source>
+                                                            </Image>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </TabItem>
+                                    <TabItem Header="Base"
+                                             Foreground="{StaticResource VSText}" 
+                                             Width="76">
                                         <ScrollViewer Style="{StaticResource LeftScrollViewer}">
                                             <ItemsControl ItemsSource="{Binding CubeBaseCollection}">
                                                 <ItemsControl.ItemTemplate>
@@ -105,10 +131,6 @@
                                                 </ItemsControl.ItemsPanel>
                                             </ItemsControl>
                                         </ScrollViewer>
-                                    </TabItem>
-                                    <TabItem Header="Cube Top" 
-                                             Foreground="{StaticResource VSText}">
-                                        
                                     </TabItem>
                                 </TabControl>
                             </Border>

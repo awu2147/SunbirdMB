@@ -21,16 +21,25 @@ namespace SunbirdMB
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel ViewModel { get; set; }
+        private MainWindowViewModel MainWindowViewModel { get; set; }
+        internal LoggerViewModel LoggerViewModel { get; set; }
+        internal CubeDesignerViewModel CubeDesignerViewModel { get; set; }
 
         private Config config;
 
         public MainWindow()
         {
             InitializeComponent();
-            ViewModel = new MainWindowViewModel(this);
-            DataContext = ViewModel;
-            Logger.DataContext = new LoggerViewModel();
+
+            MainWindowViewModel = new MainWindowViewModel(this);
+            DataContext = MainWindowViewModel;
+
+            LoggerViewModel = new LoggerViewModel();
+            Logger.DataContext = LoggerViewModel;
+
+            CubeDesignerViewModel = new CubeDesignerViewModel();
+            CubeDesigner.DataContext = CubeDesignerViewModel;
+
             MainGame.Loaded += MainGame_Loaded;
 
             if (File.Exists("Config.xml"))
@@ -56,7 +65,7 @@ namespace SunbirdMB
             SizeChanged += MainWindow_SizeChanged;
             Closed += MainWindow_Closed;
 
-            ViewModel.Initialize();
+            MainWindowViewModel.Initialize();
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)

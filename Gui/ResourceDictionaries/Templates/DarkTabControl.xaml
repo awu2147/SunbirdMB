@@ -65,7 +65,7 @@
                     Margin="0,0,4,-1"
                     IsItemsHost="True"
                     KeyboardNavigation.TabIndex="1"
-                    Background="Transparent" />
+                    Background="Transparent"/>
                         <Border x:Name="Border"
                   Grid.Row="1"
                   BorderThickness="1"
@@ -164,10 +164,11 @@
                             </Border.Background>
                             <ContentPresenter x:Name="ContentSite"
                               VerticalAlignment="Center"
-                              HorizontalAlignment="Center"
+                              HorizontalAlignment="Left"
                               ContentSource="Header"
-                              Margin="12,2,12,2"
-                              RecognizesAccessKey="True" />
+                              Margin="3,2,3,2"
+                              RecognizesAccessKey="True">
+                            </ContentPresenter>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>

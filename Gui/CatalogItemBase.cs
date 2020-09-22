@@ -33,9 +33,9 @@ namespace SunbirdMB.Gui
         }
     }
 
-    public class CubeBaseItem : CatalogItemBase
+    public class CubeCatalogItem : CatalogItemBase
     {
-        public CubeBaseItem(string image) : base(image, new Int32Rect(0, 0, 72, 75))
+        public CubeCatalogItem(string image) : base(image, new Int32Rect(0, 0, 72, 75))
         {
 
         }

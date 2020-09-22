@@ -19,8 +19,6 @@ namespace SunbirdMB
 {
     internal class MainWindowViewModel : ViewModelBase
     {
-        public ObservableCollection<CubeBaseItem> CubeBaseCollection { get; set; } = new ObservableCollection<CubeBaseItem>();
-
         internal MainWindow View { get; set; }
         public ICommand C_Import { get; set; }
         public ICommand C_Build { get; set; }
@@ -38,33 +36,37 @@ namespace SunbirdMB
             string contentPath = Path.Combine(appPath, "..", "..", "..", "Content");
             var test = Path.Combine(contentPath, CubeFactory.CubeTopMetaDataLibrary[0].Path + ".png");
             test.Log();
+        }
 
-            Build();
+        private void Build()
+        {
+            View.CubeDesignerViewModel.BuildBase();
+            View.CubeDesignerViewModel.BuildTop();
         }
 
         private void Import()
         {
+            var selectedTab = View.CubeDesigner.SelectedValue as TabItem;
+            
             var appPath = Assembly.GetExecutingAssembly().Location;
-            var basePath = Path.Combine(appPath, "..", "Content", "Cubes", "Base");
+            var destinationPath = string.Empty;
+            if (selectedTab.Header.ToString() == "Base")
+            {
+                destinationPath = Path.Combine(appPath, "..", "Content", "Cubes", "Base");
+            }
+            else if (selectedTab.Header.ToString() == "Top")
+            {
+                destinationPath = Path.Combine(appPath, "..", "Content", "Cubes", "Top");
+            }
             "import".Log();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
                 openFileDialog.FileName.Log();
                 Path.GetPathRoot(openFileDialog.FileName).Log();
-                File.Copy(openFileDialog.FileName, Path.Combine(basePath, Path.GetFileName(openFileDialog.FileName)));
+                File.Copy(openFileDialog.FileName, Path.Combine(destinationPath, Path.GetFileName(openFileDialog.FileName)));
             }
-        }
-
-        private void Build()
-        {
-            var appPath = Assembly.GetExecutingAssembly().Location;
-            var basePath = Path.Combine(appPath, "..", "Content", "Cubes", "Base");
-            var files = Directory.GetFiles(basePath);
-            foreach (var file in files)
-            {
-                CubeBaseCollection.Add(new CubeBaseItem(file));
-            }
+            
         }
     }
 
