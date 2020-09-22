@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using SunbirdMB.Tools;
 
 namespace SunbirdMB
 {
@@ -42,6 +43,9 @@ namespace SunbirdMB
                 config = new Config();
             }
 
+            //var cb = new TextureContentBuilder(@"D:\", @"Test\bin", @"Test\obj");
+            //cb.Targets.Add(@"BloodBowl.png");
+            //cb.Build();
         }
 
         private void MainGame_Loaded(object sender, EventArgs e)

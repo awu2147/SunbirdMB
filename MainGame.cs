@@ -56,7 +56,6 @@ namespace SunbirdMB
             services = new ServiceContainer();
             services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceManager);
             Content = new Microsoft.Xna.Framework.Content.ContentManager(services);
-            Content.RootDirectory = "Content";
 
             Serializer.ExtraTypes = new Type[]
             {
@@ -64,19 +63,15 @@ namespace SunbirdMB
                 typeof(Deco),
             };
 
-
-            //if (cleanLoad == true)
-            //{
-            //    Config = new Config(this);
-            //}
-            //else
-            //{
-            //    Config = Serializer.ReadXML<Config>(Config.ConfigSerializer, "Config.xml");
-            //    Config.LoadContent(this);
-            //}
-
             Camera = new Camera(this);
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // must be called after the WpfGraphicsDeviceService instance was created
+            base.Initialize();
+
+            // content loading now possible
+
+            Content.RootDirectory = "Content2";
 
             if (cleanLoad == true)
             {
@@ -86,11 +81,6 @@ namespace SunbirdMB
             {
                 AssetLibraries.ImportLibraries(this);
             }
-
-            // must be called after the WpfGraphicsDeviceService instance was created
-            base.Initialize();
-
-            // content loading now possible
 
             CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
         }

@@ -43,6 +43,7 @@ namespace SunbirdMB.Core
             WindowTop = window.Top;
         }
 
+        public string OutputDir { get; set; }
         public int WorldZoom { get; set; } = 3;
 
         internal void LoadGameParameters(MainGame game)
