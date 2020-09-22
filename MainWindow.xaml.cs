@@ -20,14 +20,15 @@ namespace SunbirdMB
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<Actor> ActorList { get; set; } = new ObservableCollection<Actor>();
+        private MainWindowViewModel ViewModel { get; set; }
 
         private Config config;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = this;
+            ViewModel = new MainWindowViewModel(this);
+            DataContext = ViewModel;
             Logger.DataContext = new LoggerViewModel();
             MainGame.Loaded += MainGame_Loaded;
 
@@ -50,20 +51,8 @@ namespace SunbirdMB
             MainGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
             SizeChanged += MainWindow_SizeChanged;
             Closed += MainWindow_Closed;
-           
-            var appPath = Assembly.GetExecutingAssembly().Location;
-            string contentPath = Path.Combine(appPath, "..", "..", "..","Content");
-            var test = Path.Combine(contentPath, CubeFactory.CubeTopMetaDataLibrary[0].Path + ".png");
-            test.Log();
 
-            ActorList.Add(new Actor(test, new Int32Rect(0, 0, 72, 75)));
-            ActorList.Add(new Actor(test, new Int32Rect(0, 75, 72, 75)));
-            ActorList.Add(new Actor(test, new Int32Rect(72, 0, 72, 75)));
-            ActorList.Add(new Actor(test, new Int32Rect(72, 75, 72, 75)));
-            ActorList.Add(new Actor(test, new Int32Rect(0, 0, 72, 75)));
-            ActorList.Add(new Actor(test, new Int32Rect(0, 75, 72, 75)));
-            ActorList.Add(new Actor(test, new Int32Rect(72, 0, 72, 75)));
-            ActorList.Add(new Actor(test, new Int32Rect(72, 75, 72, 75)));
+            ViewModel.Initialize();
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)
@@ -95,21 +84,4 @@ namespace SunbirdMB
         }
     }
 
-    public class Actor
-    {
-        public string Image { get; set; }
-
-        public Int32Rect SourceRect { get; set; }
-
-        public Actor(string imagePath) : this(imagePath, Int32Rect.Empty)
-        {
-            Image = imagePath;
-        }
-
-        public Actor(string imagePath, Int32Rect sourceRect)
-        {
-            Image = imagePath;
-            SourceRect = sourceRect;
-        }
-    }
 }

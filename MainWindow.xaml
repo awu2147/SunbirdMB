@@ -482,11 +482,13 @@
                                     <ItemsControl ItemsSource="{Binding ActorList}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Image Height="75" MouseDown="Image_MouseDown">
-                                                    <Image.Source>
-                                                        <CroppedBitmap Source="{Binding Image}" SourceRect="{Binding SourceRect}"/>
-                                                    </Image.Source>
-                                                </Image>
+                                                <Button Command="{Binding C_MouseDown}">
+                                                    <Image Height="75">
+                                                        <Image.Source>
+                                                            <CroppedBitmap Source="{Binding Image}" SourceRect="{Binding SourceRect}"/>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Button>                                                
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                         <ItemsControl.ItemsPanel>
@@ -502,7 +504,7 @@
                 </DockPanel>
                 <DockPanel Grid.Row="1" Background="#252526">
                     <Border BorderBrush="#3e3e42" BorderThickness="1" Margin="1,1,2,1">
-                        <Grid>
+                        <Grid x:Name="Logger">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
@@ -517,10 +519,10 @@
                                                VerticalAlignment="Center"/>
                                 </Border>
                                 <Border BorderBrush="#3e3e42" BorderThickness="1" Grid.Column="1">
-                                    <Button Content="Clear" Click="Clear_Log_Click" DockPanel.Dock="Right" Grid.Column="1" Margin="0"></Button>
+                                    <Button Content="Clear" Command="{Binding C_ClearLog}" DockPanel.Dock="Right" Grid.Column="1" Margin="0"></Button>
                                 </Border>
                             </Grid>
-                            <DataGrid x:Name="Logger" ItemsSource="{Binding Log}" Grid.Row="1" AutoGenerateColumns="False" 
+                            <DataGrid ItemsSource="{Binding Log}" Grid.Row="1" AutoGenerateColumns="False" 
                                       CanUserResizeColumns="False" CanUserSortColumns="False" GridLinesVisibility="None"
                                       HeadersVisibility="None" BorderBrush="#3e3e42" BorderThickness="1" 
                                       VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden"

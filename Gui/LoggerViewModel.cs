@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace SunbirdMB.Gui
 {
@@ -15,9 +16,16 @@ namespace SunbirdMB.Gui
     {
         public static ObservableCollection<LogMessage> Log { get; set; } = new ObservableCollection<LogMessage>();
 
+        public ICommand C_ClearLog { get; set; }
+
         public LoggerViewModel()
         {
+            C_ClearLog = new RelayCommand((o) => ClearLog());
+        }
 
+        private void ClearLog()
+        {
+            Log.Clear();
         }
 
         public static string TimeNow()
