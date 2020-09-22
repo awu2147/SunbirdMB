@@ -15,14 +15,11 @@ namespace SunbirdMB
 {
     public class MainGame : WpfGame
     {
-        private IGraphicsDeviceService _graphicsDeviceManager;
-        private IServiceContainer _services;
-        private SpriteBatch _spriteBatch;
-        private WpfKeyboard _keyboard;
-        private WpfMouse _mouse;
-        public Color renderColor = Color.CornflowerBlue;
-
+        private IGraphicsDeviceService graphicsDeviceManager;
+        private IServiceContainer services;
+        private SpriteBatch spriteBatch;
         private State currentState;
+
         public State CurrentState
         {
             get { return currentState; }
@@ -37,8 +34,8 @@ namespace SunbirdMB
         public int BackBufferHeight { get { return GraphicsDevice.PresentationParameters.BackBufferHeight; } }
         public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
         public Camera Camera { get; set; }
-        internal WpfKeyboard Keyboard { get { return _keyboard; } }
-        internal WpfMouse Mouse{ get { return _mouse; } }
+        internal WpfKeyboard Keyboard { get; private set; }
+        internal WpfMouse Mouse { get; private set; }
 
         public bool cleanLoad = false;
 
@@ -49,16 +46,16 @@ namespace SunbirdMB
             // must be initialized. required by Content loading and rendering (will add itself to the Services)
             // note that MonoGame requires this to be initialized in the constructor, while WpfInterop requires it to
             // be called inside Initialize (before base.Initialize())
-            _graphicsDeviceManager = new WpfGraphicsDeviceService(this);
+            graphicsDeviceManager = new WpfGraphicsDeviceService(this);
 
             // wpf and keyboard need reference to the host control in order to receive input
             // this means every WpfGame control will have it's own keyboard & mouse manager which will only react if the mouse is in the control
-            _keyboard = new WpfKeyboard(this);
-            _mouse = new WpfMouse(this);
+            Keyboard = new WpfKeyboard(this);
+            Mouse = new WpfMouse(this);
 
-            _services = new ServiceContainer();
-            _services.AddService(typeof(IGraphicsDeviceService), _graphicsDeviceManager);
-            Content = new Microsoft.Xna.Framework.Content.ContentManager(_services);
+            services = new ServiceContainer();
+            services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceManager);
+            Content = new Microsoft.Xna.Framework.Content.ContentManager(services);
             Content.RootDirectory = "Content";
 
             Serializer.ExtraTypes = new Type[]
@@ -67,8 +64,19 @@ namespace SunbirdMB
                 typeof(Deco),
             };
 
+
+            //if (cleanLoad == true)
+            //{
+            //    Config = new Config(this);
+            //}
+            //else
+            //{
+            //    Config = Serializer.ReadXML<Config>(Config.ConfigSerializer, "Config.xml");
+            //    Config.LoadContent(this);
+            //}
+
             Camera = new Camera(this);
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             if (cleanLoad == true)
             {
@@ -87,18 +95,21 @@ namespace SunbirdMB
             CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
         }
 
-        public void OnExit()
+        internal void SaveAndSerialize()
         {
-            CurrentState.OnExit();
+            CurrentState.SaveAndSerialize();
             var cubeFactoryData = new CubeFactoryData();
-            cubeFactoryData.SyncIn();
+            cubeFactoryData.Save();
             cubeFactoryData.Serialize();
 
             var decoFactoryData = new DecoFactoryData();
-            decoFactoryData.SyncIn();
+            decoFactoryData.Save();
             decoFactoryData.Serialize();
         }
 
+        /// <summary>
+        /// Set the width and height of the backbuffer to the wpf panel that hosts the main game.
+        /// </summary>
         public void SetCameraTransformMatrix(int width, int height)
         {
             GraphicsDevice.PresentationParameters.BackBufferWidth = width;
@@ -124,13 +135,10 @@ namespace SunbirdMB
             // get and cache the wpf rendertarget (there is always a default rendertarget)
             var wpfRenderTarget = (RenderTarget2D)GraphicsDevice.GetRenderTargets()[0].RenderTarget;
             GraphicsDevice.SetRenderTarget(wpfRenderTarget);
-            string colorcode = "#1e1e1e";
-            int argb = Int32.Parse(colorcode.Replace("#", ""), NumberStyles.HexNumber);
-            System.Drawing.Color clr = System.Drawing.Color.FromArgb(argb);
-            GraphicsDevice.Clear(new Microsoft.Xna.Framework.Color(clr.R, clr.G, clr.B));
-            _spriteBatch.Begin(transformMatrix: Camera.CurrentTransform, samplerState: SamplerState);
-            CurrentState.Draw(gameTime, _spriteBatch);
-            _spriteBatch.End();
+            GraphicsDevice.Clear(GraphicsHelper.HexColor("#1e1e1e"));
+            spriteBatch.Begin(transformMatrix: Camera.CurrentTransform, samplerState: SamplerState);
+            CurrentState.Draw(gameTime, spriteBatch);
+            spriteBatch.End();
         }
     }
 }

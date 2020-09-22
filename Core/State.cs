@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using System.Runtime.Serialization;
 
 namespace SunbirdMB.Core
 {
@@ -42,7 +43,7 @@ namespace SunbirdMB.Core
             handler?.Invoke(this, null);
         }
 
-        public abstract void OnExit();
+        public abstract void SaveAndSerialize();
 
         public abstract void Update(GameTime gameTime);
 

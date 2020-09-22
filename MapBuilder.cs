@@ -158,7 +158,7 @@ namespace SunbirdMB
             }
         }
 
-        public override void OnExit()
+        public override void SaveAndSerialize()
         {
             Serializer.WriteXML<MapBuilder>(MapBuilderSerializer, this, saveFilePath);
         }

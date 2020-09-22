@@ -103,6 +103,7 @@
     <Compile Include="AssetLibraries.cs" />
     <Compile Include="Core\Animator.cs" />
     <Compile Include="Core\Camera.cs" />
+    <Compile Include="Framework\Config.cs" />
     <Compile Include="Core\Cube.cs" />
     <Compile Include="Core\Peripherals.cs" />
     <Compile Include="Core\SpriteList.cs" />

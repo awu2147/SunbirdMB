@@ -300,10 +300,7 @@ namespace SunbirdMB.Core
         public List<DecoMetaData> DecoMetaDataLibrary2x2 { get; set; }
         public List<DecoMetaData> DecoMetaDataLibrary3x3 { get; set; }
 
-        public DecoFactoryData()
-        {
-            SyncIn();
-        }
+        public DecoFactoryData() { }
 
         public void Serialize()
         {
@@ -313,7 +310,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Create a copy of DecoFactory's static properties;
         /// </summary>
-        public void SyncIn()
+        public void Save()
         {
             IsRandom = DecoFactory.IsRandom;
 
@@ -333,7 +330,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Reassign values to DecoFactory's static properties;
         /// </summary>
-        public void SyncOut(MainGame mainGame)
+        public void Load(MainGame mainGame)
         {
             DecoFactory.IsRandom = IsRandom;
 

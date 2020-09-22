@@ -553,7 +553,7 @@
             </Grid>
             <DockPanel x:Name="MainGamePanel" Grid.Column="1" Background="SlateGray">
                 <Border BorderBrush="DimGray" BorderThickness="0">
-                    <local:MainGame x:Name="MainGameWindow" FocusVisualStyle="{x:Null}"/>
+                    <local:MainGame x:Name="MainGame" FocusVisualStyle="{x:Null}"/>
                 </Border>
             </DockPanel>
             <GridSplitter Grid.Column ="0" Background="Transparent" Width="4"

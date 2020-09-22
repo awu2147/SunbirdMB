@@ -22,32 +22,35 @@ namespace SunbirdMB
     {
         public ObservableCollection<Actor> ActorList { get; set; } = new ObservableCollection<Actor>();
 
+        private Config config;
+
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             Logger.DataContext = new LoggerViewModel();
-            MainGameWindow.Loaded += MainGameWindow_Loaded;
-            Closed += MainWindow_Closed;
+            MainGame.Loaded += MainGame_Loaded;
+
+            if (File.Exists("Config.xml"))
+            {
+                config = Serializer.ReadXML<Config>(Config.ConfigSerializer, "Config.xml");
+                config.LoadApplicationParameters(this);
+            }
+            else
+            {
+                config = new Config();
+            }
+
         }
 
-        private void MainWindow_Closed(object sender, EventArgs e)
+        private void MainGame_Loaded(object sender, EventArgs e)
         {
-            MainGameWindow.OnExit();
-        }
+            config.LoadGameParameters(MainGame);
 
-        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            MainGameWindow.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
-        }
-
-        private void MainGameWindow_Loaded(object sender, EventArgs e)
-        {
-            Debug.Print(MainGamePanel.ActualWidth.ToString());
-            Debug.Print(MainGamePanel.ActualHeight.ToString());
-            MainGameWindow.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
+            MainGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
             SizeChanged += MainWindow_SizeChanged;
-
+            Closed += MainWindow_Closed;
+           
             var appPath = Assembly.GetExecutingAssembly().Location;
             string contentPath = Path.Combine(appPath, "..", "..", "..","Content");
             var test = Path.Combine(contentPath, CubeFactory.CubeTopMetaDataLibrary[0].Path + ".png");
@@ -61,6 +64,19 @@ namespace SunbirdMB
             ActorList.Add(new Actor(test, new Int32Rect(0, 75, 72, 75)));
             ActorList.Add(new Actor(test, new Int32Rect(72, 0, 72, 75)));
             ActorList.Add(new Actor(test, new Int32Rect(72, 75, 72, 75)));
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            MainGame.SaveAndSerialize();
+            config.SaveApplicationParameters(this);
+            config.SaveGameParameters(MainGame);
+            config.Serialize();
+        }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MainGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
         }
 
         private void Clear_Log_Click(object sender, RoutedEventArgs e)

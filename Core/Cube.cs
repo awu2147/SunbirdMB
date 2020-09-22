@@ -247,10 +247,7 @@ namespace SunbirdMB.Core
         public List<CubeMetaData> CubeTopMetaDataLibrary { get; set; }
         public List<CubeMetaData> CubeBaseMetaDataLibrary { get; set; }
 
-        public CubeFactoryData()
-        {
-            SyncIn();
-        }
+        public CubeFactoryData() { }
 
         public void Serialize()
         {
@@ -260,7 +257,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Create a copy of CubeFactory's static properties;
         /// </summary>
-        public void SyncIn()
+        public void Save()
         {
             IsRandomTop = CubeFactory.IsRandomTop;
             IsRandomBase = CubeFactory.IsRandomBase;
@@ -278,7 +275,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Reassign values to CubeFactory's static properties;
         /// </summary>
-        public void SyncOut(MainGame mainGame)
+        public void Load(MainGame mainGame)
         {
             CubeFactory.IsRandomTop = IsRandomTop;
             CubeFactory.IsRandomBase = IsRandomBase;
@@ -315,7 +312,6 @@ namespace SunbirdMB.Core
             CubeFactory.CurrentCubeBaseMetaData.LoadContent(mainGame);
 
         }
-
     }
 
 }

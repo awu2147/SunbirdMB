@@ -170,10 +170,10 @@ namespace SunbirdMB
         public static void ImportLibraries(MainGame mainGame)
         {
             CubeFactoryData cubeFactoryData = Serializer.ReadXML<CubeFactoryData>(CubeFactoryData.CubeFactoryDataSerializer, "CubeFactoryData.xml");
-            cubeFactoryData.SyncOut(mainGame);
+            cubeFactoryData.Load(mainGame);
 
             DecoFactoryData decoFactoryData = Serializer.ReadXML<DecoFactoryData>(DecoFactoryData.DecoFactoryDataSerializer, "DecoFactoryData.xml");
-            decoFactoryData.SyncOut(mainGame);
+            decoFactoryData.Load(mainGame);
         }
 
     }

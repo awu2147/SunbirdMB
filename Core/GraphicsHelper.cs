@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Globalization;
 
 namespace SunbirdMB.Core
 {
@@ -110,6 +111,11 @@ namespace SunbirdMB.Core
 
         public static Dictionary<string, Texture2D> SelfShadowLibrary = new Dictionary<string, Texture2D>() { };
 
+        public static Color HexColor(string hexCode)
+        {
+            int argb = Int32.Parse(hexCode.Replace("#", ""), NumberStyles.HexNumber);
+            return new Color((uint)argb);
+        }
 
         #region Obsolete
 
