@@ -44,6 +44,7 @@ namespace SunbirdMB.Core
         }
 
         public string OutputDir { get; set; }
+        public string IntermediateDir { get; set; }
         public int WorldZoom { get; set; } = 3;
 
         internal void LoadGameParameters(MainGame game)

@@ -74,9 +74,10 @@ namespace SunbirdMB.Core
 
     }
 
-    [Serializable]
     public class CubeMetaData
     {
+        public static readonly XmlSerializer CubeMetaDataSerializer = Serializer.CreateNew(typeof(CubeMetaData));
+
         [XmlIgnore]
         public Texture2D Texture;
         public string Path { get; set; }
@@ -99,6 +100,11 @@ namespace SunbirdMB.Core
         public void LoadContent(MainGame mainGame)
         {
             Texture = mainGame.Content.Load<Texture2D>(Path);
+        }
+
+        public void Serialize(string path)
+        {
+            Serializer.WriteXML<CubeMetaData>(CubeMetaDataSerializer, this, path);
         }
 
         public void NextFrame()
@@ -137,8 +143,8 @@ namespace SunbirdMB.Core
         public static int CurrentTopIndex { get; set; }
         public static int CurrentBaseIndex { get; set; }
 
-        public static List<CubeMetaData> CubeTopMetaDataLibrary { get; set; }
-        public static List<CubeMetaData> CubeBaseMetaDataLibrary { get; set; }
+        public static List<CubeMetaData> CubeTopMetaDataLibrary { get; set; } = new List<CubeMetaData>();
+        public static List<CubeMetaData> CubeBaseMetaDataLibrary { get; set; } = new List<CubeMetaData>();
 
         public static XDictionary<string, CubeMetaData> CubeMetaDataLibrary { get; set; }
 
@@ -172,10 +178,10 @@ namespace SunbirdMB.Core
             }
 
             // This actually prevents memory leak vs CreateMask() since content manager knows to reuse same texture. Should all cubes have the same shadow and antishadow?
-            cube.Shadow = mainGame.Content.Load<Texture2D>("Temp/CubeShadow");
-            cube.ShadowPath = "Temp/CubeShadow";
-            cube.AntiShadow = mainGame.Content.Load<Texture2D>("Temp/CubeAntiShadow");
-            cube.AntiShadowPath = "Temp/CubeAntiShadow";
+            //cube.Shadow = mainGame.Content.Load<Texture2D>("Temp/CubeShadow");
+            //cube.ShadowPath = "Temp/CubeShadow";
+            //cube.AntiShadow = mainGame.Content.Load<Texture2D>("Temp/CubeAntiShadow");
+            //cube.AntiShadowPath = "Temp/CubeAntiShadow";
 
             return cube;
         }
@@ -185,52 +191,11 @@ namespace SunbirdMB.Core
             return CreateCube(mainGame, CurrentCubeTopMetaData, CurrentCubeBaseMetaData, coords, relativeCoords, altitude);
         }
 
-        public static void FindNextTop()
-        {
-            CurrentTopIndex++;
-            if (CurrentTopIndex >= CubeTopMetaDataLibrary.Count())
-            {
-                CurrentTopIndex = 0;
-            }
-            CurrentCubeTopMetaData = CubeTopMetaDataLibrary[CurrentTopIndex];
-        }
-
-        public static void FindPreviousTop()
-        {
-            CurrentTopIndex--;
-            if (CurrentTopIndex < 0)
-            {
-                CurrentTopIndex = CubeTopMetaDataLibrary.Count() - 1;
-            }
-            CurrentCubeTopMetaData = CubeTopMetaDataLibrary[CurrentTopIndex];
-        }
-
-        public static void FindNextBase()
-        {
-            CurrentBaseIndex++;
-            if (CurrentBaseIndex >= CubeBaseMetaDataLibrary.Count())
-            {
-                CurrentBaseIndex = 0;
-            }
-            CurrentCubeBaseMetaData = CubeBaseMetaDataLibrary[CurrentBaseIndex];
-        }
-
-        public static void FindPreviousBase()
-        {
-            CurrentBaseIndex--;
-            if (CurrentBaseIndex < 0)
-            {
-                CurrentBaseIndex = CubeBaseMetaDataLibrary.Count() - 1;
-            }
-            CurrentCubeBaseMetaData = CubeBaseMetaDataLibrary[CurrentBaseIndex];
-        }
-
     }
 
     /// <summary>
     /// Acts as a data store for the static class CubeFactory during serialization.
     /// </summary>
-    [Serializable]
     public class CubeFactoryData
     {
         public static readonly XmlSerializer CubeFactoryDataSerializer = Serializer.CreateNew(typeof(CubeFactoryData), new Type[] { typeof(CubeMetaData) });
@@ -240,9 +205,6 @@ namespace SunbirdMB.Core
 
         public CubeMetaData CurrentCubeTopMetaData { get; set; }
         public CubeMetaData CurrentCubeBaseMetaData { get; set; }
-
-        public int CurrentTopIndex { get; set; }
-        public int CurrentBaseIndex { get; set; }
 
         public List<CubeMetaData> CubeTopMetaDataLibrary { get; set; }
         public List<CubeMetaData> CubeBaseMetaDataLibrary { get; set; }
@@ -265,9 +227,6 @@ namespace SunbirdMB.Core
             CurrentCubeTopMetaData = CubeFactory.CurrentCubeTopMetaData;
             CurrentCubeBaseMetaData = CubeFactory.CurrentCubeBaseMetaData;
 
-            CurrentTopIndex = CubeFactory.CurrentTopIndex;
-            CurrentBaseIndex = CubeFactory.CurrentBaseIndex;
-
             CubeTopMetaDataLibrary = CubeFactory.CubeTopMetaDataLibrary;
             CubeBaseMetaDataLibrary = CubeFactory.CubeBaseMetaDataLibrary;
         }
@@ -282,9 +241,6 @@ namespace SunbirdMB.Core
 
             CubeFactory.CurrentCubeTopMetaData = CurrentCubeTopMetaData;
             CubeFactory.CurrentCubeBaseMetaData = CurrentCubeBaseMetaData;
-
-            CubeFactory.CurrentTopIndex = CurrentTopIndex;
-            CubeFactory.CurrentBaseIndex = CurrentBaseIndex;
 
             CubeFactory.CubeTopMetaDataLibrary = CubeTopMetaDataLibrary;
             CubeFactory.CubeBaseMetaDataLibrary = CubeBaseMetaDataLibrary;

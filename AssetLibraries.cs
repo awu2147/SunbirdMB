@@ -11,6 +11,12 @@ namespace SunbirdMB
         private static string dirCubes = "Cubes/";
         private static string dir1x1 = "Decos/1x1/";
 
+        public static void RebuildLibraries()
+        {
+            CubeFactory.CubeTopMetaDataLibrary = new List<CubeMetaData>();
+
+        }
+
         public static void RebuildLibraries(MainGame mainGame)
         {
             CubeFactory.CubeTopMetaDataLibrary = new List<CubeMetaData>()

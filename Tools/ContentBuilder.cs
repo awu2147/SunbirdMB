@@ -1,8 +1,12 @@
-﻿using System;
+﻿using SunbirdMB.Framework;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,30 +14,55 @@ namespace SunbirdMB.Tools
 {
     internal class ContentBuilder
     {
+        public enum Mode
+        {
+            [Description("/build")]
+            Build,
+            [Description("/rebuild")]
+            Rebuild,
+            [Description("/incremental")]
+            Incremental
+        }
+
+        private string GetMode(Mode buildMode)
+        {
+            var enumType = typeof(Mode);
+            var memberInfos = enumType.GetMember(buildMode.ToString());
+            var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+            var valueAttributes = enumValueMemberInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            var description = ((DescriptionAttribute)valueAttributes[0]).Description;
+            return description;
+        }
+
         internal const string mgcb = "mgcb";
-        internal string WorkingDir { get; set; }
-        internal string OutputDir { get; set; }
-        internal string IntermediateDir { get; set; }
-        internal string Importer { get; set; }
-        internal string Processor { get; set; }
-        internal string ProcessorParam { get; set; }
+        internal string OutputDir { get; set; } = string.Empty;
+        internal string IntermediateDir { get; set; } = "obj";
+        internal Mode BuildMode { get; set; } = Mode.Rebuild;
+        internal virtual string Importer { get { return string.Empty; } }
+        internal virtual string Processor { get { return string.Empty; } }
+        internal virtual string ProcessorParam { get { return string.Empty; } }
         internal List<string> Targets { get; set; } = new List<string>();
 
         public ContentBuilder() { }
 
-        public ContentBuilder(string workingDir, string outputDir, string intermediateDir)
+        public ContentBuilder(string outputDir, string intermediateDir)
         {
-            WorkingDir = workingDir;
             OutputDir = outputDir;
             IntermediateDir = intermediateDir;
         }
 
+        /// <summary>
+        /// If arg is string.Empty, return string.Empty and ignore the prefix.
+        /// </summary>
         private string ValidateArg(string prefix, string arg)
         {
             string result = arg != string.Empty ? $"{prefix}{arg}" : string.Empty;
             return result;
         }
 
+        /// <summary>
+        /// Get build arguments.
+        /// </summary>
         private string GetArgs()
         {
             string outputDir = ValidateArg("/outputDir:", OutputDir);
@@ -41,7 +70,7 @@ namespace SunbirdMB.Tools
             string importer = ValidateArg("/importer:", Importer);
             string processor = ValidateArg("/processor:", Processor);
             string processorParam = ValidateArg("/processorParam:", ProcessorParam);
-            return $"{outputDir} {intermediateDir} {importer} {processor} {outputDir} {processorParam}";
+            return $@"{outputDir} {intermediateDir} {GetMode(BuildMode)} {importer} {processor} {processorParam}";
         }
 
         private string GetTargets()
@@ -56,35 +85,31 @@ namespace SunbirdMB.Tools
 
         internal void Build()
         {
-            //ProcessStartInfo startInfo = new ProcessStartInfo();
-            ////startInfo.WorkingDirectory = WorkingDir;
-            //startInfo.FileName = mgcb;
-            //startInfo.Arguments = $@"{GetArgs()} {GetTargets()}";
-            //startInfo.RedirectStandardOutput = true;
-            //startInfo.RedirectStandardError = true;
-            //startInfo.UseShellExecute = true;
-            //startInfo.CreateNoWindow = true;
-            //Process buildProcess = new Process();
-            //buildProcess.StartInfo = startInfo;
-            //buildProcess.EnableRaisingEvents = true;
-            //buildProcess.Start();
-
-            Process.Start(mgcb, $@"{GetArgs()} {GetTargets()}");
+            using (Process process = new Process())
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = mgcb;
+                startInfo.Arguments = $@"{GetArgs()} {GetTargets()}";
+                startInfo.UseShellExecute = false;
+                startInfo.RedirectStandardError = true;
+                startInfo.CreateNoWindow = true;
+                process.StartInfo = startInfo;
+                process.Start();
+                StreamReader myStreamReader = process.StandardError;
+                Console.WriteLine(myStreamReader.ReadLine());
+            }
         }
 
-        internal void Rebuild()
-        {
-            Process.Start(mgcb, @"/rebuild");
-        }
     }
 
     internal class TextureContentBuilder : ContentBuilder
     {
-        public TextureContentBuilder(string workingDir, string outputDir, string intermediateDir) : base(workingDir, outputDir, intermediateDir)
-        {
-            Importer = "TextureImporter";
-            Processor = "TextureProcessor";
-            ProcessorParam = "ColorKeyEnabled=false";
-        }
+        internal override string Importer { get { return "TextureImporter"; } }
+        internal override string Processor { get { return "TextureProcessor"; } }
+        internal override string ProcessorParam { get { return "ColorKeyEnabled=false"; } }
+
+        public TextureContentBuilder() : base() { }
+
+        public TextureContentBuilder(string outputDir, string intermediateDir) : base(outputDir, intermediateDir) { }
     }
 }

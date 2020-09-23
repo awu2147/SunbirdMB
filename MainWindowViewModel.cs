@@ -40,8 +40,8 @@ namespace SunbirdMB
 
         private void Build()
         {
-            View.CubeDesignerViewModel.BuildBase();
-            View.CubeDesignerViewModel.BuildTop();
+            //View.CubeDesignerViewModel.ImportBase();
+            //View.CubeDesignerViewModel.ImportTop();
         }
 
         private void Import()
@@ -65,6 +65,10 @@ namespace SunbirdMB
                 openFileDialog.FileName.Log();
                 Path.GetPathRoot(openFileDialog.FileName).Log();
                 File.Copy(openFileDialog.FileName, Path.Combine(destinationPath, Path.GetFileName(openFileDialog.FileName)));
+                // .png
+                var path = Path.Combine(destinationPath, Path.GetFileName(openFileDialog.FileName));
+                var cmd = new CubeMetaData() { Path = path, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
+                cmd.Serialize(Path.ChangeExtension(path, ".metadata"));
             }
             
         }
