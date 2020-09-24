@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/DarkVerticalScrollBar.xaml"/>
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/DarkTabControl.xaml"/>
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/DarkTextBox.xaml"/>
+                <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/CubeDesignerButtonItem.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -57,7 +58,7 @@
         </DockPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="258"/>
+                <ColumnDefinition Width="264"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid>
@@ -95,12 +96,12 @@
                                             BorderThickness="0">
                                         <TabItem Header="Top" 
                                              Foreground="{StaticResource VSText}"
-                                             Width="76">
+                                             Width="78">
                                             <ScrollViewer Style="{StaticResource LeftScrollViewer}">
                                                 <ItemsControl ItemsSource="{x:Static gui:CubeDesignerViewModel.CubeTopCollection}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Button Command="{Binding C_MouseDown}">
+                                                            <Button Command="{Binding C_MouseDown}" Style="{StaticResource CubeDesignerItem}">
                                                                 <Image Height="75">
                                                                     <Image.Source>
                                                                         <CroppedBitmap Source="{Binding ImagePath}" 
@@ -120,12 +121,12 @@
                                         </TabItem>
                                         <TabItem Header="Base"
                                              Foreground="{StaticResource VSText}" 
-                                             Width="76">
+                                             Width="78">
                                             <ScrollViewer Style="{StaticResource LeftScrollViewer}">
                                                 <ItemsControl ItemsSource="{x:Static gui:CubeDesignerViewModel.CubeBaseCollection}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Button Command="{Binding C_MouseDown}">
+                                                            <Button Command="{Binding C_MouseDown}" Style="{StaticResource CubeDesignerItem}">
                                                                 <Image Height="75">
                                                                     <Image.Source>
                                                                         <CroppedBitmap Source="{Binding ImagePath}" 
@@ -222,7 +223,7 @@
                             <Grid Grid.Row="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                         BorderThickness="1">
@@ -239,7 +240,8 @@
                                     <Button Content="Clear"
                                             Command="{Binding C_ClearLog}" 
                                             DockPanel.Dock="Right" 
-                                            Grid.Column="1"/>
+                                            Grid.Column="1" Style="{StaticResource DarkRedButton}"
+                                            Foreground="{StaticResource VSText}"/>
                                 </Border>
                             </Grid>
                             <DataGrid ItemsSource="{Binding Log}" 
