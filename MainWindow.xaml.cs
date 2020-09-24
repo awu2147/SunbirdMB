@@ -37,7 +37,7 @@ namespace SunbirdMB
             LoggerViewModel = new LoggerViewModel();
             Logger.DataContext = LoggerViewModel;
 
-            CubeDesignerViewModel = new CubeDesignerViewModel();
+            CubeDesignerViewModel = new CubeDesignerViewModel(CubePropertiesGrid);
             CubeDesigner.DataContext = CubeDesignerViewModel;
 
             MainGame.Loaded += MainGame_Loaded;
@@ -52,9 +52,6 @@ namespace SunbirdMB
                 config = new Config();
             }
 
-            //var cb = new TextureContentBuilder(@"D:\", @"Test\bin", @"Test\obj");
-            //cb.Targets.Add(@"BloodBowl.png");
-            //cb.Build();
         }
 
         private void MainGame_Loaded(object sender, EventArgs e)
@@ -65,7 +62,7 @@ namespace SunbirdMB
             SizeChanged += MainWindow_SizeChanged;
             Closed += MainWindow_Closed;
 
-            MainWindowViewModel.Initialize();
+            CubeDesignerViewModel.OnMainGameLoaded(MainGame);
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)
@@ -94,6 +91,38 @@ namespace SunbirdMB
             Image image = sender as Image;
             var bmi = image.Source as CroppedBitmap;
             bmi.Source.ToString().Log();
+        }
+
+        private void TextBox_IntegerOnly(object sender, TextCompositionEventArgs e)
+        {
+            try
+            {
+                Convert.ToDouble(e.Text);
+            }
+            catch
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TextBox_DoubleOnly(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text != ".")
+            {
+                try
+                {
+                    Convert.ToDouble(e.Text);
+                }
+                catch
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            BackgroundGrid.Focus();
         }
     }
 

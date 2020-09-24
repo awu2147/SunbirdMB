@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace SunbirdMB.Gui
 {
-    public class LoggerViewModel : ViewModelBase
+    public class LoggerViewModel : PropertyChangedBase
     {
         public static ObservableCollection<LogMessage> Log { get; set; } = new ObservableCollection<LogMessage>();
 

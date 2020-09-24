@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace SunbirdMB.Gui
 {
-    public class ViewModelBase
+    public class PropertyChangedBase
     {
         //The interface only includes this evennt
         public event PropertyChangedEventHandler PropertyChanged;

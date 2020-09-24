@@ -45,4 +45,11 @@ namespace SunbirdMB.Framework
         Builder
     }
 
+    public enum CubePart
+    {
+        Top,
+        Base,
+        All
+    }
+
 }

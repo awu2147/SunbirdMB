@@ -1,4 +1,6 @@
-﻿using SunbirdMB.Framework;
+﻿using SunbirdMB.Core;
+using SunbirdMB.Framework;
+using SunbirdMB.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +14,7 @@ namespace SunbirdMB.Gui
 {
     public class CatalogItemBase
     {
-        public string Image { get; set; }
+        public string ImagePath { get; set; }
 
         public Int32Rect SourceRect { get; set; }
 
@@ -22,22 +24,30 @@ namespace SunbirdMB.Gui
 
         public CatalogItemBase(string imagePath, Int32Rect sourceRect)
         {
-            Image = imagePath;
+            ImagePath = imagePath;
             SourceRect = sourceRect;
             C_MouseDown = new RelayCommand((o) => MouseDown());
         }
 
         internal virtual void MouseDown()
         {
-            $"Clicked {Path.GetFileName(Image)}".Log();
+            $"Clicked {Path.GetFileName(ImagePath)}".Log();
         }
     }
 
-    public class CubeCatalogItem : CatalogItemBase
+    public class CubeCatalogItem : CatalogItemBase, IContent
     {
-        public CubeCatalogItem(string image) : base(image, new Int32Rect(0, 0, 72, 75))
+        public string ContentPath { get; set; }
+        public CubeCatalogItem(string imagePath, string contentPath) : base(imagePath, new Int32Rect(0, 0, 72, 75))
         {
+            ContentPath = contentPath;
+        }
 
+        internal override void MouseDown()
+        {
+            $"Clicked {Path.GetFileName(ImagePath)}".Log();
+            CubeFactory.SetCurrent(ContentPath);
+            CubeDesignerViewModel.SetPropertyGridDataContext(CubeFactory.CubeMetaDataLibrary[ContentPath]);
         }
     }
 }

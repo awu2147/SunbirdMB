@@ -4,50 +4,56 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SunbirdMB"
+        xmlns:gui="clr-namespace:SunbirdMB.Gui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="900">
+        Title="MainWindow" Height="620" Width="900">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/LoggerDataGrid.xaml"/>
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/DarkVerticalScrollBar.xaml"/>
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/DarkTabControl.xaml"/>
+                <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/DarkTextBox.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid>        
+    <Grid Background="{StaticResource VSDark3Brush}" Focusable="True" MouseDown="Grid_MouseDown" x:Name="BackgroundGrid">        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <DockPanel Background="{StaticResource VSDark3Brush}">
-            <Menu Background="{StaticResource VSDark3Brush}" 
+            <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                            BorderThickness="1" 
+                            Margin="1,2,2,1">
+                <Menu Background="{StaticResource VSDark3Brush}" 
                   BorderBrush="{StaticResource VSDark1Brush}" 
                   BorderThickness="1" 
                   Padding="2" 
-                  Margin="1">
-                <MenuItem Background="{StaticResource VSDark1Brush}" 
+                  Margin="0">
+                    <MenuItem Background="{StaticResource VSDark1Brush}" 
                           BorderBrush="{StaticResource VSDark1Brush}" 
                           BorderThickness="1">
-                    <MenuItem.Header>
-                        <TextBlock Text="File" 
+                        <MenuItem.Header>
+                            <TextBlock Text="File" 
                                    HorizontalAlignment="Center" 
                                    VerticalAlignment="Center" 
                                    Width="24" 
                                    TextAlignment="Center" 
                                    Padding="2,1,2,1"
                                    Foreground="{StaticResource VSText}"/>
-                    </MenuItem.Header>
-                    <MenuItem Header="New"/>
-                    <MenuItem Header="Open"/>
-                    <MenuItem Header="Save"/>
-                    <MenuItem Header="Import" Command="{Binding C_Import}"/>
-                    <MenuItem Header="Build" Command="{Binding C_Build}"/>
-                    <Separator />
-                    <MenuItem Header="Exit" />
-                </MenuItem>
-            </Menu>
+                        </MenuItem.Header>
+                        <MenuItem Header="New"/>
+                        <MenuItem Header="Open"/>
+                        <MenuItem Header="Save"/>
+                        <MenuItem Header="Import" Command="{Binding C_Import}"/>
+                        <MenuItem Header="Build" Command="{Binding C_Build}"/>
+                        <Separator />
+                        <MenuItem Header="Exit" />
+                    </MenuItem>
+                </Menu>
+            </Border>            
         </DockPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -56,87 +62,153 @@
             </Grid.ColumnDefinitions>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="260"/>
+                    <RowDefinition Height="403"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <DockPanel Background="{StaticResource VSDark3Brush}">
-                    <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Background="{StaticResource VSDark3Brush}">
+                        <Border BorderBrush="{StaticResource VSDark1Brush}" 
                             BorderThickness="1" 
                             Margin="1,1,2,1">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                     BorderThickness="1">
-                                <TextBlock Text="Cube Designer"
+                                    <TextBlock Text="Cube Designer"
                                            Padding="3,2,3,2" 
                                            Foreground="{StaticResource VSText}" 
                                            Margin="1" 
                                            Background="{StaticResource VSDark1Brush}"
                                            VerticalAlignment="Center"/>
-                            </Border>
-                            <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                                </Border>
+                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                     BorderThickness="1" 
                                     Grid.Row="1">
-                                <TabControl x:Name="CubeDesigner" Background="{StaticResource VSDark3Brush}" 
+                                    <TabControl x:Name="CubeDesigner" Background="{StaticResource VSDark3Brush}" 
                                             BorderThickness="0">
-                                    <TabItem Header="Top" 
+                                        <TabItem Header="Top" 
                                              Foreground="{StaticResource VSText}"
                                              Width="76">
-                                        <ScrollViewer Style="{StaticResource LeftScrollViewer}">
-                                            <ItemsControl ItemsSource="{Binding CubeTopCollection}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Button Command="{Binding C_MouseDown}">
-                                                            <Image Height="75">
-                                                                <Image.Source>
-                                                                    <CroppedBitmap Source="{Binding Image}" 
+                                            <ScrollViewer Style="{StaticResource LeftScrollViewer}">
+                                                <ItemsControl ItemsSource="{x:Static gui:CubeDesignerViewModel.CubeTopCollection}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Button Command="{Binding C_MouseDown}">
+                                                                <Image Height="75">
+                                                                    <Image.Source>
+                                                                        <CroppedBitmap Source="{Binding ImagePath}" 
                                                                                    SourceRect="{Binding SourceRect}"/>
-                                                                </Image.Source>
-                                                            </Image>
-                                                        </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <WrapPanel/>
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
-                                        </ScrollViewer>
-                                    </TabItem>
-                                    <TabItem Header="Base"
+                                                                    </Image.Source>
+                                                                </Image>
+                                                            </Button>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <WrapPanel/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Base"
                                              Foreground="{StaticResource VSText}" 
                                              Width="76">
-                                        <ScrollViewer Style="{StaticResource LeftScrollViewer}">
-                                            <ItemsControl ItemsSource="{Binding CubeBaseCollection}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Button Command="{Binding C_MouseDown}">
-                                                            <Image Height="75">
-                                                                <Image.Source>
-                                                                    <CroppedBitmap Source="{Binding Image}" 
+                                            <ScrollViewer Style="{StaticResource LeftScrollViewer}">
+                                                <ItemsControl ItemsSource="{x:Static gui:CubeDesignerViewModel.CubeBaseCollection}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Button Command="{Binding C_MouseDown}">
+                                                                <Image Height="75">
+                                                                    <Image.Source>
+                                                                        <CroppedBitmap Source="{Binding ImagePath}" 
                                                                                    SourceRect="{Binding SourceRect}"/>
-                                                                </Image.Source>
-                                                            </Image>
-                                                        </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <WrapPanel/>
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
-                                        </ScrollViewer>
-                                    </TabItem>
-                                </TabControl>
-                            </Border>
-                        </Grid>
-                    </Border>
-                </DockPanel>
+                                                                    </Image.Source>
+                                                                </Image>
+                                                            </Button>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <WrapPanel/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </TabItem>
+                                    </TabControl>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DockPanel>
+                    <DockPanel Grid.Row="1" 
+                               Background="{StaticResource VSDark3Brush}" Margin="0,-3,0,0">
+                        <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                            BorderThickness="1" 
+                            Margin="1,0,2,1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                                    BorderThickness="1">
+                                    <TextBlock Text="Properties"
+                                           Padding="3,2,3,2" 
+                                           Foreground="{StaticResource VSText}" 
+                                           Margin="1" 
+                                           Background="{StaticResource VSDark1Brush}"
+                                           VerticalAlignment="Center"/>
+                                </Border>
+                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                                    BorderThickness="1" 
+                                    Grid.Row="1">
+                                    <Grid x:Name="CubePropertiesGrid" Margin="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Content="Sheet Rows" Foreground="{StaticResource VSText}"/>
+                                        <TextBox Grid.Column="1" Text="{Binding SheetRows}" PreviewTextInput="TextBox_IntegerOnly"
+                                                 Style="{StaticResource DarkTextBox}"/>
+
+                                        <Label Grid.Row="1" Content="Sheet Columns" Foreground="{StaticResource VSText}"/>
+                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SheetColumns}" PreviewTextInput="TextBox_IntegerOnly"
+                                                 Style="{StaticResource DarkTextBox}"/>
+
+                                        <Label Grid.Row="2" Content="Frame Count" Foreground="{StaticResource VSText}"/>
+                                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FrameCount}" PreviewTextInput="TextBox_IntegerOnly"
+                                                 Style="{StaticResource DarkTextBox}"/>
+
+                                        <Label Grid.Row="3" Content="Start Frame" Foreground="{StaticResource VSText}"/>
+                                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding StartFrame}" PreviewTextInput="TextBox_IntegerOnly"
+                                                 Style="{StaticResource DarkTextBox}"/>
+
+                                        <Label Grid.Row="4" Content="Frame Speed" Foreground="{StaticResource VSText}"/>
+                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly"
+                                                 Style="{StaticResource DarkTextBox}"/>
+                                        
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DockPanel>
+                </Grid>
                 <DockPanel Grid.Row="1" 
                            Background="{StaticResource VSDark3Brush}">
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 

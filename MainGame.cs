@@ -71,16 +71,7 @@ namespace SunbirdMB
 
             // content loading now possible
 
-            Content.RootDirectory = "Content2";
-
-            if (cleanLoad == true)
-            {
-                AssetLibraries.RebuildLibraries(this);
-            }
-            else
-            {
-                AssetLibraries.ImportLibraries(this);
-            }
+            Content.RootDirectory = "Content";
 
             CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
         }
@@ -88,13 +79,6 @@ namespace SunbirdMB
         internal void SaveAndSerialize()
         {
             CurrentState.SaveAndSerialize();
-            var cubeFactoryData = new CubeFactoryData();
-            cubeFactoryData.Save();
-            cubeFactoryData.Serialize();
-
-            var decoFactoryData = new DecoFactoryData();
-            decoFactoryData.Save();
-            decoFactoryData.Serialize();
         }
 
         /// <summary>

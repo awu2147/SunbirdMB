@@ -14,10 +14,12 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using System.Diagnostics;
+using SunbirdMB.Tools;
 
 namespace SunbirdMB
 {
-    internal class MainWindowViewModel : ViewModelBase
+    internal class MainWindowViewModel : PropertyChangedBase
     {
         internal MainWindow View { get; set; }
         public ICommand C_Import { get; set; }
@@ -30,14 +32,6 @@ namespace SunbirdMB
             C_Build = new RelayCommand((o) => Build());
         }
 
-        internal void Initialize()
-        {
-            var appPath = Assembly.GetExecutingAssembly().Location;
-            string contentPath = Path.Combine(appPath, "..", "..", "..", "Content");
-            var test = Path.Combine(contentPath, CubeFactory.CubeTopMetaDataLibrary[0].Path + ".png");
-            test.Log();
-        }
-
         private void Build()
         {
             //View.CubeDesignerViewModel.ImportBase();
@@ -47,28 +41,45 @@ namespace SunbirdMB
         private void Import()
         {
             var selectedTab = View.CubeDesigner.SelectedValue as TabItem;
-            
+
             var appPath = Assembly.GetExecutingAssembly().Location;
-            var destinationPath = string.Empty;
-            if (selectedTab.Header.ToString() == "Base")
+            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
+            Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
+            var contentDirectory = string.Empty;
+            if (selectedTab.Header.ToString() == "Top")
             {
-                destinationPath = Path.Combine(appPath, "..", "Content", "Cubes", "Base");
+                contentDirectory = Path.Combine(appDirectory, "Content", "Cubes", "Top");
+                Debug.Assert(contentDirectory == @"D:\SunbirdMB\bin\Debug\Content\Cubes\Top");
             }
-            else if (selectedTab.Header.ToString() == "Top")
+            else if (selectedTab.Header.ToString() == "Base")
             {
-                destinationPath = Path.Combine(appPath, "..", "Content", "Cubes", "Top");
+                contentDirectory = Path.Combine(appDirectory, "Content", "Cubes", "Base");
+                Debug.Assert(contentDirectory == @"D:\SunbirdMB\bin\Debug\Content\Cubes\Base");
             }
-            "import".Log();
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
-                openFileDialog.FileName.Log();
-                Path.GetPathRoot(openFileDialog.FileName).Log();
-                File.Copy(openFileDialog.FileName, Path.Combine(destinationPath, Path.GetFileName(openFileDialog.FileName)));
-                // .png
-                var path = Path.Combine(destinationPath, Path.GetFileName(openFileDialog.FileName));
-                var cmd = new CubeMetaData() { Path = path, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
-                cmd.Serialize(Path.ChangeExtension(path, ".metadata"));
+                if (Path.GetExtension(openFileDialog.FileName) == ".png")
+                {
+                    var newFilePath = Path.Combine(contentDirectory, Path.GetFileName(openFileDialog.FileName));
+                    File.Copy(openFileDialog.FileName, newFilePath);
+                    if (selectedTab.Header.ToString() == "Top")
+                    {
+                        CubeDesignerViewModel.Import(newFilePath, CubePart.Top);
+                    }
+                    else if (selectedTab.Header.ToString() == "Base")
+                    {
+                        CubeDesignerViewModel.Import(newFilePath, CubePart.Base);
+                    }
+                    // We don't need to rebuild everything, only the .png we just imported.
+                    ContentBuilder.BuildFile(newFilePath);
+                    CubeFactory.BuildLibrary(View.MainGame);
+                }
+                else
+                {
+                    "Incorrect file format".Log();
+                }
             }
             
         }

@@ -94,12 +94,18 @@
     </ApplicationDefinition>
     <Compile Include="Gui\CatalogItemBase.cs" />
     <Compile Include="Gui\CubeDesignerViewModel.cs" />
+    <Compile Include="Gui\CubePropertiesGridViewModel.cs" />
+    <Compile Include="Interfaces\IContent.cs" />
     <Compile Include="Tools\ContentBuilder.cs" />
     <Page Include="Gui\ResourceDictionaries\Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\ResourceDictionaries\Templates\DarkTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\ResourceDictionaries\Templates\DarkTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

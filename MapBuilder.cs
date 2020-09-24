@@ -192,7 +192,6 @@ namespace SunbirdMB
                     {
                         if (BuildMode == BuildMode._Cube)
                         {
-                            CubeFactory.CurrentCubeBaseMetaData = CubeFactory.CubeBaseMetaDataLibrary[0];
                             var cube = CubeFactory.CreateCurrentCube(MainGame, topFaceCoords, relativeTopFaceCoords, Altitude);
                             LayerMap[Altitude].AddCheck(cube, Altitude);
                         }

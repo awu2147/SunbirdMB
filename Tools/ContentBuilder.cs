@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.RightsManagement;
 using System.Text;
@@ -14,7 +15,7 @@ namespace SunbirdMB.Tools
 {
     internal class ContentBuilder
     {
-        public enum Mode
+        public enum BuildMode
         {
             [Description("/build")]
             Build,
@@ -24,9 +25,9 @@ namespace SunbirdMB.Tools
             Incremental
         }
 
-        private string GetMode(Mode buildMode)
+        private string GetMode(BuildMode buildMode)
         {
-            var enumType = typeof(Mode);
+            var enumType = typeof(BuildMode);
             var memberInfos = enumType.GetMember(buildMode.ToString());
             var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
             var valueAttributes = enumValueMemberInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
@@ -37,7 +38,7 @@ namespace SunbirdMB.Tools
         internal const string mgcb = "mgcb";
         internal string OutputDir { get; set; } = string.Empty;
         internal string IntermediateDir { get; set; } = "obj";
-        internal Mode BuildMode { get; set; } = Mode.Rebuild;
+        internal BuildMode Mode { get; set; } = BuildMode.Rebuild;
         internal virtual string Importer { get { return string.Empty; } }
         internal virtual string Processor { get { return string.Empty; } }
         internal virtual string ProcessorParam { get { return string.Empty; } }
@@ -70,7 +71,7 @@ namespace SunbirdMB.Tools
             string importer = ValidateArg("/importer:", Importer);
             string processor = ValidateArg("/processor:", Processor);
             string processorParam = ValidateArg("/processorParam:", ProcessorParam);
-            return $@"{outputDir} {intermediateDir} {GetMode(BuildMode)} {importer} {processor} {processorParam}";
+            return $@"{outputDir} {intermediateDir} {GetMode(Mode)} {importer} {processor} {processorParam}";
         }
 
         private string GetTargets()
@@ -99,6 +100,43 @@ namespace SunbirdMB.Tools
                 Console.WriteLine(myStreamReader.ReadLine());
             }
         }
+
+        /// <summary>
+        /// Rebuild the Content folder.
+        /// </summary>
+        internal static void RebuildContent()
+        {
+            "Rebuilding content...".Log();
+            var appPath = Assembly.GetExecutingAssembly().Location;
+            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
+            Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
+            var contentPath = Path.Combine(appDirectory, "Content");
+            var files = Directory.GetFiles(contentPath, "*.png", SearchOption.AllDirectories);
+            var tcb = new TextureContentBuilder();
+            foreach (var file in files)
+            {
+                var target = file.Replace(appDirectory, "");
+                tcb.Targets.Add(target);
+            }
+            tcb.Build();
+        }
+
+        /// <summary>
+        /// Rebuild the Content folder.
+        /// </summary>
+        internal static void BuildFile(string filePath)
+        {
+            "Building content...".Log();
+            var appPath = Assembly.GetExecutingAssembly().Location;
+            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
+            Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
+            var tcb = new TextureContentBuilder();
+            tcb.Mode = BuildMode.Incremental;
+            var target = filePath.Replace(appDirectory, "");
+            tcb.Targets.Add(target);
+            tcb.Build();
+        }
+
 
     }
 

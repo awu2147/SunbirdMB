@@ -14,15 +14,17 @@ using Microsoft.Xna.Framework.Content;
 using Sunbird.Core;
 using SunbirdMB.Interfaces;
 using SunbirdMB.Framework;
+using SunbirdMB.Gui;
+using System.Reflection;
 
 namespace SunbirdMB.Core
 {
     /// <summary>
     /// A single unit building block.
     /// </summary>
-    [Serializable]
     public class Cube : Sprite, IWorldObject
     {
+        public Animator AnimatorTop { get; set; }
         public Animator AnimatorBase { get; set; }
 
         public Cube() { }
@@ -32,35 +34,20 @@ namespace SunbirdMB.Core
         /// </summary>
         public override void LoadContent(MainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
         {
-            Animator.LoadContent(content);
-            Animator.Owner = this;
+            AnimatorTop.LoadContent(content);
+            AnimatorTop.Owner = this;
             AnimatorBase.LoadContent(content);
             AnimatorBase.Owner = this;
-#if DEBUG
-            Debug.Assert(ShadowPath != null);
-            Debug.Assert(AntiShadowPath != null);
-#endif
-            Shadow = content.Load<Texture2D>(ShadowPath);
-            AntiShadow = content.Load<Texture2D>(AntiShadowPath);
-            if (LightPath != null) { Light = content.Load<Texture2D>(LightPath); }
-        }
-
-        /// <summary>
-        /// Core method used to re-instantiate non-serializable properties and delegates. This is safe to call during runtime.
-        /// </summary>
-        public override void SafeLoadContent(MainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
-        {
-            LoadContent(mainGame, graphicsDevice, content);
         }
 
         public override void Update(GameTime gameTime)
         {
-            Animator.Update(gameTime);
+            AnimatorTop.Update(gameTime);
             AnimatorBase.Update(gameTime);
-#if DEBUG
-            Debug.Assert(Animator.Position == Position);
+
+            Debug.Assert(AnimatorTop.Position == Position);
             Debug.Assert(AnimatorBase.Position == Position);
-#endif
+
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -68,67 +55,88 @@ namespace SunbirdMB.Core
             if (IsHidden == false)
             {
                 AnimatorBase.Draw(gameTime, spriteBatch, Alpha);
-                Animator.Draw(gameTime, spriteBatch, Alpha);
+                AnimatorTop.Draw(gameTime, spriteBatch, Alpha);
             }
         }
 
     }
 
-    public class CubeMetaData
+    public class CubeMetaData : PropertyChangedBase
     {
         public static readonly XmlSerializer CubeMetaDataSerializer = Serializer.CreateNew(typeof(CubeMetaData));
 
         [XmlIgnore]
         public Texture2D Texture;
-        public string Path { get; set; }
+        public string ContentPath { get; set; }
+        public CubePart Part { get; set; }
 
-        public int SheetRows { get; set; } = 1;
-        public int SheetColumns { get; set; } = 1;
-        public int StartFrame { get; set; } = 0;
-        public int CurrentFrame { get; set; } = 0;
-        public int FrameCount { get; set; } = 1;
-        public float FrameSpeed { get; set; } = 0.133f;
-        public AnimationState AnimState { get; set; } = AnimationState.None;
-        public CubeMetaData()
+        private int sheetRows = 1;
+        public int SheetRows
         {
+            get { return sheetRows; }
+            set { SetProperty(ref sheetRows, value); }
+        }
 
+        private int sheetColumns = 1;
+        public int SheetColumns
+        {
+            get { return sheetColumns; }
+            set { SetProperty(ref sheetColumns, value); }
+        }
+
+        private int frameCount = 1;
+        public int FrameCount
+        {
+            get { return frameCount; }
+            set { SetProperty(ref frameCount, value); }
+        }
+
+        private int startFrame = 0;
+        public int StartFrame
+        {
+            get { return startFrame; }
+            set { SetProperty(ref startFrame, value); }
+        }
+
+        private float frameSpeed = 0.133f;
+        public float FrameSpeed
+        {
+            get { return frameSpeed; }
+            set { SetProperty(ref frameSpeed, value); }
+        }
+
+        public int CurrentFrame { get; set; } = 0;
+
+        public AnimationState AnimState { get; set; } = AnimationState.None;
+
+        public CubeMetaData() { }
+
+        internal void SubscribeHandlers()
+        {
+            PropertyChanged += CubeMetaData_PropertyChanged;
+        }
+
+        private void CubeMetaData_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var appPath = Assembly.GetExecutingAssembly().Location;
+            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
+            var contentDirectory = Path.Combine(appDirectory, @"Content\");
+            var metadataPath = Path.ChangeExtension(Path.Combine(contentDirectory, ContentPath), ".metadata");
+            Serialize(metadataPath);
         }
 
         /// <summary>
-        /// Core method used to re-instantiate non-serializable properties and delegates. This can create garbage if called during runtime.
+        /// Call this to load texture content from path.
         /// </summary>
         public void LoadContent(MainGame mainGame)
         {
-            Texture = mainGame.Content.Load<Texture2D>(Path);
+            Texture = mainGame.Content.Load<Texture2D>(ContentPath);
+            SubscribeHandlers();
         }
 
         public void Serialize(string path)
         {
             Serializer.WriteXML<CubeMetaData>(CubeMetaDataSerializer, this, path);
-        }
-
-        public void NextFrame()
-        {
-            if (AnimState == AnimationState.None)
-            {
-                CurrentFrame++;
-                if (CurrentFrame >= FrameCount)
-                {
-                    CurrentFrame = 0;
-                }
-            }
-        }
-
-        public void PreviousFrame()
-        {
-            if (AnimState == AnimationState.None)
-            {
-                CurrentFrame--;
-                if (CurrentFrame < 0)
-                {
-                    CurrentFrame = FrameCount - 1;
-                }
-            }
         }
     }
 
@@ -140,13 +148,22 @@ namespace SunbirdMB.Core
         public static CubeMetaData CurrentCubeTopMetaData { get; set; }
         public static CubeMetaData CurrentCubeBaseMetaData { get; set; }
 
-        public static int CurrentTopIndex { get; set; }
-        public static int CurrentBaseIndex { get; set; }
-
-        public static List<CubeMetaData> CubeTopMetaDataLibrary { get; set; } = new List<CubeMetaData>();
-        public static List<CubeMetaData> CubeBaseMetaDataLibrary { get; set; } = new List<CubeMetaData>();
+        public static List<CubeMetaData> CubeMetaDataCollection { get; set; } = new List<CubeMetaData>();
 
         public static XDictionary<string, CubeMetaData> CubeMetaDataLibrary { get; set; }
+
+        public static void SetCurrent(string contentPath)
+        {
+            var cmd = CubeMetaDataLibrary[contentPath];
+            if (cmd.Part == CubePart.Top)
+            {
+                CurrentCubeTopMetaData = cmd;
+            }
+            else if (cmd.Part == CubePart.Base)
+            {
+                CurrentCubeBaseMetaData = cmd;
+            }
+        }
 
         public static Cube CreateCube(MainGame mainGame, CubeMetaData cubeTopMD, CubeMetaData cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
         {
@@ -154,19 +171,19 @@ namespace SunbirdMB.Core
             var rand = new Random();
 
             // Create cube top animator.
-            var spriteSheet = SpriteSheet.CreateNew(cubeTopMD.Texture, cubeTopMD.Path, cubeTopMD.SheetRows, cubeTopMD.SheetColumns);
-            cube.Animator = new Animator(cube, spriteSheet, cubeTopMD.StartFrame, cubeTopMD.CurrentFrame, cubeTopMD.FrameCount, cubeTopMD.FrameSpeed, cubeTopMD.AnimState);
+            var spriteSheet = SpriteSheet.CreateNew(cubeTopMD.Texture, cubeTopMD.ContentPath, cubeTopMD.SheetRows, cubeTopMD.SheetColumns);
+            cube.AnimatorTop = new Animator(cube, spriteSheet, cubeTopMD.StartFrame, cubeTopMD.CurrentFrame, cubeTopMD.FrameCount, cubeTopMD.FrameSpeed, cubeTopMD.AnimState);
             if (IsRandomTop == true && cubeTopMD.AnimState == AnimationState.None)
             {
-                cube.Animator.CurrentFrame = rand.Next(0, cube.Animator.FramesInLoop);
+                cube.AnimatorTop.CurrentFrame = rand.Next(0, cube.AnimatorTop.FramesInLoop);
             }
             else
             {
-                cube.Animator.CurrentFrame = cubeTopMD.CurrentFrame;
+                cube.AnimatorTop.CurrentFrame = cubeTopMD.CurrentFrame;
             }
 
             // Create cube base animator.
-            var spriteSheetBase = SpriteSheet.CreateNew(cubeBaseMD.Texture, cubeBaseMD.Path, cubeBaseMD.SheetRows, cubeBaseMD.SheetColumns);
+            var spriteSheetBase = SpriteSheet.CreateNew(cubeBaseMD.Texture, cubeBaseMD.ContentPath, cubeBaseMD.SheetRows, cubeBaseMD.SheetColumns);
             cube.AnimatorBase = new Animator(cube, spriteSheetBase, cubeBaseMD.StartFrame, cubeBaseMD.CurrentFrame, cubeBaseMD.FrameCount, cubeBaseMD.FrameSpeed, cubeBaseMD.AnimState);
             if (IsRandomBase == true && cubeBaseMD.AnimState == AnimationState.None)
             {
@@ -177,12 +194,6 @@ namespace SunbirdMB.Core
                 cube.AnimatorBase.CurrentFrame = cubeBaseMD.CurrentFrame;
             }
 
-            // This actually prevents memory leak vs CreateMask() since content manager knows to reuse same texture. Should all cubes have the same shadow and antishadow?
-            //cube.Shadow = mainGame.Content.Load<Texture2D>("Temp/CubeShadow");
-            //cube.ShadowPath = "Temp/CubeShadow";
-            //cube.AntiShadow = mainGame.Content.Load<Texture2D>("Temp/CubeAntiShadow");
-            //cube.AntiShadowPath = "Temp/CubeAntiShadow";
-
             return cube;
         }
 
@@ -191,84 +202,27 @@ namespace SunbirdMB.Core
             return CreateCube(mainGame, CurrentCubeTopMetaData, CurrentCubeBaseMetaData, coords, relativeCoords, altitude);
         }
 
-    }
-
-    /// <summary>
-    /// Acts as a data store for the static class CubeFactory during serialization.
-    /// </summary>
-    public class CubeFactoryData
-    {
-        public static readonly XmlSerializer CubeFactoryDataSerializer = Serializer.CreateNew(typeof(CubeFactoryData), new Type[] { typeof(CubeMetaData) });
-
-        public bool IsRandomTop { get; set; }
-        public bool IsRandomBase { get; set; }
-
-        public CubeMetaData CurrentCubeTopMetaData { get; set; }
-        public CubeMetaData CurrentCubeBaseMetaData { get; set; }
-
-        public List<CubeMetaData> CubeTopMetaDataLibrary { get; set; }
-        public List<CubeMetaData> CubeBaseMetaDataLibrary { get; set; }
-
-        public CubeFactoryData() { }
-
-        public void Serialize()
-        {
-            Serializer.WriteXML<CubeFactoryData>(CubeFactoryDataSerializer, this, "CubeFactoryData.xml");
-        }
-
         /// <summary>
-        /// Create a copy of CubeFactory's static properties;
+        /// Build the cube metadata library by using path to load textures into memory.
         /// </summary>
-        public void Save()
+        public static void BuildLibrary(MainGame mainGame)
         {
-            IsRandomTop = CubeFactory.IsRandomTop;
-            IsRandomBase = CubeFactory.IsRandomBase;
-
-            CurrentCubeTopMetaData = CubeFactory.CurrentCubeTopMetaData;
-            CurrentCubeBaseMetaData = CubeFactory.CurrentCubeBaseMetaData;
-
-            CubeTopMetaDataLibrary = CubeFactory.CubeTopMetaDataLibrary;
-            CubeBaseMetaDataLibrary = CubeFactory.CubeBaseMetaDataLibrary;
-        }
-
-        /// <summary>
-        /// Reassign values to CubeFactory's static properties;
-        /// </summary>
-        public void Load(MainGame mainGame)
-        {
-            CubeFactory.IsRandomTop = IsRandomTop;
-            CubeFactory.IsRandomBase = IsRandomBase;
-
-            CubeFactory.CurrentCubeTopMetaData = CurrentCubeTopMetaData;
-            CubeFactory.CurrentCubeBaseMetaData = CurrentCubeBaseMetaData;
-
-            CubeFactory.CubeTopMetaDataLibrary = CubeTopMetaDataLibrary;
-            CubeFactory.CubeBaseMetaDataLibrary = CubeBaseMetaDataLibrary;
-
-            // Generate library Textures from Path and populate CubeMetaDataLibrary (Dictionary).
-            CubeFactory.CubeMetaDataLibrary = new XDictionary<string, CubeMetaData>();
-            foreach (var ctmd in CubeFactory.CubeTopMetaDataLibrary)
+            CubeMetaDataLibrary = new XDictionary<string, CubeMetaData>();
+            foreach (var cmd in CubeMetaDataCollection)
             {
-                ctmd.LoadContent(mainGame);
-                if (!CubeFactory.CubeMetaDataLibrary.ContainsKey(ctmd.Path))
+                cmd.LoadContent(mainGame);
+                if (!CubeMetaDataLibrary.ContainsKey(cmd.ContentPath))
                 {
-                    CubeFactory.CubeMetaDataLibrary.Add(ctmd.Path, ctmd);
+                    CubeMetaDataLibrary.Add(cmd.ContentPath, cmd);
                 }
             }
-            foreach (var cbmd in CubeFactory.CubeBaseMetaDataLibrary)
-            {
-                cbmd.LoadContent(mainGame);
-                if (!CubeFactory.CubeMetaDataLibrary.ContainsKey(cbmd.Path))
-                {
-                    CubeFactory.CubeMetaDataLibrary.Add(cbmd.Path, cbmd);
-                }
-            }
-
-            CubeFactory.CurrentCubeTopMetaData.LoadContent(mainGame);
-            CubeFactory.CurrentCubeBaseMetaData.LoadContent(mainGame);
-
         }
-    }
+
+        internal static void GenerateLibraryTextures(MainGame mainGame)
+        {
+            throw new NotImplementedException();
+        }
+    }    
 
 }
 

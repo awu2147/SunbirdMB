@@ -131,48 +131,7 @@ namespace SunbirdMB.Core
             {
                 Animator.LoadContent(content);
                 Animator.Owner = this;
-                if (this is Deco)
-                {
-                    var path = Animator.SpriteSheet.TexturePath;
-                    if (DecoFactory.DecoMetaDataLibrary.ContainsKey(path))
-                    {
-                        SelfShadow = DecoFactory.DecoMetaDataLibrary[path].SelfShadow;
-                        AntiShadow = DecoFactory.DecoMetaDataLibrary[path].AntiShadow;
-                    }
-                }
-                // Currently, Cube (anti)shadow textures do not need to be dynamically generated. This may change if pixel perfect click detection required.
-                else
-                {
-                    // This is very slow, assign textures through libraries where possible.
-                    // Also results in memory leak if called after instantiation (use SafeLoadContent instead).
-
-                    if (GraphicsHelper.AntiShadowLibrary.ContainsKey(Animator.SpriteSheet.TexturePath))
-                    {
-                        AntiShadow = GraphicsHelper.AntiShadowLibrary[Animator.SpriteSheet.TexturePath];
-                    }
-                    else
-                    {
-                        AntiShadow = GraphicsHelper.GetAntiShadow(mainGame, Animator.SpriteSheet.Texture);
-                        GraphicsHelper.AntiShadowLibrary.Add(Animator.SpriteSheet.TexturePath, AntiShadow);
-                    }
-
-                    if (GraphicsHelper.SelfShadowLibrary.ContainsKey(Animator.SpriteSheet.TexturePath))
-                    {
-                        SelfShadow = GraphicsHelper.SelfShadowLibrary[Animator.SpriteSheet.TexturePath];
-                    }
-                    else
-                    {
-                        SelfShadow = GraphicsHelper.GetSelfShadow(mainGame, Animator.SpriteSheet.Texture);
-                        GraphicsHelper.SelfShadowLibrary.Add(Animator.SpriteSheet.TexturePath, SelfShadow);
-                    }
-                    Debug.Print(GraphicsHelper.AntiShadowLibrary.Count().ToString());
-                    Debug.Print(GraphicsHelper.SelfShadowLibrary.Count().ToString());
-                }
             }
-            // These are typically null if dynamic generation of texture occurs at some point in time i.e. here or library creation.
-            if (ShadowPath != null) { Shadow = content.Load<Texture2D>(ShadowPath); }
-            if (AntiShadowPath != null) { AntiShadow = content.Load<Texture2D>(AntiShadowPath); }
-            if (LightPath != null) { Light = content.Load<Texture2D>(LightPath); }
         }
 
         /// <summary>
