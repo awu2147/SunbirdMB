@@ -105,6 +105,13 @@ namespace SunbirdMB.Core
             set { SetProperty(ref frameSpeed, value); }
         }
 
+        //private System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb(200,100,100);
+        //public System.Windows.Media.Color Color
+        //{
+        //    get { return color; }
+        //    set { SetProperty(ref color, value); }
+        //}
+
         public int CurrentFrame { get; set; } = 0;
 
         public AnimationState AnimState { get; set; } = AnimationState.None;

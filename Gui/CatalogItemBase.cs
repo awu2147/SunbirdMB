@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,11 +13,28 @@ using System.Windows.Input;
 
 namespace SunbirdMB.Gui
 {
-    public class CatalogItemBase
+    public class CatalogItemBase : PropertyChangedBase
     {
-        public string ImagePath { get; set; }
+        private string imagePath;
+        public string ImagePath
+        {
+            get { return imagePath; }
+            set { SetProperty(ref imagePath, value); }
+        }
 
-        public Int32Rect SourceRect { get; set; }
+        private Int32Rect sourceRect;
+        public Int32Rect SourceRect
+        {
+            get { return sourceRect; }
+            set { SetProperty(ref sourceRect, value); }
+        }
+
+        private bool selected;
+        public bool Selected
+        {
+            get { return selected; }
+            set { SetProperty(ref selected, value); }
+        }
 
         public ICommand C_MouseDown { get; set; }
 
@@ -32,11 +50,14 @@ namespace SunbirdMB.Gui
         internal virtual void MouseDown()
         {
             $"Clicked {Path.GetFileName(ImagePath)}".Log();
+            Selected = true;
         }
     }
 
     public class CubeCatalogItem : CatalogItemBase, IContent
     {
+        public CubePart Part { get; set; }
+
         public string ContentPath { get; set; }
         public CubeCatalogItem(string imagePath, string contentPath) : base(imagePath, new Int32Rect(0, 0, 72, 75))
         {
@@ -45,9 +66,10 @@ namespace SunbirdMB.Gui
 
         internal override void MouseDown()
         {
-            $"Clicked {Path.GetFileName(ImagePath)}".Log();
             CubeFactory.SetCurrent(ContentPath);
             CubeDesignerViewModel.SetPropertyGridDataContext(CubeFactory.CubeMetaDataLibrary[ContentPath]);
+            Selected = true;
         }
     }
+
 }

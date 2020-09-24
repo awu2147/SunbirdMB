@@ -18,22 +18,4 @@ namespace SunbirdMB.Gui
         }
     }
 
-    public class PropertyValuePair : PropertyChangedBase
-    {
-        private string property;
-
-        public string Property
-        {
-            get { return property; }
-            set { SetProperty(ref property, value); }
-        }
-
-        private string value;
-
-        public string Value
-        {
-            get { return value; }
-            set { SetProperty(ref value, value); }
-        }
-    }
 }

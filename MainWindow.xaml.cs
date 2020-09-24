@@ -13,6 +13,7 @@ using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using SunbirdMB.Tools;
+using System.Windows.Data;
 
 namespace SunbirdMB
 {
@@ -51,6 +52,9 @@ namespace SunbirdMB
             {
                 config = new Config();
             }
+
+            var b = CubeDesigner.Items[0] as Button;
+            //b.Template.FindName()
 
         }
 

@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/CubeDesignerButtonItem.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <gui:StyleConverter x:Key="StyleConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid Background="{StaticResource VSDark3Brush}" Focusable="True" MouseDown="Grid_MouseDown" x:Name="BackgroundGrid">        
@@ -101,7 +102,14 @@
                                                 <ItemsControl ItemsSource="{x:Static gui:CubeDesignerViewModel.CubeTopCollection}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Button Command="{Binding C_MouseDown}" Style="{StaticResource CubeDesignerItem}">
+                                                            <Button Command="{Binding C_MouseDown}">
+                                                                <Button.Style>
+                                                                    <MultiBinding Converter="{StaticResource StyleConverter}">
+                                                                        <Binding Path="Selected"/>
+                                                                        <Binding Source="{StaticResource CubeDesignerItem}" />
+                                                                        <Binding Source="{StaticResource CubeDesignerSelectedItem}" />
+                                                                    </MultiBinding>
+                                                                </Button.Style>
                                                                 <Image Height="75">
                                                                     <Image.Source>
                                                                         <CroppedBitmap Source="{Binding ImagePath}" 
@@ -126,7 +134,14 @@
                                                 <ItemsControl ItemsSource="{x:Static gui:CubeDesignerViewModel.CubeBaseCollection}">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Button Command="{Binding C_MouseDown}" Style="{StaticResource CubeDesignerItem}">
+                                                            <Button Command="{Binding C_MouseDown}">
+                                                                <Button.Style>
+                                                                    <MultiBinding Converter="{StaticResource StyleConverter}">
+                                                                        <Binding Path="Selected"/>
+                                                                        <Binding Source="{StaticResource CubeDesignerItem}" />
+                                                                        <Binding Source="{StaticResource CubeDesignerSelectedItem}" />
+                                                                    </MultiBinding>
+                                                                </Button.Style>
                                                                 <Image Height="75">
                                                                     <Image.Source>
                                                                         <CroppedBitmap Source="{Binding ImagePath}" 

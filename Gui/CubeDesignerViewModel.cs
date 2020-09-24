@@ -4,6 +4,7 @@ using SunbirdMB.Tools;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Packaging;
@@ -11,7 +12,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace SunbirdMB.Gui
@@ -26,11 +29,77 @@ namespace SunbirdMB.Gui
         public CubeDesignerViewModel(Grid cubePropertiesGrid)
         {
             CubePropertiesGrid = cubePropertiesGrid;
+            CubeTopCollection.CollectionChanged += CubeTopCollection_CollectionChanged;
+            CubeBaseCollection.CollectionChanged += CubeBaseCollection_CollectionChanged;
             // Start off by populating the cube designer. We can also load/create metadata files here, and add the resulting 
             // cube metadata objects to cube factory metadata collection. From the file paths, we can deduce the cube part type.
             Import(CubePart.All);
             // Rebuild the .pngs into .xnb files.
             ContentBuilder.RebuildContent();
+        }
+
+        private void CubeBaseCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.OldItems)
+                    item.PropertyChanged -= CubeBaseCollectionItem_PropertyChanged;
+            }
+            if (e.NewItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.NewItems)
+                    item.PropertyChanged += CubeBaseCollectionItem_PropertyChanged;
+            }
+        }
+
+        private void CubeBaseCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            CubeCatalogItem cci = sender as CubeCatalogItem;
+            if (e.PropertyName == "Selected")
+            {
+                if (cci.Selected == true)
+                {
+                    foreach (var item in CubeBaseCollection)
+                    {
+                        if (item != cci)
+                        {
+                            item.Selected = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CubeTopCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.OldItems)
+                    item.PropertyChanged -= CubeTopCollectionItem_PropertyChanged;
+            }
+            if (e.NewItems != null)
+            {
+                foreach (INotifyPropertyChanged item in e.NewItems)
+                    item.PropertyChanged += CubeTopCollectionItem_PropertyChanged;
+            }
+        }
+
+        private void CubeTopCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            CubeCatalogItem cci = sender as CubeCatalogItem;
+            if (e.PropertyName == "Selected")
+            {
+                if (cci.Selected == true)
+                {
+                    foreach (var item in CubeTopCollection)
+                    {
+                        if (item != cci)
+                        {
+                            item.Selected = false;
+                        }
+                    }
+                }
+            }
         }
 
         internal static void SetPropertyGridDataContext(CubeMetaData cmd)
@@ -46,6 +115,8 @@ namespace SunbirdMB.Gui
             // Initial current selections are set here.
             CubeFactory.CurrentCubeTopMetaData = CubeFactory.CubeMetaDataLibrary[CubeTopCollection[0].ContentPath];
             CubeFactory.CurrentCubeBaseMetaData = CubeFactory.CubeMetaDataLibrary[CubeBaseCollection[0].ContentPath];
+            CubeTopCollection[0].Selected = true;
+            CubeBaseCollection[0].Selected = true;
 
             CubePropertiesGrid.DataContext = CubeFactory.CurrentCubeTopMetaData;
         }
@@ -143,6 +214,23 @@ namespace SunbirdMB.Gui
                     CubeFactory.CubeMetaDataCollection.Add(cmd);
                 }
             }
+        }
+    }
+
+    public class StyleConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            bool? dataValue = values[0] as bool?;
+            Style firstStyle = values[1] as Style;
+            Style secondStyle = values[2] as Style;
+
+            return dataValue.Equals(false) ? firstStyle : secondStyle;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }
