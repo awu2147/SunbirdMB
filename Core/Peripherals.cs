@@ -14,6 +14,7 @@ using System.Xml.Schema;
 using SunbirdMB.Core;
 using MonoGame.Framework.WpfInterop.Input;
 using SunbirdMB;
+using SunbirdMB.Interfaces;
 
 namespace Sunbird.Core
 {
@@ -45,7 +46,7 @@ namespace Sunbird.Core
         public static event EventHandler<EventArgs> ScrollWheelUp;
         public static event EventHandler<EventArgs> ScrollWheelDown;
 
-        public static void PreUpdate(MainGame mainGame)
+        public static void PreUpdate(IMainGame mainGame)
         {
             currentMouseState = mainGame.Mouse.GetState();
             currentKeyboardState = mainGame.Keyboard.GetState();
@@ -143,7 +144,7 @@ namespace Sunbird.Core
             handler?.Invoke(null, null);
         }
 
-        public static Point GetMouseWindowPosition(MainGame mainGame)
+        public static Point GetMouseWindowPosition(IMainGame mainGame)
         {
             MouseState state = mainGame.Mouse.GetState();
             return new Point(state.X, state.Y);
@@ -164,11 +165,11 @@ namespace Sunbird.Core
         /// <summary>
         /// For mouse interactions with world objects, apply ZoomRatio scaling to object position, width, and height to correctly determine overlaps.
         /// </summary>
-        public static Point GetMouseWorldPosition(MainGame mainGame)
+        public static Point GetMouseWorldPosition(IMainGame mainGame, Camera camera)
         {   
-            if (mainGame.Camera.CurrentMode == CameraMode.Drag)
+            if (camera.CurrentMode == CameraMode.Drag)
             {
-                return new Point(-(int)mainGame.Camera.DragTransform.M41, -(int)mainGame.Camera.DragTransform.M42) + GetMouseWindowPosition(mainGame);
+                return new Point(-(int)camera.DragTransform.M41, -(int)camera.DragTransform.M42) + GetMouseWindowPosition(mainGame);
             }
             else
             {
@@ -176,7 +177,7 @@ namespace Sunbird.Core
             }
         }
 
-        public static Point GetScaledMouseWorldPosition(Camera camera, MainGame mainGame)
+        public static Point GetScaledMouseWorldPosition(IMainGame mainGame, Camera camera)
         {   
             if (camera.CurrentMode == CameraMode.Drag)
             {

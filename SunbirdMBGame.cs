@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Framework.WpfInterop;
-using MonoGame.Framework.WpfInterop.Input;
 using Sunbird.Core;
 using SunbirdMB.Core;
 using SunbirdMB.Framework;
+using SunbirdMB.Interfaces;
 using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
@@ -13,7 +12,7 @@ using System.Globalization;
 
 namespace SunbirdMB
 {
-    public class MainGame : WpfGame
+    public class SunbirdMBGame : WpfGame, IMainGame
     {
         private IGraphicsDeviceService graphicsDeviceManager;
         private IServiceContainer services;
@@ -34,8 +33,8 @@ namespace SunbirdMB
         public int BackBufferHeight { get { return GraphicsDevice.PresentationParameters.BackBufferHeight; } }
         public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
         public Camera Camera { get; set; }
-        internal WpfKeyboard Keyboard { get; private set; }
-        internal WpfMouse Mouse { get; private set; }
+        public Keyboard Keyboard { get; set; }
+        public Mouse Mouse { get; set; }
 
         public bool cleanLoad = false;
 
@@ -50,8 +49,8 @@ namespace SunbirdMB
 
             // wpf and keyboard need reference to the host control in order to receive input
             // this means every WpfGame control will have it's own keyboard & mouse manager which will only react if the mouse is in the control
-            Keyboard = new WpfKeyboard(this);
-            Mouse = new WpfMouse(this);
+            Keyboard = new Keyboard(this);
+            Mouse = new Mouse(this);
 
             services = new ServiceContainer();
             services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceManager);

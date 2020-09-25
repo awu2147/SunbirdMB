@@ -22,7 +22,7 @@
     </Style>
 
     <!-- Button -->
-    <Style TargetType="Button" x:Key="CubeDesignerItem">
+    <Style TargetType="Button" x:Key="CubeDesignerItemStyle">
         <Setter Property="SnapsToDevicePixels"
           Value="true" />
         <Setter Property="OverridesDefaultStyle"
@@ -302,7 +302,7 @@
     </Style>
 
     <!-- Button -->
-    <Style TargetType="Button" x:Key="CubeDesignerSelectedItem">
+    <Style TargetType="Button" x:Key="CubeDesignerSelectedItemStyle">
         <Setter Property="SnapsToDevicePixels"
           Value="true" />
         <Setter Property="OverridesDefaultStyle"

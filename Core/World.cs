@@ -149,9 +149,9 @@ namespace Sunbird.Core
             return GetRelativeCoord(coord, altitude) + offset;
         }
 
-        public static Coord TopFace_PointToRelativeCoord(MainGame mainGame, int altitude)
+        public static Coord TopFace_PointToRelativeCoord(SunbirdMBGame mainGame, int altitude)
         {
-            return TopFace_PointToRelativeCoord(Peripherals.GetMouseWorldPosition(mainGame), altitude);
+            return TopFace_PointToRelativeCoord(Peripherals.GetMouseWorldPosition(mainGame, mainGame.Camera), altitude);
         }
 
         public static Coord TopFace_PositionToRelativeCoord(Vector2 position, int altitude)
@@ -164,9 +164,9 @@ namespace Sunbird.Core
             return TopFace_PointToRelativeCoord(point, 0);
         }
 
-        public static Coord TopFace_PointToCoord(MainGame mainGame)
+        public static Coord TopFace_PointToCoord(SunbirdMBGame mainGame)
         {
-            return TopFace_PointToRelativeCoord(Peripherals.GetMouseWorldPosition(mainGame), 0);
+            return TopFace_PointToRelativeCoord(Peripherals.GetMouseWorldPosition(mainGame, mainGame.Camera), 0);
         }
 
         public static Coord TopFace_PositionToCoord(Vector2 position)

@@ -54,22 +54,4 @@ namespace SunbirdMB.Gui
         }
     }
 
-    public class CubeCatalogItem : CatalogItemBase, IContent
-    {
-        public CubePart Part { get; set; }
-
-        public string ContentPath { get; set; }
-        public CubeCatalogItem(string imagePath, string contentPath) : base(imagePath, new Int32Rect(0, 0, 72, 75))
-        {
-            ContentPath = contentPath;
-        }
-
-        internal override void MouseDown()
-        {
-            CubeFactory.SetCurrent(ContentPath);
-            CubeDesignerViewModel.SetPropertyGridDataContext(CubeFactory.CubeMetaDataLibrary[ContentPath]);
-            Selected = true;
-        }
-    }
-
 }

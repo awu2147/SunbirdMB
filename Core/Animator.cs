@@ -8,16 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.Xml.Serialization;
+using SunbirdMB.Framework;
 
 namespace SunbirdMB.Core
 {
-    public enum AnimationState
-    {
-        None,
-        Once,
-        Loop
-    }
-
     public class AnimArgs
     {
         public int StartFrame { get; set; }
@@ -42,17 +36,19 @@ namespace SunbirdMB.Core
         }
     }
 
-    [Serializable]
     public class Animator
     {
+        /// <summary>
+        /// The sprite that owns this animator.
+        /// </summary>
         [XmlIgnore]
-        public Sprite Owner { get; set; }
+        public Sprite Sprite { get; set; }
 
         [XmlIgnore]
         public Dictionary<int, Point> PositionMap { get { return SpriteSheet.PositionMap; } }
 
         public SpriteSheet SpriteSheet { get; set; }
-        public Vector2 Position { get { return Owner.Position + Owner.PositionOffset; } }
+        public Vector2 Position { get { return Sprite.Position + Sprite.PositionOffset; } }
 
         public int StartFrame { get; set; }
         public int CurrentFrame { get; set; }
@@ -70,7 +66,7 @@ namespace SunbirdMB.Core
 
         public Animator(Sprite owner, SpriteSheet spriteSheet, int startFrame, int currentFrame, int frameCount, float frameSpeed, AnimationState animState)
         {
-            Owner = owner;
+            Sprite = owner;
             SpriteSheet = spriteSheet;
             StartFrame = startFrame;
             CurrentFrame = currentFrame;
@@ -110,6 +106,45 @@ namespace SunbirdMB.Core
         public Rectangle WorldArea()
         {
             return new Rectangle((int)Position.X, (int)Position.Y, SpriteSheet.FrameWidth, SpriteSheet.FrameHeight);
+        }
+
+        /// <summary>
+        /// Replace the SpriteSheet. This is usually followed by a ReconfigureAnimator method call.
+        /// </summary>
+        /// <param name="newSheet"></param>
+        public void ReplaceSpriteSheet(SpriteSheet newSheet)
+        {
+            SpriteSheet = newSheet;
+        }
+
+        /// <summary>
+        /// Reconfigure the Animator. 
+        /// </summary>
+        public void Reconfigure(AnimArgs args)
+        {
+            Reconfigure(args.StartFrame, args.CurrentFrame, args.FramesInLoop, args.FrameSpeed, args.AnimState);
+        }
+
+        /// <summary>
+        /// Reconfigure the Animator using Current frame = Start frame.
+        /// </summary>
+        public void Reconfigure(int startFrame, int frameCount, float frameSpeed, AnimationState animState)
+        {
+            Reconfigure(startFrame, startFrame, frameCount, frameSpeed, animState);
+        }
+
+        /// <summary>
+        /// Reconfigure the Animator.
+        /// </summary>
+        public void Reconfigure(int startFrame, int currentFrame, int frameCount, float frameSpeed, AnimationState animState)
+        {
+            StartFrame = startFrame;
+            CurrentFrame = currentFrame;
+            FrameCounter = currentFrame - startFrame;
+            FramesInLoop = frameCount;
+            FrameSpeed = frameSpeed;
+            AnimState = animState;
+            Timer.Reset();
         }
 
         public void Update(GameTime gameTime)

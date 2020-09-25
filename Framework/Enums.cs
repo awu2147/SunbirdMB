@@ -52,4 +52,11 @@ namespace SunbirdMB.Framework
         All
     }
 
+    public enum AnimationState
+    {
+        None,
+        Once,
+        Loop
+    }
+
 }

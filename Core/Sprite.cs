@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using SunbirdMB.Framework;
+using SunbirdMB.Interfaces;
 
 namespace SunbirdMB.Core
 {
@@ -28,8 +29,11 @@ namespace SunbirdMB.Core
     {
         public static readonly XmlSerializer SpriteSerializer = Serializer.CreateNew(typeof(Sprite));
 
+        /// <summary>
+        /// The game that this sprite belongs to.
+        /// </summary>
         [XmlIgnore]
-        public MainGame MainGame { get; set; }
+        public IMainGame MainGame { get; set; }
         public Animator Animator { get; set; }
         public float Alpha { get; set; } = 1f;
         public Vector2 Position { get; set; }
@@ -58,25 +62,26 @@ namespace SunbirdMB.Core
 
         public Sprite() { }
 
-        public Sprite(MainGame mainGame, SpriteSheet spriteSheet) 
+        public Sprite(IMainGame mainGame, SpriteSheet spriteSheet) 
             : this(mainGame, spriteSheet, Vector2.Zero) { }
 
-        public Sprite(MainGame mainGame, SpriteSheet spriteSheet, Vector2 position) 
+        public Sprite(IMainGame mainGame, SpriteSheet spriteSheet, Vector2 position) 
             : this(mainGame, spriteSheet, position, Alignment.TopLeft, null) { }
 
-        public Sprite(MainGame mainGame, SpriteSheet spriteSheet, Vector2 position, Alignment alignment) 
+        public Sprite(IMainGame mainGame, SpriteSheet spriteSheet, Vector2 position, Alignment alignment) 
             : this(mainGame, spriteSheet, position, alignment, null) { }
 
-        public Sprite(MainGame mainGame, SpriteSheet spriteSheet, AnimArgs animArgs) 
+        public Sprite(IMainGame mainGame, SpriteSheet spriteSheet, AnimArgs animArgs) 
             : this(mainGame, spriteSheet, Vector2.Zero, Alignment.TopLeft, animArgs) { }
 
-        public Sprite(MainGame mainGame, SpriteSheet spriteSheet, Vector2 position, Alignment alignment, AnimArgs animArgs)
+        public Sprite(IMainGame mainGame, SpriteSheet spriteSheet, Vector2 position, Alignment alignment, AnimArgs animArgs)
         {
             MainGame = mainGame;
+            // An animator is always required for the sprite to be drawn. The default constructor assumes the given spritesheet to be a single frame image.
             Animator = new Animator(this, spriteSheet);
             if (animArgs != null)
             {
-                ReconfigureAnimator(animArgs);
+                Animator.Reconfigure(animArgs);
             }
 
             if (GraphicsHelper.AntiShadowLibrary.ContainsKey(Animator.SpriteSheet.TexturePath))
@@ -124,30 +129,14 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Core method used to re-instantiate non-serializable properties and delegates. This can create garbage if called during runtime.
         /// </summary>
-        public virtual void LoadContent(MainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
+        public virtual void LoadContent(IMainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
         {
             MainGame = mainGame;
             if (Animator != null)
             {
                 Animator.LoadContent(content);
-                Animator.Owner = this;
+                Animator.Sprite = this;
             }
-        }
-
-        /// <summary>
-        /// Core method used to re-instantiate non-serializable properties and delegates. This is safe to call during runtime.
-        /// </summary>
-        public virtual void SafeLoadContent(MainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
-        {
-            MainGame = mainGame;
-            if (Animator != null)
-            {
-                Animator.LoadContent(content);
-                Animator.Owner = this;
-            }
-            if (ShadowPath != null) { Shadow = content.Load<Texture2D>(ShadowPath); }
-            if (AntiShadowPath != null) { AntiShadow = content.Load<Texture2D>(AntiShadowPath); }
-            if (LightPath != null) { Light = content.Load<Texture2D>(LightPath); }
         }
 
         public virtual void OnClicked()
@@ -156,70 +145,7 @@ namespace SunbirdMB.Core
             handler?.Invoke(this, null);
         }
 
-        /// <summary>
-        /// Replace the SpriteSheet of the default Sprite Animator. This is usually followed by a ReconfigureAnimator method call.
-        /// </summary>
-        /// <param name="newSheet"></param>
-        public void ReplaceSpriteSheet(SpriteSheet newSheet)
-        {
-            ReplaceSpriteSheet(newSheet, Animator);
-        }
-
-        /// <summary>
-        /// Replace the SpriteSheet of a specified Animator. This is usually followed by a ReconfigureAnimator method call.
-        /// </summary>
-        /// <param name="newSheet"></param>
-        /// <param name="animator"></param>
-        public void ReplaceSpriteSheet(SpriteSheet newSheet, Animator animator)
-        {
-            animator.SpriteSheet = newSheet;
-        }
-
-        /// <summary>
-        /// Reconfigure the default Sprite Animator using Current frame = Start frame.
-        /// </summary>
-        public void ReconfigureAnimator(int startFrame, int frameCount, float frameSpeed, AnimationState animState)
-        {
-            ReconfigureAnimator(startFrame, startFrame, frameCount, frameSpeed, animState, Animator);
-        }
-
-        /// <summary>
-        /// Reconfigure the default Sprite Animator. 
-        /// </summary>
-        public void ReconfigureAnimator(AnimArgs args)
-        {
-            ReconfigureAnimator(args.StartFrame, args.CurrentFrame, args.FramesInLoop, args.FrameSpeed, args.AnimState);
-        }
-
-        /// <summary>
-        /// Reconfigure the default Sprite Animator. 
-        /// </summary>
-        public void ReconfigureAnimator(int startFrame, int currentFrame, int frameCount, float frameSpeed, AnimationState animState)
-        {
-            ReconfigureAnimator(startFrame, currentFrame, frameCount, frameSpeed, animState, Animator);
-        }
-
-        /// <summary>
-        /// Reconfigure the specified Animator using Current frame = Start frame.
-        /// </summary>
-        public void ReconfigureAnimator(int startFrame, int frameCount, float frameSpeed, AnimationState animState, Animator animator)
-        {
-            ReconfigureAnimator(startFrame, startFrame, frameCount, frameSpeed, animState, animator);
-        }
-
-        /// <summary>
-        /// Reconfigure the specified Animator.
-        /// </summary>
-        public void ReconfigureAnimator(int startFrame, int currentFrame, int frameCount, float frameSpeed, AnimationState animState, Animator animator)
-        {
-            animator.StartFrame = startFrame;
-            animator.CurrentFrame = currentFrame;
-            animator.FrameCounter = currentFrame - startFrame;
-            animator.FramesInLoop = frameCount;
-            animator.FrameSpeed = frameSpeed;
-            animator.AnimState = animState;
-            animator.Timer.Reset();
-        }
+       
 
         public virtual void Update(GameTime gameTime)
         {

@@ -20,66 +20,58 @@ namespace SunbirdMB
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class SunbirdMBWindow : Window
     {
-        private MainWindowViewModel MainWindowViewModel { get; set; }
-        internal LoggerViewModel LoggerViewModel { get; set; }
-        internal CubeDesignerViewModel CubeDesignerViewModel { get; set; }
+        private SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
+        internal SunbirdMBGame SunbirdMBGame { get; set; }
 
-        private Config config;
+        private Config Config { get; set; }
 
-        public MainWindow()
+        public SunbirdMBWindow()
         {
             InitializeComponent();
 
-            MainWindowViewModel = new MainWindowViewModel(this);
-            DataContext = MainWindowViewModel;
+            SunbirdMBGame = MainGame;
+            SunbirdMBGame.Loaded += SunbirdMBGame_Loaded;
 
-            LoggerViewModel = new LoggerViewModel();
-            Logger.DataContext = LoggerViewModel;
-
-            CubeDesignerViewModel = new CubeDesignerViewModel(CubePropertiesGrid);
-            CubeDesigner.DataContext = CubeDesignerViewModel;
-
-            MainGame.Loaded += MainGame_Loaded;
+            SunbirdMBWindowViewModel = new SunbirdMBWindowViewModel();
+            SunbirdMBWindowViewModel.SunbirdMBGame = SunbirdMBGame;
+            DataContext = SunbirdMBWindowViewModel;
 
             if (File.Exists("Config.xml"))
             {
-                config = Serializer.ReadXML<Config>(Config.ConfigSerializer, "Config.xml");
-                config.LoadApplicationParameters(this);
+                Config = Serializer.ReadXML<Config>(Config.ConfigSerializer, "Config.xml");
+                Config.LoadApplicationParameters(this);
             }
             else
             {
-                config = new Config();
+                Config = new Config();
             }
-
-            var b = CubeDesigner.Items[0] as Button;
-            //b.Template.FindName()
 
         }
 
-        private void MainGame_Loaded(object sender, EventArgs e)
+        private void SunbirdMBGame_Loaded(object sender, EventArgs e)
         {
-            config.LoadGameParameters(MainGame);
+            Config.LoadGameParameters(SunbirdMBGame);
 
-            MainGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
+            SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
             SizeChanged += MainWindow_SizeChanged;
             Closed += MainWindow_Closed;
 
-            CubeDesignerViewModel.OnMainGameLoaded(MainGame);
+            SunbirdMBWindowViewModel.OnMainGameLoaded(SunbirdMBGame);
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)
         {
-            MainGame.SaveAndSerialize();
-            config.SaveApplicationParameters(this);
-            config.SaveGameParameters(MainGame);
-            config.Serialize();
+            SunbirdMBGame.SaveAndSerialize();
+            Config.SaveApplicationParameters(this);
+            Config.SaveGameParameters(SunbirdMBGame);
+            Config.Serialize();
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            MainGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
+            SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
         }
 
         private void Clear_Log_Click(object sender, RoutedEventArgs e)

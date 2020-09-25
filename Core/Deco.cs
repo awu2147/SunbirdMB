@@ -56,7 +56,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Core method used to re-instantiate non-serializable properties and delegates. This can create garbage if called during runtime.
         /// </summary>
-        public void LoadContent(MainGame mainGame)
+        public void LoadContent(SunbirdMBGame mainGame)
         {
             Texture = mainGame.Content.Load<Texture2D>(Path);
 
@@ -125,7 +125,7 @@ namespace SunbirdMB.Core
 
         public static XDictionary<string, DecoMetaData> DecoMetaDataLibrary { get; set; }
 
-        public static Deco CreateDeco(MainGame mainGame, DecoMetaData decoMD, Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateDeco(SunbirdMBGame mainGame, DecoMetaData decoMD, Coord coords, Coord relativeCoords, int altitude)
         {
             var rand = new Random();
             Type type = Type.GetType(decoMD.TypeName);
@@ -175,15 +175,15 @@ namespace SunbirdMB.Core
             return deco;
         }
 
-        public static Deco CreateCurrentDeco1x1(MainGame mainGame, Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateCurrentDeco1x1(SunbirdMBGame mainGame, Coord coords, Coord relativeCoords, int altitude)
         {
             return CreateDeco(mainGame, CurrentDecoMetaData1x1, coords, relativeCoords, altitude);
         }
-        public static Deco CreateCurrentDeco2x2(MainGame mainGame, Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateCurrentDeco2x2(SunbirdMBGame mainGame, Coord coords, Coord relativeCoords, int altitude)
         {
             return CreateDeco(mainGame, CurrentDecoMetaData2x2, coords, relativeCoords, altitude);
         }
-        public static Deco CreateCurrentDeco3x3(MainGame mainGame, Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateCurrentDeco3x3(SunbirdMBGame mainGame, Coord coords, Coord relativeCoords, int altitude)
         {
             return CreateDeco(mainGame, CurrentDecoMetaData3x3, coords, relativeCoords, altitude);
         }
@@ -330,7 +330,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Reassign values to DecoFactory's static properties;
         /// </summary>
-        public void Load(MainGame mainGame)
+        public void Load(SunbirdMBGame mainGame)
         {
             DecoFactory.IsRandom = IsRandom;
 

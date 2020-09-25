@@ -21,14 +21,30 @@ namespace SunbirdMB.Gui
 {
     public class CubeDesignerViewModel : PropertyChangedBase
     {
-        public static ObservableCollection<CubeCatalogItem> CubeTopCollection { get; set; } = new ObservableCollection<CubeCatalogItem>();
-        public static ObservableCollection<CubeCatalogItem> CubeBaseCollection { get; set; } = new ObservableCollection<CubeCatalogItem>();
+        public ObservableCollection<CubeDesignerItem> CubeTopCollection { get; set; } = new ObservableCollection<CubeDesignerItem>();
+        public ObservableCollection<CubeDesignerItem> CubeBaseCollection { get; set; } = new ObservableCollection<CubeDesignerItem>();
 
-        public static Grid CubePropertiesGrid { get; set; }
 
-        public CubeDesignerViewModel(Grid cubePropertiesGrid)
+        private TabItem selectedTab;
+        public TabItem SelectedTab
         {
-            CubePropertiesGrid = cubePropertiesGrid;
+            get { return selectedTab; }
+            set { SetProperty(ref selectedTab, value); }
+        }
+
+        private CubeMetadata currentMetadata;
+        public CubeMetadata CurrentMetadata
+        {
+            get { return currentMetadata; }
+            set { SetProperty(ref currentMetadata, value); }
+        }
+
+        public CubeDesignerViewModel() { }
+
+        internal void Initialize()
+        {
+            //CubeTopCollection = new ObservableCollection<CubeDesignerItem>();
+            //CubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
             CubeTopCollection.CollectionChanged += CubeTopCollection_CollectionChanged;
             CubeBaseCollection.CollectionChanged += CubeBaseCollection_CollectionChanged;
             // Start off by populating the cube designer. We can also load/create metadata files here, and add the resulting 
@@ -54,17 +70,14 @@ namespace SunbirdMB.Gui
 
         private void CubeBaseCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            CubeCatalogItem cci = sender as CubeCatalogItem;
-            if (e.PropertyName == "Selected")
+            CubeDesignerItem cci = sender as CubeDesignerItem;
+            if (e.PropertyName == "Selected" && cci.Selected == true)
             {
-                if (cci.Selected == true)
+                foreach (var item in CubeBaseCollection)
                 {
-                    foreach (var item in CubeBaseCollection)
+                    if (item != cci)
                     {
-                        if (item != cci)
-                        {
-                            item.Selected = false;
-                        }
+                        item.Selected = false;
                     }
                 }
             }
@@ -86,28 +99,20 @@ namespace SunbirdMB.Gui
 
         private void CubeTopCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            CubeCatalogItem cci = sender as CubeCatalogItem;
-            if (e.PropertyName == "Selected")
+            CubeDesignerItem cci = sender as CubeDesignerItem;
+            if (e.PropertyName == "Selected" && cci.Selected == true)
             {
-                if (cci.Selected == true)
+                foreach (var item in CubeTopCollection)
                 {
-                    foreach (var item in CubeTopCollection)
+                    if (item != cci)
                     {
-                        if (item != cci)
-                        {
-                            item.Selected = false;
-                        }
+                        item.Selected = false;
                     }
                 }
             }
         }
 
-        internal static void SetPropertyGridDataContext(CubeMetaData cmd)
-        {
-            CubePropertiesGrid.DataContext = cmd;
-        }
-
-        internal void OnMainGameLoaded(MainGame mainGame)
+        internal void OnMainGameLoaded(SunbirdMBGame mainGame)
         {
             // Once the main game has loaded, we have access to the content manager. We can now build our cube factory
             // library by creating textures from paths.
@@ -115,16 +120,16 @@ namespace SunbirdMB.Gui
             // Initial current selections are set here.
             CubeFactory.CurrentCubeTopMetaData = CubeFactory.CubeMetaDataLibrary[CubeTopCollection[0].ContentPath];
             CubeFactory.CurrentCubeBaseMetaData = CubeFactory.CubeMetaDataLibrary[CubeBaseCollection[0].ContentPath];
+
             CubeTopCollection[0].Selected = true;
             CubeBaseCollection[0].Selected = true;
-
-            CubePropertiesGrid.DataContext = CubeFactory.CurrentCubeTopMetaData;
+            CurrentMetadata = CubeFactory.CurrentCubeTopMetaData;
         }
 
         /// <summary>
         /// Import a single cube part into the cube designer and cube factory metadata collection (unbuilt).
         /// </summary>
-        internal static void Import(string path, CubePart part)
+        internal void Import(string path, CubePart part)
         {
             var appPath = Assembly.GetExecutingAssembly().Location;
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
@@ -139,22 +144,22 @@ namespace SunbirdMB.Gui
             // Ask what cube part we are importing.
             if (part == CubePart.Top)
             {
-                CubeTopCollection.Add(new CubeCatalogItem(path, contentPath));
+                CubeTopCollection.Add(new CubeDesignerItem(this, path, contentPath));
             }
             else if (part == CubePart.Base)
             {
-                CubeBaseCollection.Add(new CubeCatalogItem(path, contentPath));
+                CubeBaseCollection.Add(new CubeDesignerItem(this, path, contentPath));
             }
             // Find or create cube metadata.
             var metadata = Path.ChangeExtension(path, ".metadata");
-            CubeMetaData cmd;
+            CubeMetadata cmd;
             if (File.Exists(metadata))
             {
-                cmd = Serializer.ReadXML<CubeMetaData>(CubeMetaData.CubeMetaDataSerializer, metadata);
+                cmd = Serializer.ReadXML<CubeMetadata>(CubeMetadata.CubeMetaDataSerializer, metadata);
             }
             else
             {
-                cmd = new CubeMetaData() { ContentPath = contentPath, Part = part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
+                cmd = new CubeMetadata() { ContentPath = contentPath, Part = part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
                 cmd.Serialize(metadata);
                 $"Creating {Path.GetFileName(metadata)}...".Log();
             }
@@ -164,7 +169,7 @@ namespace SunbirdMB.Gui
         /// <summary>
         /// Import cube parts into the cube designer and cube library (unbuilt).
         /// </summary>
-        internal static void Import(CubePart part)
+        internal void Import(CubePart part)
         {
             if (part == CubePart.All)
             {
@@ -193,21 +198,21 @@ namespace SunbirdMB.Gui
                     var contentPath = Path.ChangeExtension(file.Replace(appDirectory + @"Content\", ""), null);
                     if (part == CubePart.Top)
                     {
-                        CubeTopCollection.Add(new CubeCatalogItem(file, contentPath));
+                        CubeTopCollection.Add(new CubeDesignerItem(this, file, contentPath));
                     }
                     else if (part == CubePart.Base)
                     {
-                        CubeBaseCollection.Add(new CubeCatalogItem(file, contentPath));
+                        CubeBaseCollection.Add(new CubeDesignerItem(this, file, contentPath));
                     }
                     var metadata = Path.ChangeExtension(file, ".metadata");
-                    CubeMetaData cmd;
+                    CubeMetadata cmd;
                     if (File.Exists(metadata))
                     {
-                        cmd = Serializer.ReadXML<CubeMetaData>(CubeMetaData.CubeMetaDataSerializer, metadata);
+                        cmd = Serializer.ReadXML<CubeMetadata>(CubeMetadata.CubeMetaDataSerializer, metadata);
                     }
                     else
                     {
-                        cmd = new CubeMetaData() { ContentPath = contentPath, Part = part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
+                        cmd = new CubeMetadata() { ContentPath = contentPath, Part = part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
                         cmd.Serialize(metadata);
                         $"Creating {Path.GetFileName(metadata)}...".Log();
                     }

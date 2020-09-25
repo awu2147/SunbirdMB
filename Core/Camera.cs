@@ -27,17 +27,17 @@ namespace SunbirdMB.Core
         private Direction PushDirection { get; set; }
         private float Counter { get; set; } = 3;
 
-        private MainGame MainGame { get; set; }
+        private SunbirdMBGame MainGame { get; set; }
         private int Width { get { return MainGame.BackBufferWidth; } }
         private int Height { get { return MainGame.BackBufferHeight; } }
 
 
-        public Camera(MainGame sender)
+        public Camera(SunbirdMBGame sender)
         {
             MainGame = sender;
         }
 
-        public void Update(MainGame mainGame)
+        public void Update(SunbirdMBGame mainGame)
         {
             if (CurrentMode == CameraMode.Drag)
             {
@@ -46,7 +46,7 @@ namespace SunbirdMB.Core
             Drag(MainGame);
         }
 
-        public void Drag(MainGame mainGame)
+        public void Drag(SunbirdMBGame mainGame)
         {
             //Wrap this in else block if toggling.
             if (Peripherals.MiddleButtonPressed() && MainGame.IsActive == true)

@@ -67,7 +67,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// This overload creates garbage if called more than once. Use with Care.
         /// </summary>
-        public static SpriteSheet CreateNew(MainGame mainGame, string path, int row, int columns)
+        public static SpriteSheet CreateNew(SunbirdMBGame mainGame, string path, int row, int columns)
         {
             //FileStream fileStream = new FileStream($@"..\..\..\..\Content\{path}.png", FileMode.Open);
             //Texture2D t = Texture2D.FromStream(mainGame.GraphicsDevice, fileStream);
@@ -79,7 +79,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// This overload creates garbage if called more than once. Use with Care.
         /// </summary>
-        public static SpriteSheet CreateNew(MainGame mainGame, string path)
+        public static SpriteSheet CreateNew(SunbirdMBGame mainGame, string path)
         {
             return CreateNew(mainGame, path, 1, 1);
         }

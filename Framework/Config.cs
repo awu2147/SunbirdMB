@@ -27,7 +27,7 @@ namespace SunbirdMB.Core
         public double WindowLeft { get; set; }
         public double WindowTop { get; set; }
 
-        internal void LoadApplicationParameters(MainWindow window)
+        internal void LoadApplicationParameters(SunbirdMBWindow window)
         {
             window.Height = WindowHeight;
             window.Width = WindowWidth;
@@ -35,7 +35,7 @@ namespace SunbirdMB.Core
             window.Top = WindowTop;
         }
 
-        internal void SaveApplicationParameters(MainWindow window)
+        internal void SaveApplicationParameters(SunbirdMBWindow window)
         {
             WindowHeight = window.Height;
             WindowWidth = window.Width;
@@ -47,13 +47,13 @@ namespace SunbirdMB.Core
         public string IntermediateDir { get; set; }
         public int WorldZoom { get; set; } = 3;
 
-        internal void LoadGameParameters(MainGame game)
+        internal void LoadGameParameters(SunbirdMBGame game)
         {
             World.Zoom = WorldZoom;
             World.ReconstructTopFaceArea();
         }
 
-        internal void SaveGameParameters(MainGame game)
+        internal void SaveGameParameters(SunbirdMBGame game)
         {
             WorldZoom = World.Zoom;
         }

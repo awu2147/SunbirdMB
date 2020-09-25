@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Globalization;
+using SunbirdMB.Interfaces;
 
 namespace SunbirdMB.Core
 {
@@ -78,7 +79,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Returns a mask texture from a base texture. This creates garbage.
         /// </summary>
-        public static Texture2D GetMask(MainGame mainGame, Texture2D texture, Color color)
+        public static Texture2D GetMask(IMainGame mainGame, Texture2D texture, Color color)
         {
             var totalPixels = texture.Width * texture.Height;
             Color[] maskPixels = new Color[totalPixels];
@@ -97,14 +98,14 @@ namespace SunbirdMB.Core
             return mask;
         }
 
-        public static Texture2D GetAntiShadow(MainGame mainGame, Texture2D texture)
+        public static Texture2D GetAntiShadow(IMainGame mainGame, Texture2D texture)
         {
             return GetMask(mainGame, texture, Color.Black);
         }
 
         public static Dictionary<string, Texture2D> AntiShadowLibrary = new Dictionary<string, Texture2D>() { };
 
-        public static Texture2D GetSelfShadow(MainGame mainGame, Texture2D texture)
+        public static Texture2D GetSelfShadow(IMainGame mainGame, Texture2D texture)
         {
             return GetMask(mainGame, texture, new Color(109, 117, 141));
         }

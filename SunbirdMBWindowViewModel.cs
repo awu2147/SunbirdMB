@@ -19,28 +19,53 @@ using SunbirdMB.Tools;
 
 namespace SunbirdMB
 {
-    internal class MainWindowViewModel : PropertyChangedBase
+    internal class SunbirdMBWindowViewModel : PropertyChangedBase
     {
-        internal MainWindow View { get; set; }
         public ICommand C_Import { get; set; }
         public ICommand C_Build { get; set; }
 
-        public MainWindowViewModel(MainWindow view)
+        private CubeDesignerViewModel cubeDesignerViewModel;
+        public CubeDesignerViewModel CubeDesignerViewModel
         {
-            View = view; 
+            get { return cubeDesignerViewModel; }
+            set { SetProperty(ref cubeDesignerViewModel, value); }
+        }
+
+        private LoggerViewModel loggerViewModel;
+        public LoggerViewModel LoggerViewModel
+        {
+            get { return loggerViewModel; }
+            set { SetProperty(ref loggerViewModel, value); }
+        }
+
+        public SunbirdMBGame SunbirdMBGame { get; set; }
+
+        public SunbirdMBWindowViewModel()
+        {
             C_Import = new RelayCommand((o) => Import());
             C_Build = new RelayCommand((o) => Build());
+
+            CubeDesignerViewModel = new CubeDesignerViewModel();
+            CubeDesignerViewModel.Initialize();
+
+            LoggerViewModel = new LoggerViewModel();
         }
 
         private void Build()
         {
+            //CubeDesignerViewModel.Initialize();
             //View.CubeDesignerViewModel.ImportBase();
             //View.CubeDesignerViewModel.ImportTop();
         }
 
+        internal void OnMainGameLoaded(SunbirdMBGame mainGame)
+        {
+            CubeDesignerViewModel.OnMainGameLoaded(mainGame);
+        }
+
         private void Import()
         {
-            var selectedTab = View.CubeDesigner.SelectedValue as TabItem;
+            var selectedTab = CubeDesignerViewModel.SelectedTab as TabItem;
 
             var appPath = Assembly.GetExecutingAssembly().Location;
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
@@ -74,7 +99,7 @@ namespace SunbirdMB
                     }
                     // We don't need to rebuild everything, only the .png we just imported.
                     ContentBuilder.BuildFile(newFilePath);
-                    CubeFactory.BuildLibrary(View.MainGame);
+                    CubeFactory.BuildLibrary(SunbirdMBGame);
                 }
                 else
                 {

@@ -22,8 +22,6 @@ namespace SunbirdMB
 
         public static readonly XmlSerializer MapBuilderSerializer = Serializer.CreateNew(typeof(MapBuilder));
 
-        private Sprite MessageLogBG;
-
         /// <summary>
         /// For optimization reasons, create and assign value to this field during an update() loop so it is ready to be used in the draw() loop.
         /// </summary>
@@ -56,7 +54,7 @@ namespace SunbirdMB
 
         }
 
-        public MapBuilder(MainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content, string path) 
+        public MapBuilder(SunbirdMBGame mainGame, GraphicsDevice graphicsDevice, ContentManager content, string path) 
             : base(mainGame, graphicsDevice, content)
         {
             this.saveFilePath = path;
@@ -182,7 +180,7 @@ namespace SunbirdMB
                 if (Peripherals.KeyTapped(Keys.L) && MainGame.IsActive)
                 {
                     $"Window Position = {Peripherals.GetMouseWindowPosition(MainGame)}".Log();
-                    $"World Position = {Peripherals.GetMouseWorldPosition(MainGame)}".Log();
+                    $"World Position = {Peripherals.GetMouseWorldPosition(MainGame, MainGame.Camera)}".Log();
                     $"Altitude = {Altitude}".Log();
                 }
 

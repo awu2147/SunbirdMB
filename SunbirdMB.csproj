@@ -74,6 +74,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Controls.Ribbon" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -92,11 +93,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\Cube\CubeFactory.cs" />
+    <Compile Include="Core\Cube\CubeMetadata.cs" />
+    <Compile Include="Framework\Keyboard.cs" />
+    <Compile Include="Framework\Mouse.cs" />
     <Compile Include="Gui\CatalogItemBase.cs" />
-    <Compile Include="Gui\CubeDesignerViewModel.cs" />
-    <Compile Include="Gui\CubePropertiesGridViewModel.cs" />
+    <Compile Include="Gui\CubeDesigner\CubeDesignerItem.cs" />
+    <Compile Include="Gui\CubeDesigner\CubeDesignerViewModel.cs" />
+    <Compile Include="Gui\CubeDesigner\CubeDesignerView.xaml.cs">
+      <DependentUpon>CubeDesignerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Logger\Logger.xaml.cs">
+      <DependentUpon>Logger.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Interfaces\IContent.cs" />
+    <Compile Include="Interfaces\IMainGame.cs" />
     <Compile Include="Tools\ContentBuilder.cs" />
+    <Page Include="Gui\Logger\Logger.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\ResourceDictionaries\Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -121,7 +137,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Gui\CubeDesigner\CubeDesignerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SunbirdMBWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -129,11 +149,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AssetLibraries.cs" />
     <Compile Include="Core\Animator.cs" />
     <Compile Include="Core\Camera.cs" />
     <Compile Include="Framework\Config.cs" />
-    <Compile Include="Core\Cube.cs" />
+    <Compile Include="Core\Cube\Cube.cs" />
     <Compile Include="Core\Peripherals.cs" />
     <Compile Include="Core\SpriteList.cs" />
     <Compile Include="Core\World.cs" />
@@ -150,18 +169,18 @@
     <Compile Include="Core\State.cs" />
     <Compile Include="Core\Timer.cs" />
     <Compile Include="Framework\XDictionary.cs" />
-    <Compile Include="Gui\LoggerViewModel.cs" />
+    <Compile Include="Gui\Logger\LoggerViewModel.cs" />
     <Compile Include="Gui\RelayCommand.cs" />
     <Compile Include="Gui\ViewModelBase.cs" />
     <Compile Include="Interfaces\IWorldObject.cs" />
-    <Compile Include="MainGame.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="SunbirdMBGame.cs" />
+    <Compile Include="SunbirdMBWindow.xaml.cs">
+      <DependentUpon>SunbirdMBWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="SunbirdMBWindowViewModel.cs" />
     <Compile Include="MapBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
