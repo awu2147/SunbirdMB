@@ -17,11 +17,12 @@
                 <ResourceDictionary Source="Gui/ResourceDictionaries/Templates/CubeDesignerButtonItem.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <gui:StyleConverter x:Key="StyleConverter"/>
-            <gui:CubeDesignerViewModel x:Key="CubeDesignerViewModel"/>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid Background="{StaticResource VSDark3Brush}" Focusable="True" MouseDown="Grid_MouseDown" x:Name="BackgroundGrid">        
+    <Grid x:Name="BackgroundGrid"
+          Background="{StaticResource VSDark3Brush}" 
+          Focusable="True" 
+          MouseDown="Grid_MouseDown">        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -31,13 +32,13 @@
                             BorderThickness="1" 
                             Margin="1,2,2,1">
                 <Menu Background="{StaticResource VSDark3Brush}" 
-                  BorderBrush="{StaticResource VSDark1Brush}" 
-                  BorderThickness="1" 
-                  Padding="2" 
-                  Margin="0">
-                    <MenuItem Background="{StaticResource VSDark1Brush}" 
-                          BorderBrush="{StaticResource VSDark1Brush}" 
-                          BorderThickness="1">
+                      BorderBrush="{StaticResource VSDark1Brush}" 
+                      BorderThickness="1" 
+                      Padding="2" 
+                      Margin="0">
+                    <MenuItem Background="{StaticResource VSDark1Brush}"
+                              BorderBrush="{StaticResource VSDark1Brush}"
+                              BorderThickness="1">
                         <MenuItem.Header>
                             <TextBlock Text="File" 
                                    HorizontalAlignment="Center" 
@@ -73,170 +74,6 @@
                         <Binding Path="CubeDesignerViewModel" Mode="TwoWay"/>
                     </gui:CubeDesignerView.DataContext>
                 </gui:CubeDesignerView>
-                <!--<Grid>
-                    <Grid.DataContext>
-                        <Binding Source="{StaticResource CubeDesignerViewModel}"/>
-                    </Grid.DataContext>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <DockPanel Background="{StaticResource VSDark3Brush}">
-                        <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                            BorderThickness="1" 
-                            Margin="1,1,2,1">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                    BorderThickness="1">
-                                    <TextBlock Text="Cube Designer"
-                                           Padding="3,2,3,2" 
-                                           Foreground="{StaticResource VSText}" 
-                                           Margin="1" 
-                                           Background="{StaticResource VSDark1Brush}"
-                                           VerticalAlignment="Center"/>
-                                </Border>
-                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                    BorderThickness="1" 
-                                    Grid.Row="1">
-                                    <TabControl Background="{StaticResource VSDark3Brush}" 
-                                            BorderThickness="0" SelectedItem="{Binding SelectedItem}">
-                                        <TabItem Header="Top" 
-                                             Foreground="{StaticResource VSText}"
-                                             Width="78">
-                                            <ScrollViewer Style="{StaticResource LeftScrollViewer}">
-                                                <ItemsControl ItemsSource="{Binding CubeTopCollection, Mode=TwoWay}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Button Command="{Binding C_MouseDown}">
-                                                                <Button.Style>
-                                                                    <MultiBinding Converter="{StaticResource StyleConverter}">
-                                                                        <Binding Path="Selected"/>
-                                                                        <Binding Source="{StaticResource CubeDesignerItemStyle}" />
-                                                                        <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
-                                                                    </MultiBinding>
-                                                                </Button.Style>
-                                                                <Image Height="75">
-                                                                    <Image.Source>
-                                                                        <CroppedBitmap Source="{Binding ImagePath}" 
-                                                                                   SourceRect="{Binding SourceRect}"/>
-                                                                    </Image.Source>
-                                                                </Image>
-                                                            </Button>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <WrapPanel/>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                </ItemsControl>
-                                            </ScrollViewer>
-                                        </TabItem>
-                                        <TabItem Header="Base"
-                                             Foreground="{StaticResource VSText}" 
-                                             Width="78">
-                                            <ScrollViewer Style="{StaticResource LeftScrollViewer}">
-                                                <ItemsControl ItemsSource="{Binding CubeBaseCollection}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Button Command="{Binding C_MouseDown}">
-                                                                <Button.Style>
-                                                                    <MultiBinding Converter="{StaticResource StyleConverter}">
-                                                                        <Binding Path="Selected"/>
-                                                                        <Binding Source="{StaticResource CubeDesignerItemStyle}" />
-                                                                        <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
-                                                                    </MultiBinding>
-                                                                </Button.Style>
-                                                                <Image Height="75">
-                                                                    <Image.Source>
-                                                                        <CroppedBitmap Source="{Binding ImagePath}" 
-                                                                                   SourceRect="{Binding SourceRect}"/>
-                                                                    </Image.Source>
-                                                                </Image>
-                                                            </Button>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <WrapPanel/>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                </ItemsControl>
-                                            </ScrollViewer>
-                                        </TabItem>
-                                    </TabControl>
-                                </Border>
-                            </Grid>
-                        </Border>
-                    </DockPanel>
-                    <DockPanel Grid.Row="1" 
-                               Background="{StaticResource VSDark3Brush}" Margin="0,-3,0,0">
-                        <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                            BorderThickness="1" 
-                            Margin="1,0,2,1">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                    BorderThickness="1">
-                                    <TextBlock Text="Properties"
-                                           Padding="3,2,3,2" 
-                                           Foreground="{StaticResource VSText}" 
-                                           Margin="1" 
-                                           Background="{StaticResource VSDark1Brush}"
-                                           VerticalAlignment="Center"/>
-                                </Border>
-                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                    BorderThickness="1" 
-                                    Grid.Row="1">
-                                    <Grid Margin="1">
-                                        <Grid.DataContext>
-                                            <Binding Path="CurrentMetadata"/>
-                                        </Grid.DataContext>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <Label Content="Sheet Rows" Foreground="{StaticResource VSText}"/>
-                                        <TextBox Grid.Column="1" Text="{Binding SheetRows}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
-
-                                        <Label Grid.Row="1" Content="Sheet Columns" Foreground="{StaticResource VSText}"/>
-                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SheetColumns}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
-
-                                        <Label Grid.Row="2" Content="Frame Count" Foreground="{StaticResource VSText}"/>
-                                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FrameCount}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
-
-                                        <Label Grid.Row="3" Content="Start Frame" Foreground="{StaticResource VSText}"/>
-                                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding StartFrame}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
-
-                                        <Label Grid.Row="4" Content="Frame Speed" Foreground="{StaticResource VSText}"/>
-                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
-                                        
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </Border>
-                    </DockPanel>
-                </Grid>-->
                 <DockPanel Grid.Row="1" 
                            Background="{StaticResource VSDark3Brush}">
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 
@@ -247,74 +84,6 @@
                                 <Binding Path="LoggerViewModel"/>
                             </gui:Logger.DataContext>
                         </gui:Logger>
-                        <!--<Grid x:Name="Logger">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                        BorderThickness="1">
-                                    <TextBlock Text="Logger" 
-                                               Padding="3,2,3,2" 
-                                               Foreground="{StaticResource VSText}" 
-                                               Margin="1" 
-                                               Background="{StaticResource VSDark1Brush}"
-                                               VerticalAlignment="Center"/>
-                                </Border>
-                                <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                        BorderThickness="1" 
-                                        Grid.Column="1">
-                                    <Button Content="Clear"
-                                            Command="{Binding C_ClearLog}" 
-                                            DockPanel.Dock="Right" 
-                                            Grid.Column="1" Style="{StaticResource DarkRedButton}"
-                                            Foreground="{StaticResource VSText}"/>
-                                </Border>
-                            </Grid>
-                            <DataGrid ItemsSource="{Binding Log}" 
-                                      Grid.Row="1" 
-                                      AutoGenerateColumns="False" 
-                                      CanUserResizeColumns="False" 
-                                      CanUserSortColumns="False" 
-                                      GridLinesVisibility="None"
-                                      HeadersVisibility="None"                                       
-                                      Background="{StaticResource VSDark3Brush}" 
-                                      BorderBrush="{StaticResource VSDark1Brush}" 
-                                      BorderThickness="1" 
-                                      VerticalScrollBarVisibility="Visible" 
-                                      HorizontalScrollBarVisibility="Hidden"
-                                      ScrollViewer.CanContentScroll="False" 
-                                      Style="{StaticResource LoggerDataGrid}">
-                                <DataGrid.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="Background" Value="{StaticResource VSDark3Brush}"/>
-                                        <Setter Property="BorderBrush" Value="{StaticResource VSDark3Brush}"/>
-                                        <Setter Property="Foreground" Value="{StaticResource VSText}"/>
-                                    </Style>
-                                </DataGrid.CellStyle>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Binding="{Binding Time}" 
-                                                        Width="50" 
-                                                        Header="Time" 
-                                                        IsReadOnly="True"/>
-                                    <DataGridTextColumn Binding="{Binding Message}" 
-                                                        Width="*" 
-                                                        Header="Message" 
-                                                        IsReadOnly="True">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style>
-                                                <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>-->
                     </Border>
                 </DockPanel>
                 <GridSplitter Grid.Row ="1" 

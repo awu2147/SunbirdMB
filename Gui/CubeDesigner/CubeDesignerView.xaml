@@ -16,7 +16,7 @@
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/CubeDesignerButtonItem.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <local:StyleConverter x:Key="StyleConverter"/>
+            <local:SelectedStyleConverter x:Key="SelectedStyleConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -26,8 +26,8 @@
         </Grid.RowDefinitions>
         <DockPanel Background="{StaticResource VSDark3Brush}">
             <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                            BorderThickness="1" 
-                            Margin="1,1,2,1">
+                    BorderThickness="1" 
+                    Margin="1,1,2,1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -36,27 +36,28 @@
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                     BorderThickness="1">
                         <TextBlock Text="Cube Designer"
-                                           Padding="3,2,3,2" 
-                                           Foreground="{StaticResource VSText}" 
-                                           Margin="1" 
-                                           Background="{StaticResource VSDark1Brush}"
-                                           VerticalAlignment="Center"/>
+                                   Padding="3,2,3,2" 
+                                   Foreground="{StaticResource VSText}" 
+                                   Margin="1" 
+                                   Background="{StaticResource VSDark1Brush}"
+                                   VerticalAlignment="Center"/>
                     </Border>
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                     BorderThickness="1" 
                                     Grid.Row="1">
                         <TabControl Background="{StaticResource VSDark3Brush}" 
-                                            BorderThickness="0" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}" SelectedIndex="0">
+                                    BorderThickness="0"
+                                    SelectedItem="{Binding SelectedTab, Mode=OneWayToSource}">
                             <TabItem Header="Top" 
-                                             Foreground="{StaticResource VSText}"
-                                             Width="78">
+                                     Foreground="{StaticResource VSText}"
+                                     Width="78">
                                 <ScrollViewer Style="{StaticResource LeftScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeTopCollection, Mode=TwoWay}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Command="{Binding C_MouseDown}">
                                                     <Button.Style>
-                                                        <MultiBinding Converter="{StaticResource StyleConverter}">
+                                                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
                                                             <Binding Path="Selected"/>
                                                             <Binding Source="{StaticResource CubeDesignerItemStyle}" />
                                                             <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
@@ -65,7 +66,7 @@
                                                     <Image Height="75">
                                                         <Image.Source>
                                                             <CroppedBitmap Source="{Binding ImagePath}" 
-                                                                                   SourceRect="{Binding SourceRect}"/>
+                                                                           SourceRect="{Binding SourceRect}"/>
                                                         </Image.Source>
                                                     </Image>
                                                 </Button>
@@ -80,15 +81,15 @@
                                 </ScrollViewer>
                             </TabItem>
                             <TabItem Header="Base"
-                                             Foreground="{StaticResource VSText}" 
-                                             Width="78">
+                                     Foreground="{StaticResource VSText}" 
+                                     Width="78">
                                 <ScrollViewer Style="{StaticResource LeftScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeBaseCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Command="{Binding C_MouseDown}">
                                                     <Button.Style>
-                                                        <MultiBinding Converter="{StaticResource StyleConverter}">
+                                                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
                                                             <Binding Path="Selected"/>
                                                             <Binding Source="{StaticResource CubeDesignerItemStyle}" />
                                                             <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
@@ -97,7 +98,7 @@
                                                     <Image Height="75">
                                                         <Image.Source>
                                                             <CroppedBitmap Source="{Binding ImagePath}" 
-                                                                                   SourceRect="{Binding SourceRect}"/>
+                                                                           SourceRect="{Binding SourceRect}"/>
                                                         </Image.Source>
                                                     </Image>
                                                 </Button>
@@ -117,27 +118,28 @@
             </Border>
         </DockPanel>
         <DockPanel Grid.Row="1" 
-                               Background="{StaticResource VSDark3Brush}" Margin="0,-3,0,0">
+                   Background="{StaticResource VSDark3Brush}" 
+                   Margin="0,-3,0,0">
             <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                            BorderThickness="1" 
-                            Margin="1,0,2,1">
+                    BorderThickness="1" 
+                    Margin="1,0,2,1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                    BorderThickness="1">
+                            BorderThickness="1">
                         <TextBlock Text="Properties"
-                                           Padding="3,2,3,2" 
-                                           Foreground="{StaticResource VSText}" 
-                                           Margin="1" 
-                                           Background="{StaticResource VSDark1Brush}"
-                                           VerticalAlignment="Center"/>
+                                   Padding="3,2,3,2" 
+                                   Foreground="{StaticResource VSText}" 
+                                   Margin="1" 
+                                   Background="{StaticResource VSDark1Brush}"
+                                   VerticalAlignment="Center"/>
                     </Border>
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                    BorderThickness="1" 
-                                    Grid.Row="1">
+                            BorderThickness="1" 
+                            Grid.Row="1">
                         <Grid Margin="1">
                             <Grid.DataContext>
                                 <Binding Path="CurrentMetadata"/>

@@ -65,7 +65,7 @@ namespace SunbirdMB
 
         private void Import()
         {
-            var selectedTab = CubeDesignerViewModel.SelectedTab as TabItem;
+            var selectedTab = CubeDesignerViewModel.SelectedTab;
 
             var appPath = Assembly.GetExecutingAssembly().Location;
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));

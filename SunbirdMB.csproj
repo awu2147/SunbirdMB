@@ -106,6 +106,7 @@
     <Compile Include="Gui\Logger\Logger.xaml.cs">
       <DependentUpon>Logger.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\SelectedStyleConverter.cs" />
     <Compile Include="Interfaces\IContent.cs" />
     <Compile Include="Interfaces\IMainGame.cs" />
     <Compile Include="Tools\ContentBuilder.cs" />

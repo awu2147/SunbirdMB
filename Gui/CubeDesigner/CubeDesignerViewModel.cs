@@ -24,7 +24,6 @@ namespace SunbirdMB.Gui
         public ObservableCollection<CubeDesignerItem> CubeTopCollection { get; set; } = new ObservableCollection<CubeDesignerItem>();
         public ObservableCollection<CubeDesignerItem> CubeBaseCollection { get; set; } = new ObservableCollection<CubeDesignerItem>();
 
-
         private TabItem selectedTab;
         public TabItem SelectedTab
         {
@@ -222,20 +221,4 @@ namespace SunbirdMB.Gui
         }
     }
 
-    public class StyleConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            bool? dataValue = values[0] as bool?;
-            Style firstStyle = values[1] as Style;
-            Style secondStyle = values[2] as Style;
-
-            return dataValue.Equals(false) ? firstStyle : secondStyle;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
 }

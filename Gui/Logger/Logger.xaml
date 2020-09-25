@@ -16,7 +16,6 @@
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/CubeDesignerButtonItem.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <local:StyleConverter x:Key="StyleConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>

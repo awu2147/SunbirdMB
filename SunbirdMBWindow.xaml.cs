@@ -22,17 +22,16 @@ namespace SunbirdMB
     /// </summary>
     public partial class SunbirdMBWindow : Window
     {
-        private SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
         internal SunbirdMBGame SunbirdMBGame { get; set; }
-
-        private Config Config { get; set; }
+        private SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
+        private Config Config { get; set; }        
 
         public SunbirdMBWindow()
         {
             InitializeComponent();
 
             SunbirdMBGame = MainGame;
-            SunbirdMBGame.Loaded += SunbirdMBGame_Loaded;
+            SunbirdMBGame.Loaded += Game_Loaded;
 
             SunbirdMBWindowViewModel = new SunbirdMBWindowViewModel();
             SunbirdMBWindowViewModel.SunbirdMBGame = SunbirdMBGame;
@@ -50,18 +49,18 @@ namespace SunbirdMB
 
         }
 
-        private void SunbirdMBGame_Loaded(object sender, EventArgs e)
+        private void Game_Loaded(object sender, EventArgs e)
         {
             Config.LoadGameParameters(SunbirdMBGame);
 
             SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
-            SizeChanged += MainWindow_SizeChanged;
-            Closed += MainWindow_Closed;
+            SizeChanged += Window_SizeChanged;
+            Closed += Window_Closed;
 
             SunbirdMBWindowViewModel.OnMainGameLoaded(SunbirdMBGame);
         }
 
-        private void MainWindow_Closed(object sender, EventArgs e)
+        private void Window_Closed(object sender, EventArgs e)
         {
             SunbirdMBGame.SaveAndSerialize();
             Config.SaveApplicationParameters(this);
@@ -69,51 +68,9 @@ namespace SunbirdMB
             Config.Serialize();
         }
 
-        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
-        }
-
-        private void Clear_Log_Click(object sender, RoutedEventArgs e)
-        {
-            LoggerViewModel.Log.Clear();
-        }
-
-        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            "clicked".Log();
-            sender.GetType().ToString().Log();
-
-            Image image = sender as Image;
-            var bmi = image.Source as CroppedBitmap;
-            bmi.Source.ToString().Log();
-        }
-
-        private void TextBox_IntegerOnly(object sender, TextCompositionEventArgs e)
-        {
-            try
-            {
-                Convert.ToDouble(e.Text);
-            }
-            catch
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void TextBox_DoubleOnly(object sender, TextCompositionEventArgs e)
-        {
-            if (e.Text != ".")
-            {
-                try
-                {
-                    Convert.ToDouble(e.Text);
-                }
-                catch
-                {
-                    e.Handled = true;
-                }
-            }
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
