@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -58,7 +60,12 @@ namespace SunbirdMB
             : base(mainGame, graphicsDevice, content)
         {
             this.saveFilePath = path;
-            if (mainGame.cleanLoad)
+            var appPath = Assembly.GetExecutingAssembly().Location;
+            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
+            Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
+            var svp = Path.Combine(appDirectory, path);
+            Debug.Assert(svp == @"D:\SunbirdMB\bin\Debug\MapBuilderSave.xml");
+            if (mainGame.cleanLoad || !File.Exists(svp))
             {
                 CreateContent();
             }

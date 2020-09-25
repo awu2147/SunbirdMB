@@ -42,8 +42,6 @@ namespace SunbirdMB.Gui
 
         internal void Initialize()
         {
-            //CubeTopCollection = new ObservableCollection<CubeDesignerItem>();
-            //CubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
             CubeTopCollection.CollectionChanged += CubeTopCollection_CollectionChanged;
             CubeBaseCollection.CollectionChanged += CubeBaseCollection_CollectionChanged;
             // Start off by populating the cube designer. We can also load/create metadata files here, and add the resulting 
@@ -51,6 +49,29 @@ namespace SunbirdMB.Gui
             Import(CubePart.All);
             // Rebuild the .pngs into .xnb files.
             ContentBuilder.RebuildContent();
+
+            SubscribeHandlers();
+        }
+
+        internal void SubscribeHandlers()
+        {
+            PropertyChanged += CubeDesignerViewModel_PropertyChanged; ;
+        }
+
+        private void CubeDesignerViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedTab")
+            {
+                switch (selectedTab.Header)
+                {
+                    case "Top":
+                        CurrentMetadata = CubeFactory.CurrentCubeTopMetaData;
+                        break;
+                    case "Base":
+                        CurrentMetadata = CubeFactory.CurrentCubeBaseMetaData;
+                        break;
+                }
+            }
         }
 
         private void CubeBaseCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

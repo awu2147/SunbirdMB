@@ -14,8 +14,8 @@ namespace SunbirdMB.Core
 {
     public class AnimArgs
     {
-        public int StartFrame { get; set; }
-        public int CurrentFrame { get; set; }
+        public int StartFrame { get; set; } = 1;
+        public int CurrentFrame { get; set; } = 1;
         public int FramesInLoop { get; set; } = 1;
         public float FrameSpeed { get; set; } = 0.133f;
         public AnimationState AnimState { get; set; } = AnimationState.None;
@@ -50,8 +50,8 @@ namespace SunbirdMB.Core
         public SpriteSheet SpriteSheet { get; set; }
         public Vector2 Position { get { return Sprite.Position + Sprite.PositionOffset; } }
 
-        public int StartFrame { get; set; }
-        public int CurrentFrame { get; set; }
+        public int StartFrame { get; set; } = 1;
+        public int CurrentFrame { get; set; } = 1;
         public int FramesInLoop { get; set; } = 1;
         public int FrameCounter { get; set; }
         public float FrameSpeed { get; set; } = 0.133f;
@@ -62,7 +62,7 @@ namespace SunbirdMB.Core
         private Animator() { }
 
         public Animator(Sprite owner, SpriteSheet spriteSheet) 
-            : this(owner, spriteSheet, 0, 0, 1, 0.133f, AnimationState.None) { }
+            : this(owner, spriteSheet, 1, 1, 1, 0.133f, AnimationState.None) { }
 
         public Animator(Sprite owner, SpriteSheet spriteSheet, int startFrame, int currentFrame, int frameCount, float frameSpeed, AnimationState animState)
         {
@@ -163,7 +163,7 @@ namespace SunbirdMB.Core
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, float alpha)
         {
             spriteBatch.Draw(SpriteSheet.Texture, Position,
-            new Rectangle(PositionMap[CurrentFrame].X, PositionMap[CurrentFrame].Y,
+            new Rectangle(PositionMap[CurrentFrame - 1].X, PositionMap[CurrentFrame - 1].Y,
             SpriteSheet.FrameWidth, SpriteSheet.FrameHeight), Color.White * alpha);
         }
     }

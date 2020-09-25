@@ -45,12 +45,12 @@
     <Color x:Key="VSDark2">#2d2d30</Color>
     <Color x:Key="VSDark3">#252526</Color>
     <Color x:Key="VSDark4">#1e1e1e</Color>
+    <Color x:Key="VSText">WhiteSmoke</Color>
 
     <Brush x:Key="VSDark1Brush">#3e3e42</Brush>
     <Brush x:Key="VSDark2Brush">#2d2d30</Brush>
     <Brush x:Key="VSDark3Brush">#252526</Brush>
     <Brush x:Key="VSDark4Brush">#1e1e1e</Brush>
-
-    <Brush x:Key="VSText">WhiteSmoke</Brush>
+    <Brush x:Key="VSTextBrush">WhiteSmoke</Brush>
 
 </ResourceDictionary>

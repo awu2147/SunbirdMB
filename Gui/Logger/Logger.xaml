@@ -32,7 +32,7 @@
                                         BorderThickness="1">
                 <TextBlock Text="Logger" 
                                                Padding="3,2,3,2" 
-                                               Foreground="{StaticResource VSText}" 
+                                               Foreground="{StaticResource VSTextBrush}" 
                                                Margin="1" 
                                                Background="{StaticResource VSDark1Brush}"
                                                VerticalAlignment="Center"/>
@@ -44,7 +44,7 @@
                                             Command="{Binding C_ClearLog}" 
                                             DockPanel.Dock="Right" 
                                             Grid.Column="1" Style="{StaticResource DarkRedButton}"
-                                            Foreground="{StaticResource VSText}"/>
+                                            Foreground="{StaticResource VSTextBrush}"/>
             </Border>
         </Grid>
         <DataGrid ItemsSource="{Binding Log}" 
@@ -65,7 +65,7 @@
                 <Style TargetType="DataGridCell">
                     <Setter Property="Background" Value="{StaticResource VSDark3Brush}"/>
                     <Setter Property="BorderBrush" Value="{StaticResource VSDark3Brush}"/>
-                    <Setter Property="Foreground" Value="{StaticResource VSText}"/>
+                    <Setter Property="Foreground" Value="{StaticResource VSTextBrush}"/>
                 </Style>
             </DataGrid.CellStyle>
             <DataGrid.Columns>

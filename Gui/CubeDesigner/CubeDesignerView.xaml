@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SunbirdMB.Gui"
+             xmlns:local="clr-namespace:SunbirdMB.Gui"             
+             xmlns:framework="clr-namespace:SunbirdMB.Framework"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -13,10 +15,18 @@
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkVerticalScrollBar.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkTabControl.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkTextBox.xaml"/>
+                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkComboBox.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/CubeDesignerButtonItem.xaml"/>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <local:SelectedStyleConverter x:Key="SelectedStyleConverter"/>
+            <local:SigFigConverter x:Key="SigFigConverter"/>
+            <ObjectDataProvider x:Key="AnimStateEnum" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="framework:AnimationState"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -37,7 +47,7 @@
                                     BorderThickness="1">
                         <TextBlock Text="Cube Designer"
                                    Padding="3,2,3,2" 
-                                   Foreground="{StaticResource VSText}" 
+                                   Foreground="{StaticResource VSTextBrush}" 
                                    Margin="1" 
                                    Background="{StaticResource VSDark1Brush}"
                                    VerticalAlignment="Center"/>
@@ -49,7 +59,7 @@
                                     BorderThickness="0"
                                     SelectedItem="{Binding SelectedTab, Mode=OneWayToSource}">
                             <TabItem Header="Top" 
-                                     Foreground="{StaticResource VSText}"
+                                     Foreground="{StaticResource VSTextBrush}"
                                      Width="78">
                                 <ScrollViewer Style="{StaticResource LeftScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeTopCollection, Mode=TwoWay}">
@@ -81,7 +91,7 @@
                                 </ScrollViewer>
                             </TabItem>
                             <TabItem Header="Base"
-                                     Foreground="{StaticResource VSText}" 
+                                     Foreground="{StaticResource VSTextBrush}" 
                                      Width="78">
                                 <ScrollViewer Style="{StaticResource LeftScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeBaseCollection}">
@@ -132,7 +142,7 @@
                             BorderThickness="1">
                         <TextBlock Text="Properties"
                                    Padding="3,2,3,2" 
-                                   Foreground="{StaticResource VSText}" 
+                                   Foreground="{StaticResource VSTextBrush}" 
                                    Margin="1" 
                                    Background="{StaticResource VSDark1Brush}"
                                    VerticalAlignment="Center"/>
@@ -154,27 +164,39 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Label Content="Sheet Rows" Foreground="{StaticResource VSText}"/>
+                            <Label Content="Sheet Rows" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Column="1" Text="{Binding SheetRows}" PreviewTextInput="TextBox_IntegerOnly"
                                                  Style="{StaticResource DarkTextBox}"/>
 
-                            <Label Grid.Row="1" Content="Sheet Columns" Foreground="{StaticResource VSText}"/>
+                            <Label Grid.Row="1" Content="Sheet Columns" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SheetColumns}" PreviewTextInput="TextBox_IntegerOnly"
                                                  Style="{StaticResource DarkTextBox}"/>
 
-                            <Label Grid.Row="2" Content="Frame Count" Foreground="{StaticResource VSText}"/>
+                            <Label Grid.Row="2" Content="Frame Count" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FrameCount}" PreviewTextInput="TextBox_IntegerOnly"
                                                  Style="{StaticResource DarkTextBox}"/>
 
-                            <Label Grid.Row="3" Content="Start Frame" Foreground="{StaticResource VSText}"/>
+                            <Label Grid.Row="3" Content="Start Frame" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding StartFrame}" PreviewTextInput="TextBox_IntegerOnly"
                                                  Style="{StaticResource DarkTextBox}"/>
 
-                            <Label Grid.Row="4" Content="Frame Speed" Foreground="{StaticResource VSText}"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly"
+                            <Label Grid.Row="4" Content="Current Frame" Foreground="{StaticResource VSTextBrush}"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding CurrentFrame}" PreviewTextInput="TextBox_IntegerOnly"
                                                  Style="{StaticResource DarkTextBox}"/>
+
+                            <Label Grid.Row="5" Content="Frame Speed" Foreground="{StaticResource VSTextBrush}"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly"
+                                                 Style="{StaticResource DarkTextBox}"/>
+
+                            <Label Grid.Row="6" Content="Animation State" Foreground="{StaticResource VSTextBrush}"/>
+                            <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding Source={StaticResource AnimStateEnum}}" 
+                                      SelectedItem="{Binding AnimState}" Foreground="{StaticResource VSTextBrush}" Margin="1" 
+                                      Style="{StaticResource DarkComboBox}" ItemContainerStyle="{StaticResource DarkComboBoxItem}">
+                            </ComboBox>
 
                         </Grid>
                     </Border>

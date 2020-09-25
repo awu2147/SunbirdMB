@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SunbirdMB"
         xmlns:gui="clr-namespace:SunbirdMB.Gui"
         mc:Ignorable="d"
-        Title="Sunbird Map Builder" Height="620" Width="900">
+        Title="Sunbird Map Builder" Height="820" Width="900">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -46,7 +46,7 @@
                                    Width="24" 
                                    TextAlignment="Center" 
                                    Padding="2,1,2,1"
-                                   Foreground="{StaticResource VSText}"/>
+                                   Foreground="{StaticResource VSTextBrush}"/>
                         </MenuItem.Header>
                         <MenuItem Header="New"/>
                         <MenuItem Header="Open"/>
@@ -66,7 +66,7 @@
             </Grid.ColumnDefinitions>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="403"/>
+                    <RowDefinition Height="480"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <gui:CubeDesignerView>

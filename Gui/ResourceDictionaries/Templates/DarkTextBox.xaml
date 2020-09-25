@@ -38,7 +38,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="2"/>
-        <Setter Property="Foreground" Value="{StaticResource VSText}"/>
+        <Setter Property="Foreground" Value="{StaticResource VSTextBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource VSDark1Brush}"/>
         <Setter Property="Margin" Value="1"/>
         <!--<Style.Triggers>

@@ -44,7 +44,7 @@ namespace SunbirdMB.Core
             cube.AnimatorTop = new Animator(cube, spriteSheet, cubeTopMD.StartFrame, cubeTopMD.CurrentFrame, cubeTopMD.FrameCount, cubeTopMD.FrameSpeed, cubeTopMD.AnimState);
             if (IsRandomTop == true && cubeTopMD.AnimState == AnimationState.None)
             {
-                cube.AnimatorTop.CurrentFrame = rand.Next(0, cube.AnimatorTop.FramesInLoop);
+                cube.AnimatorTop.CurrentFrame = rand.Next(1, cube.AnimatorTop.FramesInLoop + 1);
             }
             else
             {
@@ -56,7 +56,7 @@ namespace SunbirdMB.Core
             cube.AnimatorBase = new Animator(cube, spriteSheetBase, cubeBaseMD.StartFrame, cubeBaseMD.CurrentFrame, cubeBaseMD.FrameCount, cubeBaseMD.FrameSpeed, cubeBaseMD.AnimState);
             if (IsRandomBase == true && cubeBaseMD.AnimState == AnimationState.None)
             {
-                cube.AnimatorBase.CurrentFrame = rand.Next(0, cube.AnimatorBase.FramesInLoop);
+                cube.AnimatorBase.CurrentFrame = rand.Next(1, cube.AnimatorBase.FramesInLoop + 1);
             }
             else
             {

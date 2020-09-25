@@ -26,40 +26,110 @@ namespace SunbirdMB.Core
         public int SheetRows
         {
             get { return sheetRows; }
-            set { SetProperty(ref sheetRows, value); }
+            set
+            {
+                if (value < 1)
+                {
+                    SetProperty(ref sheetRows, 1);
+                }
+                else
+                {
+                    SetProperty(ref sheetRows, value);
+                }
+            }
         }
 
         private int sheetColumns = 1;
         public int SheetColumns
         {
             get { return sheetColumns; }
-            set { SetProperty(ref sheetColumns, value); }
+            set 
+            {
+                if (value < 1)
+                {
+                    SetProperty(ref sheetColumns, 1);
+                }
+                else
+                {
+                    SetProperty(ref sheetColumns, value);
+                }
+            }
         }
 
         private int frameCount = 1;
         public int FrameCount
         {
             get { return frameCount; }
-            set { SetProperty(ref frameCount, value); }
+            set
+            {
+                if (value < 1)
+                {
+                    SetProperty(ref frameCount, 1);
+                }
+                else
+                {
+                    SetProperty(ref frameCount, value);
+                }
+            }
         }
 
-        private int startFrame = 0;
+        private int startFrame = 1;
         public int StartFrame
         {
             get { return startFrame; }
-            set { SetProperty(ref startFrame, value); }
+            set
+            {
+                if (value < 1)
+                {
+                    SetProperty(ref startFrame, 1);
+                }
+                else
+                {
+                    SetProperty(ref startFrame, value);
+                }
+            }
+        }
+
+        private int currentFrame = 1;
+        public int CurrentFrame
+        {
+            get { return currentFrame; }
+            set
+            {
+                if (value < 1)
+                {
+                    SetProperty(ref currentFrame, 1);
+                }
+                else
+                {
+                    SetProperty(ref currentFrame, value);
+                }
+            }
         }
 
         private float frameSpeed = 0.133f;
         public float FrameSpeed
         {
             get { return frameSpeed; }
-            set { SetProperty(ref frameSpeed, value); }
+            set
+            {
+                if (value < 0.0166f)
+                {
+                    SetProperty(ref frameSpeed, 0.0166f);
+                }
+                else
+                {
+                    SetProperty(ref frameSpeed, value);
+                }
+            }
         }
 
-        public int CurrentFrame { get; set; } = 0;
-
-        public AnimationState AnimState { get; set; } = AnimationState.None;
+        private AnimationState animState;
+        public AnimationState AnimState
+        {
+            get { return animState; }
+            set { SetProperty(ref animState, value); }
+        }
 
         public CubeMetadata() { }
 

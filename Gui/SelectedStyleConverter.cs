@@ -24,4 +24,25 @@ namespace SunbirdMB.Gui
             throw new NotSupportedException();
         }
     }
+
+    /// <summary>
+    /// Default numeric converter with no offset.
+    /// </summary>
+    public class SigFigConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int val = (int)value;
+            if (val < 1)
+            {
+                return 1;
+            }
+            return val;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return System.Convert.ToInt32(value);
+        }
+    }
 }
