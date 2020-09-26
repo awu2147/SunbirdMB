@@ -96,9 +96,9 @@
                 <Border.BorderBrush>
                     <LinearGradientBrush EndPoint="0,1"
                              StartPoint="0,0">
-                        <GradientStop Color="{DynamicResource BorderLightColor}"
+                        <GradientStop Color="{StaticResource BorderLightColor}"
                         Offset="0" />
-                        <GradientStop Color="{DynamicResource BorderDarkColor}"
+                        <GradientStop Color="{StaticResource BorderDarkColor}"
                         Offset="1" />
                     </LinearGradientBrush>
                 </Border.BorderBrush>
@@ -108,8 +108,8 @@
                              EndPoint="0,1">
                         <LinearGradientBrush.GradientStops>
                             <GradientStopCollection>
-                                <GradientStop Color="{DynamicResource ControlLightColor}" />
-                                <GradientStop Color="{DynamicResource ControlMediumColor}"
+                                <GradientStop Color="{StaticResource ControlLightColor}" />
+                                <GradientStop Color="{StaticResource ControlMediumColor}"
                             Offset="1.0" />
                             </GradientStopCollection>
                         </LinearGradientBrush.GradientStops>
@@ -131,7 +131,7 @@
           VerticalAlignment="Center"
           Data="M 0 0 L 4 4 L 8 0 Z" >
                 <Path.Fill>
-                    <SolidColorBrush Color="{DynamicResource GlyphColor}"/>
+                    <SolidColorBrush Color="{StaticResource GlyphColor}"/>
                 </Path.Fill>
             </Path>
         </Grid>
@@ -167,16 +167,6 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="PART_EditableTextBox"
-                                                Storyboard.TargetProperty="(TextElement.Foreground).
-                                                (SolidColorBrush.Color)">
-                                            <EasingColorKeyFrame KeyTime="0"
-                                         Value="Aqua" />
-                                        </ColorAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="PART_EditableTextBox"
@@ -244,9 +234,9 @@
                   MinWidth="{TemplateBinding ActualWidth}"
                   MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <Border x:Name="DropDownBorder" BorderThickness="1">
-                                    <Border.BorderBrush>
-                                        <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                                    </Border.BorderBrush>
+                                    <!--<Border.BorderBrush>
+                                        <SolidColorBrush Color="{StaticResource BorderMediumColor}" />
+                                    </Border.BorderBrush>-->
                                     <Border.Background>
                                         <SolidColorBrush Color="{StaticResource VSDark2}" />
                                     </Border.Background>

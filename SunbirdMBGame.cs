@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.WpfInterop;
 using Sunbird.Core;
@@ -54,7 +55,7 @@ namespace SunbirdMB
 
             services = new ServiceContainer();
             services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceManager);
-            Content = new Microsoft.Xna.Framework.Content.ContentManager(services);
+            Content = new ContentManager(services);
 
             Serializer.ExtraTypes = new Type[]
             {
@@ -73,6 +74,7 @@ namespace SunbirdMB
             Content.RootDirectory = "Content";
 
             CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
+
         }
 
         internal void SaveAndSerialize()
@@ -105,7 +107,6 @@ namespace SunbirdMB
 
         protected override void Draw(GameTime gameTime)
         {
-            // get and cache the wpf rendertarget (there is always a default rendertarget)
             var wpfRenderTarget = (RenderTarget2D)GraphicsDevice.GetRenderTargets()[0].RenderTarget;
             GraphicsDevice.SetRenderTarget(wpfRenderTarget);
             GraphicsDevice.Clear(GraphicsHelper.HexColor("#1e1e1e"));

@@ -9,11 +9,11 @@
     <LinearGradientBrush x:Key="MenuPopupBrush"
                      EndPoint="0.5,1"
                      StartPoint="0.5,0">
-        <GradientStop Color="{DynamicResource ControlLightColor}"
+        <GradientStop Color="{StaticResource ControlLightColor}"
                 Offset="0" />
-        <GradientStop Color="{DynamicResource ControlMediumColor}"
+        <GradientStop Color="{StaticResource ControlMediumColor}"
                 Offset="0.5" />
-        <GradientStop Color="{DynamicResource ControlLightColor}"
+        <GradientStop Color="{StaticResource ControlLightColor}"
                 Offset="1" />
     </LinearGradientBrush>
 
@@ -54,9 +54,9 @@
                                  EndPoint="0,1">
                                 <LinearGradientBrush.GradientStops>
                                     <GradientStopCollection>
-                                        <GradientStop Color="{DynamicResource BorderMediumColor}"
+                                        <GradientStop Color="{StaticResource BorderMediumColor}"
                                 Offset="0.0" />
-                                        <GradientStop Color="{DynamicResource BorderDarkColor}"
+                                        <GradientStop Color="{StaticResource BorderDarkColor}"
                                 Offset="1.0" />
                                     </GradientStopCollection>
                                 </LinearGradientBrush.GradientStops>
@@ -67,8 +67,8 @@
                                  EndPoint="0,1">
                                 <LinearGradientBrush.GradientStops>
                                     <GradientStopCollection>
-                                        <GradientStop Color="{DynamicResource ControlLightColor}"/>
-                                        <GradientStop Color="{DynamicResource ControlMediumColor}"
+                                        <GradientStop Color="{StaticResource ControlLightColor}"/>
+                                        <GradientStop Color="{StaticResource ControlMediumColor}"
                                 Offset="1.0" />
                                     </GradientStopCollection>
                                 </LinearGradientBrush.GradientStops>
@@ -106,7 +106,7 @@
                 Data="{Binding Content, 
             RelativeSource={RelativeSource TemplatedParent}}" >
                             <Path.Fill>
-                                <SolidColorBrush Color="{DynamicResource GlyphColor}"/>
+                                <SolidColorBrush Color="{StaticResource GlyphColor}"/>
                             </Path.Fill>
                         </Path>
                     </Border>
@@ -186,9 +186,9 @@
                                  EndPoint="1,0">
                                 <LinearGradientBrush.GradientStops>
                                     <GradientStopCollection>
-                                        <GradientStop Color="{DynamicResource BorderLightColor}"
+                                        <GradientStop Color="{StaticResource BorderLightColor}"
                                 Offset="0.0" />
-                                        <GradientStop Color="{DynamicResource BorderDarkColor}"
+                                        <GradientStop Color="{StaticResource BorderDarkColor}"
                                 Offset="1.0" />
                                     </GradientStopCollection>
                                 </LinearGradientBrush.GradientStops>
@@ -201,9 +201,9 @@
                                  EndPoint="1,0">
                                 <LinearGradientBrush.GradientStops>
                                     <GradientStopCollection>
-                                        <GradientStop Color="{DynamicResource ControlLightColor}"
+                                        <GradientStop Color="{StaticResource ControlLightColor}"
                                 Offset="0.0" />
-                                        <GradientStop Color="{DynamicResource ControlMediumColor}"
+                                        <GradientStop Color="{StaticResource ControlMediumColor}"
                                 Offset="1.0" />
                                     </GradientStopCollection>
                                 </LinearGradientBrush.GradientStops>
@@ -241,7 +241,7 @@
                         <Border Grid.Column="1"
                   BorderThickness="0,1,1,1">
                             <Border.BorderBrush>
-                                <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
+                                <SolidColorBrush Color="{StaticResource BorderMediumColor}" />
                             </Border.BorderBrush>
                         </Border>
                         <ScrollBar x:Name="PART_VerticalScrollBar"

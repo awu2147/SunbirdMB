@@ -59,7 +59,7 @@
                                       BorderThickness="1" 
                                       VerticalScrollBarVisibility="Visible" 
                                       HorizontalScrollBarVisibility="Hidden"
-                                      ScrollViewer.CanContentScroll="False" 
+                                      ScrollViewer.CanContentScroll="false" 
                                       Style="{StaticResource LoggerDataGrid}">
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">

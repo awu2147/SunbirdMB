@@ -29,6 +29,17 @@ namespace SunbirdMB.Core
             DepthFormat.None);
         }
 
+        public static RenderTarget2D NewRenderTarget2D(GraphicsDevice graphicsDevice, int width, int height)
+        {
+            return new RenderTarget2D(
+            graphicsDevice,
+            width,
+            height,
+            true,
+            graphicsDevice.PresentationParameters.BackBufferFormat,
+            DepthFormat.None);
+        }
+
         /// <summary>
         /// <para>Takes an original color array and returns a new array which only includes data points contained inside the destination rectangle.</para>
         /// <para>The returned array will be ordered from top-left to bottom-right, like the original. The given the rectangle must lie within the original area.</para>

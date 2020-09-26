@@ -14,6 +14,8 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using SunbirdMB.Tools;
 using System.Windows.Data;
+using System.Windows.Media.Animation;
+using System.Windows.Interop;
 
 namespace SunbirdMB
 {
@@ -24,7 +26,9 @@ namespace SunbirdMB
     {
         internal SunbirdMBGame SunbirdMBGame { get; set; }
         private SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
-        private Config Config { get; set; }        
+        private Config Config { get; set; }
+
+        private bool gameLoaded;
 
         public SunbirdMBWindow()
         {
@@ -49,15 +53,53 @@ namespace SunbirdMB
 
         }
 
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+            source.AddHook(WndProc);
+        }
+
+        const int WM_SIZING = 0x214;
+        const int WM_EXITSIZEMOVE = 0x0232;
+        private static bool WindowWasResized = false;
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_SIZING)
+            {
+                if (WindowWasResized == false)
+                {
+                    //    'indicate the the user is resizing and not moving the window
+                    WindowWasResized = true;
+                }
+            }
+            // Handle messages...
+            if (msg == WM_EXITSIZEMOVE && WindowWasResized && gameLoaded)
+            {
+                SunbirdMBWindowViewModel.GameWidth = (int)MainGamePanel.ActualWidth;
+                SunbirdMBWindowViewModel.GameHeight = (int)MainGamePanel.ActualHeight;
+                SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
+                Console.WriteLine("WM_EXITSIZEMOVE");
+                WindowWasResized = false;
+            }
+
+            return IntPtr.Zero;
+        }
+
         private void Game_Loaded(object sender, EventArgs e)
         {
             Config.LoadGameParameters(SunbirdMBGame);
 
+            SunbirdMBWindowViewModel.GameWidth = (int)MainGamePanel.ActualWidth;
+            SunbirdMBWindowViewModel.GameHeight = (int)MainGamePanel.ActualHeight;
             SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
-            SizeChanged += Window_SizeChanged;
+            //SizeChanged += Window_SizeChanged;
             Closed += Window_Closed;
 
             SunbirdMBWindowViewModel.OnMainGameLoaded(SunbirdMBGame);
+
+            gameLoaded = true;
         }
 
         private void Window_Closed(object sender, EventArgs e)

@@ -38,6 +38,20 @@ namespace SunbirdMB
             set { SetProperty(ref loggerViewModel, value); }
         }
 
+        private int gameWidth = 900;
+        public int GameWidth
+        {
+            get { return gameWidth; }
+            set { SetProperty(ref gameWidth, value); }
+        }
+
+        private int gameHeight = 600;
+        public int GameHeight
+        {
+            get { return gameHeight; }
+            set { SetProperty(ref gameHeight, value); }
+        }
+
         public SunbirdMBGame SunbirdMBGame { get; set; }
 
         public SunbirdMBWindowViewModel()

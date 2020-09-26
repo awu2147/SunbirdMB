@@ -9,11 +9,11 @@
     <LinearGradientBrush x:Key="MenuPopupBrush"
                      EndPoint="0.5,1"
                      StartPoint="0.5,0">
-        <GradientStop Color="{DynamicResource ControlLightColor}"
+        <GradientStop Color="{StaticResource ControlLightColor}"
                 Offset="0" />
-        <GradientStop Color="{DynamicResource ControlMediumColor}"
+        <GradientStop Color="{StaticResource ControlMediumColor}"
                 Offset="0.5" />
-        <GradientStop Color="{DynamicResource ControlLightColor}"
+        <GradientStop Color="{StaticResource ControlLightColor}"
                 Offset="1" />
     </LinearGradientBrush>
 
@@ -76,14 +76,14 @@
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,1"
                                    StartPoint="0.5,0">
-                                    <GradientStop Color="{DynamicResource ContentAreaColorLight}"
+                                    <GradientStop Color="{StaticResource ContentAreaColorLight}"
                               Offset="0" />
-                                    <GradientStop Color="{DynamicResource ContentAreaColorDark}"
+                                    <GradientStop Color="{StaticResource ContentAreaColorDark}"
                               Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>
                             <Border.BorderBrush>
-                                <SolidColorBrush Color="{DynamicResource BorderMediumColor}"/>
+                                <SolidColorBrush Color="{StaticResource BorderMediumColor}"/>
                             </Border.BorderBrush>
                             <ContentPresenter x:Name="PART_SelectedContentHost"
                               Margin="4"
@@ -140,22 +140,19 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Border x:Name="Border"
-                  Margin="0,0,0,0"
-                  BorderThickness="1,1,1,1"
-                  CornerRadius="0,0,0,0">
-                            <Border.BorderBrush>
-                                <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                            </Border.BorderBrush>
+                        <Border x:Name="Border" BorderThickness="1">
+                            <!--<Border.BorderBrush>
+                                <SolidColorBrush Color="{StaticResource BorderMediumColor}" />
+                            </Border.BorderBrush>-->
                             <Border.Background>
 
                                 <LinearGradientBrush StartPoint="0,0"
                                    EndPoint="0,1">
                                     <LinearGradientBrush.GradientStops>
                                         <GradientStopCollection>
-                                            <GradientStop Color="{DynamicResource ControlLightColor}"
+                                            <GradientStop Color="{StaticResource ControlLightColor}"
                                   Offset="0.0" />
-                                            <GradientStop Color="{DynamicResource ControlMediumColor}"
+                                            <GradientStop Color="{StaticResource ControlMediumColor}"
                                   Offset="1.0" />
                                         </GradientStopCollection>
                                     </LinearGradientBrush.GradientStops>

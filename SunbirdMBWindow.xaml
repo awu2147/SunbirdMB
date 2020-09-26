@@ -99,7 +99,7 @@
                        Background="{StaticResource VSDark3Brush}">
                 <Border BorderBrush="{StaticResource VSDark1Brush}" 
                         BorderThickness="0">
-                    <local:SunbirdMBGame x:Name="MainGame" FocusVisualStyle="{x:Null}"/>
+                    <local:SunbirdMBGame x:Name="MainGame" FocusVisualStyle="{x:Null}" Width="{Binding GameWidth}" Height="{Binding GameHeight}"/>
                 </Border>
             </DockPanel>
             <GridSplitter Background="Transparent" 
