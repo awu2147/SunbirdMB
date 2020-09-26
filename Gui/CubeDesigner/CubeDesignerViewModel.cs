@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.Specialized;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -38,112 +39,110 @@ namespace SunbirdMB.Gui
             set { SetProperty(ref currentMetadata, value); }
         }
 
+        /// <summary>
+        /// This should be followed by a single Initialize() call.
+        /// </summary>
         public CubeDesignerViewModel() { }
 
+        /// <summary>
+        /// Call this after the constructor resolves. We leave the constructor empty to maintain compatibility with VS XAML designer.
+        /// </summary>
         internal void Initialize()
         {
-            CubeTopCollection.CollectionChanged += CubeTopCollection_CollectionChanged;
-            CubeBaseCollection.CollectionChanged += CubeBaseCollection_CollectionChanged;
+            // We add to the collections below when importing, so it is important to subscribe these handlers before calling Import().
+            // This will create garbage if Initialize() is called more than once.
+            CubeTopCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Top));
+            CubeBaseCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Base));
             // Start off by populating the cube designer. We can also load/create metadata files here, and add the resulting 
             // cube metadata objects to cube factory metadata collection. From the file paths, we can deduce the cube part type.
             Import(CubePart.All);
             // Rebuild the .pngs into .xnb files.
             ContentBuilder.RebuildContent();
 
-            SubscribeHandlers();
+            PropertyChanged += CubeDesignerViewModel_PropertyChanged;
         }
-
-        internal void SubscribeHandlers()
-        {
-            PropertyChanged += CubeDesignerViewModel_PropertyChanged; ;
-        }
-
-        private void CubeDesignerViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SelectedTab")
-            {
-                switch (selectedTab.Header)
-                {
-                    case "Top":
-                        CurrentMetadata = CubeFactory.CurrentCubeTopMetaData;
-                        break;
-                    case "Base":
-                        CurrentMetadata = CubeFactory.CurrentCubeBaseMetaData;
-                        break;
-                }
-            }
-        }
-
-        private void CubeBaseCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.OldItems)
-                    item.PropertyChanged -= CubeBaseCollectionItem_PropertyChanged;
-            }
-            if (e.NewItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.NewItems)
-                    item.PropertyChanged += CubeBaseCollectionItem_PropertyChanged;
-            }
-        }
-
-        private void CubeBaseCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            CubeDesignerItem cci = sender as CubeDesignerItem;
-            if (e.PropertyName == "Selected" && cci.Selected == true)
-            {
-                foreach (var item in CubeBaseCollection)
-                {
-                    if (item != cci)
-                    {
-                        item.Selected = false;
-                    }
-                }
-            }
-        }
-
-        private void CubeTopCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.OldItems)
-                    item.PropertyChanged -= CubeTopCollectionItem_PropertyChanged;
-            }
-            if (e.NewItems != null)
-            {
-                foreach (INotifyPropertyChanged item in e.NewItems)
-                    item.PropertyChanged += CubeTopCollectionItem_PropertyChanged;
-            }
-        }
-
-        private void CubeTopCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            CubeDesignerItem cci = sender as CubeDesignerItem;
-            if (e.PropertyName == "Selected" && cci.Selected == true)
-            {
-                foreach (var item in CubeTopCollection)
-                {
-                    if (item != cci)
-                    {
-                        item.Selected = false;
-                    }
-                }
-            }
-        }
-
         internal void OnMainGameLoaded(SunbirdMBGame mainGame)
         {
             // Once the main game has loaded, we have access to the content manager. We can now build our cube factory
             // library by creating textures from paths.
             CubeFactory.BuildLibrary(mainGame);
             // Initial current selections are set here.
-            CubeFactory.CurrentCubeTopMetaData = CubeFactory.CubeMetaDataLibrary[CubeTopCollection[0].ContentPath];
-            CubeFactory.CurrentCubeBaseMetaData = CubeFactory.CubeMetaDataLibrary[CubeBaseCollection[0].ContentPath];
+            // TODO: Currently we just pick the first item in our tabs.
+            SelectTop(CubeTopCollection[0]);
+            SelectBase(CubeBaseCollection[0]);
+            // Currently our metadata to display in the Properties window is just the current cube top.
+            // This just depends on which tab is selected on start-up.
+            CurrentMetadata = CubeFactory.CurrentCubeTopMetadata;
+        }
 
-            CubeTopCollection[0].Selected = true;
-            CubeBaseCollection[0].Selected = true;
-            CurrentMetadata = CubeFactory.CurrentCubeTopMetaData;
+        private void CubeDesignerViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedTab")
+            {
+                // If the selected tab changes, then we need to switch the metadata displayed in the Properties window.
+                switch (selectedTab.Header)
+                {
+                    case "Top":
+                        CurrentMetadata = CubeFactory.CurrentCubeTopMetadata;
+                        break;
+                    case "Base":
+                        CurrentMetadata = CubeFactory.CurrentCubeBaseMetadata;
+                        break;
+                }
+            }
+        }
+
+        private void CubeDesignerCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e, CubePart part)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (CubeDesignerItem item in e.NewItems)
+                {
+                    // CubeDesignerViewModel outlives CubeDesignerItem so no need to unsubscribe.
+                    item.PropertyChanged += new PropertyChangedEventHandler((_sender, _e) => CubeDesignerCollectionItem_PropertyChanged(_sender, _e, part));
+                }
+            }
+        }
+
+        private void CubeDesignerCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e, CubePart part)
+        {
+            CubeDesignerItem cdi = sender as CubeDesignerItem;
+            // Manage the selection and deselction of cube designer items here.
+            if (e.PropertyName == "Selected" && cdi.Selected == true)
+            {
+                if (part == CubePart.Top)
+                {
+                    foreach (var item in CubeTopCollection)
+                    {
+                        if (item != cdi)
+                        {
+                            item.Selected = false;
+                        }
+                    }
+                }
+                else if (part == CubePart.Base)
+                {
+                    foreach (var item in CubeBaseCollection)
+                    {
+                        if (item != cdi)
+                        {
+                            item.Selected = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SelectTop(CubeDesignerItem cubeDesignerItem)
+        {
+            CubeFactory.CurrentCubeTopMetadata = CubeFactory.CubeMetadataLibrary[cubeDesignerItem.ContentPath];
+            cubeDesignerItem.Selected = true;
+        }
+
+        private void SelectBase(CubeDesignerItem cubeDesignerItem)
+        {
+            CubeFactory.CurrentCubeBaseMetadata = CubeFactory.CubeMetadataLibrary[cubeDesignerItem.ContentPath];
+            cubeDesignerItem.Selected = true;
         }
 
         /// <summary>
@@ -183,7 +182,7 @@ namespace SunbirdMB.Gui
                 cmd.Serialize(metadata);
                 $"Creating {Path.GetFileName(metadata)}...".Log();
             }
-            CubeFactory.CubeMetaDataCollection.Add(cmd);
+            CubeFactory.CubeMetadataCollection.Add(cmd);
         }
 
         /// <summary>
@@ -236,7 +235,7 @@ namespace SunbirdMB.Gui
                         cmd.Serialize(metadata);
                         $"Creating {Path.GetFileName(metadata)}...".Log();
                     }
-                    CubeFactory.CubeMetaDataCollection.Add(cmd);
+                    CubeFactory.CubeMetadataCollection.Add(cmd);
                 }
             }
         }

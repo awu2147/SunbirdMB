@@ -27,10 +27,19 @@ namespace SunbirdMB
     public partial class SunbirdMBWindow : Window
     {
         internal SunbirdMBGame SunbirdMBGame { get; set; }
-        private SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
-        private Config Config { get; set; }
+        internal SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
+        internal Config Config { get; set; }
 
-        private bool gameLoaded;
+        internal bool gameLoaded;
+
+        private const int WM_SIZING = 0x214;
+        private const int WM_EXITSIZEMOVE = 0x0232;
+        private const int WM_SYSCOMMAND = 0x0112;
+        private readonly IntPtr SC_RESTORE = (IntPtr)0xF120;
+        private readonly IntPtr SC_MINIMIZE = (IntPtr)0XF020;
+        private readonly IntPtr SC_MAXIMIZE = (IntPtr)0xF030;
+        private static bool IsResizing = false;
+        private static bool WindowWasResized = false;
 
         public SunbirdMBWindow()
         {
@@ -73,15 +82,6 @@ namespace SunbirdMB
             source.AddHook(WndProc);
         }
 
-        const int WM_SIZING = 0x214;
-        const int WM_EXITSIZEMOVE = 0x0232;
-        const int WM_SYSCOMMAND = 0x0112;
-        IntPtr SC_RESTORE = (IntPtr)0xF120;
-        IntPtr SC_MINIMIZE = (IntPtr)0XF020;
-        IntPtr SC_MAXIMIZE = (IntPtr)0xF030;
-        private static bool IsResizing = false;
-        private static bool WindowWasResized = false;
-
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             IntPtr _wParam = (IntPtr)(wParam.ToInt32() & 0xFFF0);
@@ -101,20 +101,9 @@ namespace SunbirdMB
             }
             if (msg == WM_SYSCOMMAND)
             {
-                if (_wParam == SC_MAXIMIZE && gameLoaded)
+                if ((_wParam == SC_MAXIMIZE || _wParam == SC_MINIMIZE || _wParam == SC_RESTORE) && gameLoaded)
                 {
                     WindowWasResized = true;
-                    Console.WriteLine("maximize");
-                }
-                if (_wParam == SC_MINIMIZE && gameLoaded)
-                {
-                    WindowWasResized = true;
-                    Console.WriteLine("minimize");
-                }
-                if (_wParam == SC_RESTORE && gameLoaded)
-                {
-                    WindowWasResized = true;
-                    Console.WriteLine("restore");
                 }
             }
 
@@ -123,9 +112,10 @@ namespace SunbirdMB
 
         private void ResizeGameWindow()
         {
-            Console.WriteLine($"{(int)MainGamePanel.ActualWidth} {(int)MainGamePanel.ActualHeight}");
+            // Set back buffer size to panel size.
             SunbirdMBWindowViewModel.GameWidth = (int)MainGamePanel.ActualWidth;
             SunbirdMBWindowViewModel.GameHeight = (int)MainGamePanel.ActualHeight;
+            // Reposition camera.
             SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
         }
 
@@ -146,7 +136,6 @@ namespace SunbirdMB
         {            
             if (WindowWasResized)
             {
-                Console.WriteLine("size changed");
                 ResizeGameWindow();
                 WindowWasResized = false;
             }

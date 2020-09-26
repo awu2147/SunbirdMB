@@ -14,23 +14,23 @@ namespace SunbirdMB.Core
         public static bool IsRandomTop { get; set; }
         public static bool IsRandomBase { get; set; }
 
-        public static CubeMetadata CurrentCubeTopMetaData { get; set; }
-        public static CubeMetadata CurrentCubeBaseMetaData { get; set; }
+        public static CubeMetadata CurrentCubeTopMetadata { get; set; }
+        public static CubeMetadata CurrentCubeBaseMetadata { get; set; }
 
-        public static List<CubeMetadata> CubeMetaDataCollection { get; set; } = new List<CubeMetadata>();
+        public static List<CubeMetadata> CubeMetadataCollection { get; set; } = new List<CubeMetadata>();
 
-        public static XDictionary<string, CubeMetadata> CubeMetaDataLibrary { get; set; }
+        public static XDictionary<string, CubeMetadata> CubeMetadataLibrary { get; set; }
 
         public static void SetCurrent(string contentPath)
         {
-            var cmd = CubeMetaDataLibrary[contentPath];
+            var cmd = CubeMetadataLibrary[contentPath];
             if (cmd.Part == CubePart.Top)
             {
-                CurrentCubeTopMetaData = cmd;
+                CurrentCubeTopMetadata = cmd;
             }
             else if (cmd.Part == CubePart.Base)
             {
-                CurrentCubeBaseMetaData = cmd;
+                CurrentCubeBaseMetadata = cmd;
             }
         }
 
@@ -68,7 +68,7 @@ namespace SunbirdMB.Core
 
         public static Cube CreateCurrentCube(IMainGame mainGame, Coord coords, Coord relativeCoords, int altitude)
         {
-            return CreateCube(mainGame, CurrentCubeTopMetaData, CurrentCubeBaseMetaData, coords, relativeCoords, altitude);
+            return CreateCube(mainGame, CurrentCubeTopMetadata, CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
         }
 
         /// <summary>
@@ -76,13 +76,13 @@ namespace SunbirdMB.Core
         /// </summary>
         public static void BuildLibrary(IMainGame mainGame)
         {
-            CubeMetaDataLibrary = new XDictionary<string, CubeMetadata>();
-            foreach (var cmd in CubeMetaDataCollection)
+            CubeMetadataLibrary = new XDictionary<string, CubeMetadata>();
+            foreach (var cmd in CubeMetadataCollection)
             {
                 cmd.LoadContent(mainGame);
-                if (!CubeMetaDataLibrary.ContainsKey(cmd.ContentPath))
+                if (!CubeMetadataLibrary.ContainsKey(cmd.ContentPath))
                 {
-                    CubeMetaDataLibrary.Add(cmd.ContentPath, cmd);
+                    CubeMetadataLibrary.Add(cmd.ContentPath, cmd);
                 }
             }
         }

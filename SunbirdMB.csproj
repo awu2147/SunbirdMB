@@ -177,7 +177,7 @@
     <Compile Include="Framework\XDictionary.cs" />
     <Compile Include="Gui\Logger\LoggerViewModel.cs" />
     <Compile Include="Gui\RelayCommand.cs" />
-    <Compile Include="Gui\ViewModelBase.cs" />
+    <Compile Include="Gui\PropertyChangedBase.cs" />
     <Compile Include="Interfaces\IWorldObject.cs" />
     <Compile Include="SunbirdMBGame.cs" />
     <Compile Include="SunbirdMBWindow.xaml.cs">
