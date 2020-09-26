@@ -69,7 +69,7 @@ namespace SunbirdMB
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            HwndSource source = PresentationSource.FromVisual(MainGame) as HwndSource;
+            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
             source.AddHook(WndProc);
         }
 
