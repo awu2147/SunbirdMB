@@ -99,13 +99,14 @@
                        Background="{StaticResource VSDark3Brush}">
                 <Border BorderBrush="{StaticResource VSDark1Brush}" 
                         BorderThickness="0">
-                    <local:SunbirdMBGame x:Name="MainGame" FocusVisualStyle="{x:Null}" Width="{Binding GameWidth}" Height="{Binding GameHeight}"/>
+                    <local:SunbirdMBGame x:Name="MainGame" FocusVisualStyle="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                         Width="{Binding GameWidth}" Height="{Binding GameHeight}"/>
                 </Border>
             </DockPanel>
             <GridSplitter Background="Transparent" 
                           Width="4"
                           HorizontalAlignment="Right" 
-                          VerticalAlignment="Stretch"/>
+                          VerticalAlignment="Stretch" DragCompleted="GridSplitter_DragCompleted"/>
         </Grid>
     </Grid>
 </Window>

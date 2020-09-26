@@ -51,6 +51,9 @@ namespace SunbirdMB
 
         public static string ClickedSpriteName = string.Empty;
 
+        [XmlIgnore]
+        internal SunbirdMBGame SunbirdMBGame { get; set; }
+
         public MapBuilder()
         {
 
@@ -59,6 +62,7 @@ namespace SunbirdMB
         public MapBuilder(SunbirdMBGame mainGame, GraphicsDevice graphicsDevice, ContentManager content, string path) 
             : base(mainGame, graphicsDevice, content)
         {
+            SunbirdMBGame = mainGame;
             this.saveFilePath = path;
             var appPath = Assembly.GetExecutingAssembly().Location;
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
@@ -189,6 +193,11 @@ namespace SunbirdMB
                     $"Window Position = {Peripherals.GetMouseWindowPosition(MainGame)}".Log();
                     $"World Position = {Peripherals.GetMouseWorldPosition(MainGame, MainGame.Camera)}".Log();
                     $"Altitude = {Altitude}".Log();
+                    var scale = Vector3.Zero;
+                    var rotation = Quaternion.Identity;
+                    var translation = Vector3.Zero;
+                    SunbirdMBGame.Camera.CurrentTransform.Decompose(out scale, out rotation, out translation);
+                    $"{scale} {rotation} {translation }".Log();
                 }
 
                 if (Authorization == Authorization.Builder)

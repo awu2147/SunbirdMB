@@ -32,7 +32,7 @@ namespace SunbirdMB
 
         public int BackBufferWidth { get { return GraphicsDevice.PresentationParameters.BackBufferWidth; } }
         public int BackBufferHeight { get { return GraphicsDevice.PresentationParameters.BackBufferHeight; } }
-        public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
+        public SamplerState SamplerState { get; set; } = SamplerState.PointWrap;
         public Camera Camera { get; set; }
         public Keyboard Keyboard { get; set; }
         public Mouse Mouse { get; set; }

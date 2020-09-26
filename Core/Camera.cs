@@ -28,7 +28,15 @@ namespace SunbirdMB.Core
         private float Counter { get; set; } = 3;
 
         private SunbirdMBGame MainGame { get; set; }
+
+        /// <summary>
+        /// Back buffer width.
+        /// </summary>
         private int Width { get { return MainGame.BackBufferWidth; } }
+
+        /// <summary>
+        /// Back buffer height.
+        /// </summary>
         private int Height { get { return MainGame.BackBufferHeight; } }
 
 
@@ -54,7 +62,7 @@ namespace SunbirdMB.Core
                 CurrentMode = CameraMode.Drag;
                 if (Peripherals.MiddleButtonTapped())
                 {
-                    Peripherals.MiddleButtonReleased += peripherals_MiddleButtonReleased;
+                    Peripherals.MiddleButtonReleased += Peripherals_MiddleButtonReleased;
                     Anchor = Peripherals.GetMouseWindowPosition(mainGame);
                 }
                 var currentPosition = Peripherals.GetMouseWindowPosition(mainGame);
@@ -64,11 +72,11 @@ namespace SunbirdMB.Core
             //Wrap this in else block if toggling.
         }
 
-        private void peripherals_MiddleButtonReleased(object sender, EventArgs e)
+        private void Peripherals_MiddleButtonReleased(object sender, EventArgs e)
         {
             DragTargetPosition -= DragPositionChange.ToVector2();
             DragPositionChange = Point.Zero;
-            Peripherals.MiddleButtonReleased -= peripherals_MiddleButtonReleased;
+            Peripherals.MiddleButtonReleased -= Peripherals_MiddleButtonReleased;
         }
 
         public void RecreateDragTransform()
@@ -78,8 +86,9 @@ namespace SunbirdMB.Core
 
         public Matrix CreateDragTransform()
         {
-            return Matrix.CreateTranslation((Width / 2f) / World.ZoomRatio - DragTargetPosition.X + DragPositionChange.X,
-                                            (Height / 2f) / World.ZoomRatio - DragTargetPosition.Y + DragPositionChange.Y, 0) * Matrix.CreateScale(World.ZoomRatio);
+            var xChange = (Width / 2f) / World.ZoomRatio - DragTargetPosition.X + DragPositionChange.X;
+            var yChange = (Height / 2f) / World.ZoomRatio - DragTargetPosition.Y + DragPositionChange.Y;
+            return Matrix.CreateTranslation((float)Math.Floor(xChange), (float)Math.Floor(yChange), 0) * Matrix.CreateScale(World.ZoomRatio);
         }
        
     }
