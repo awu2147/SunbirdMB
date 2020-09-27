@@ -274,6 +274,7 @@ namespace SunbirdMB
                     GhostMarker.Coords = World.MousePositionToIsoCoord(MainGame, Altitude);
                 }
 
+                // Test
                 GhostMarker.Position = World.IsoFlatCoordToWorldPosition(mouseIsoFlatCoord);
 
                 if (LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord) || Authorization == Authorization.None)
