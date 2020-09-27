@@ -130,7 +130,7 @@ namespace SunbirdMB.Core
             var rand = new Random();
             Type type = Type.GetType(decoMD.TypeName);
             var deco = Activator.CreateInstance(type) as Deco;
-            deco.Position = World.TopFace_CoordToLocalOrigin(coords);
+            deco.Position = World.IsoFlatCoordToWorldPosition(coords);
             deco.PositionOffset = decoMD.PositionOffset;
             deco.Coords = relativeCoords;
             deco.Altitude = altitude;

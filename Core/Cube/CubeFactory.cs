@@ -36,7 +36,7 @@ namespace SunbirdMB.Core
 
         public static Cube CreateCube(IMainGame mainGame, CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
         {
-            var cube = new Cube() { Position = World.TopFace_CoordToLocalOrigin(coords), Coords = relativeCoords, Altitude = altitude };
+            var cube = new Cube() { Position = World.IsoFlatCoordToWorldPosition(coords), Coords = relativeCoords, Altitude = altitude };
             var rand = new Random();
 
             // Create cube top animator.

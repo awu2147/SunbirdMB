@@ -181,7 +181,7 @@ namespace Sunbird.Core
         {   
             if (camera.CurrentMode == CameraMode.Drag)
             {
-                return World.AntiScaledPoint(new Point(-(int)camera.DragTransform.M41, -(int)camera.DragTransform.M42) + GetMouseWindowPosition(mainGame));
+                return World.ZoomScaledPoint(new Point(-(int)camera.DragTransform.M41, -(int)camera.DragTransform.M42) + GetMouseWindowPosition(mainGame));
             }
             else
             {

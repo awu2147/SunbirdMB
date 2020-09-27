@@ -50,7 +50,7 @@ namespace SunbirdMB.Core
         internal void LoadGameParameters(SunbirdMBGame game)
         {
             World.Zoom = WorldZoom;
-            World.ReconstructTopFaceArea();
+            //World.ReconstructTopFaceArea();
         }
 
         internal void SaveGameParameters(SunbirdMBGame game)

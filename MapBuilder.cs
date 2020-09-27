@@ -140,7 +140,7 @@ namespace SunbirdMB
                 if (Peripherals.KeyPressed(Keys.LeftControl) && World.Zoom > 1)
                 {
                     World.Zoom--;
-                    World.ReconstructTopFaceArea();
+                    //.ReconstructTopFaceArea();
                     if (MainGame.Camera.CurrentMode == CameraMode.Drag)
                     {
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
@@ -165,7 +165,7 @@ namespace SunbirdMB
                 if (Peripherals.KeyPressed(Keys.LeftControl) && World.Zoom < 5)
                 {
                     World.Zoom++;
-                    World.ReconstructTopFaceArea();
+                    //World.ReconstructTopFaceArea();
                     if (MainGame.Camera.CurrentMode == CameraMode.Drag)
                     {
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
@@ -192,8 +192,8 @@ namespace SunbirdMB
             if (!IsLoading)
             {
                 // Defined with respect to current mouse position.
-                var relativeTopFaceCoords = World.TopFace_PointToRelativeCoord(MainGame, Altitude);
-                var topFaceCoords = World.TopFace_PointToCoord(MainGame);
+                Coord mouseIsoCoord = World.MousePositionToIsoCoord(MainGame, Altitude);
+                Coord mouseIsoFlatCoord = World.MousePositionToIsoFlatCoord(MainGame);
 
                 // User input actions.
                 if (Peripherals.KeyTapped(Keys.Q) && MainGame.IsActive)
@@ -213,6 +213,7 @@ namespace SunbirdMB
                     var translation = Vector3.Zero;
                     SunbirdMBGame.Camera.CurrentTransform.Decompose(out scale, out rotation, out translation);
                     $"{scale} {rotation} {translation }".Log();
+                    World.IsoFlatCoordToWorldPosition(mouseIsoFlatCoord).ToString().Log();
                 }
 
                 if (Authorization == Authorization.Builder)
@@ -221,7 +222,7 @@ namespace SunbirdMB
                     {
                         if (BuildMode == BuildMode._Cube)
                         {
-                            var cube = CubeFactory.CreateCurrentCube(MainGame, topFaceCoords, relativeTopFaceCoords, Altitude);
+                            var cube = CubeFactory.CreateCurrentCube(MainGame, mouseIsoFlatCoord, mouseIsoCoord, Altitude);
                             LayerMap[Altitude].AddCheck(cube, Altitude);
                         }
                     }
@@ -234,7 +235,7 @@ namespace SunbirdMB
                             for (int i = 0; i < LayerMap[Altitude].Count(); i++)
                             {
                                 var sprite = LayerMap[Altitude][i];
-                                if (sprite is Cube && sprite.Coords == relativeTopFaceCoords)
+                                if (sprite is Cube && sprite.Coords == mouseIsoCoord)
                                 {
                                     LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
                                 }
@@ -251,17 +252,18 @@ namespace SunbirdMB
                 if (Authorization == Authorization.Builder)
                 {
                     GhostMarker.Altitude = Altitude;
-                    GhostMarker.Coords = relativeTopFaceCoords;
+                    GhostMarker.Coords = mouseIsoCoord;
                 }
                 else if (Authorization == Authorization.None)
                 {
+                    // Top down look.
                     var l = LayerMap.Keys.ToList();
                     l.Sort();
                     l.Reverse();
 
                     foreach (var key in l)
                     {
-                        var targetedCoord = World.GetRelativeCoord(topFaceCoords, key);
+                        var targetedCoord = World.GetIsoCoord(mouseIsoFlatCoord, key);
                         if (LayerMap[key].OccupiedCoords.Contains(targetedCoord))
                         {
                             Altitude = key;
@@ -269,12 +271,12 @@ namespace SunbirdMB
                             break;
                         }
                     }
-                    GhostMarker.Coords = World.TopFace_PointToRelativeCoord(MainGame, Altitude);
+                    GhostMarker.Coords = World.MousePositionToIsoCoord(MainGame, Altitude);
                 }
 
-                GhostMarker.Position = World.TopFace_CoordToLocalOrigin(topFaceCoords);
+                GhostMarker.Position = World.IsoFlatCoordToWorldPosition(mouseIsoFlatCoord);
 
-                if (LayerMap[Altitude].OccupiedCoords.Contains(relativeTopFaceCoords) || Authorization == Authorization.None)
+                if (LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord) || Authorization == Authorization.None)
                 {
                     GhostMarker.DrawDefaultMarker = true;
                 }
@@ -283,7 +285,7 @@ namespace SunbirdMB
                     GhostMarker.DrawDefaultMarker = false;
                 }
 
-                if (LayerMap[Altitude].OccupiedCoords.Contains(relativeTopFaceCoords))
+                if (LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord))
                 {
                     GhostMarker.DrawPriority = 1;
                 }
@@ -293,6 +295,7 @@ namespace SunbirdMB
                 }
                 else if (Authorization == Authorization.None)
                 {
+                    // Why?
                     GhostMarker.DrawPriority = -1000;
                 }
 
