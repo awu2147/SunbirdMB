@@ -96,7 +96,7 @@ namespace SunbirdMB.Core
         /// <returns></returns>
         public Rectangle SheetViewArea()
         {
-            return new Rectangle(PositionMap[CurrentFrame].X, PositionMap[CurrentFrame].Y, SpriteSheet.FrameWidth, SpriteSheet.FrameHeight);
+            return new Rectangle(PositionMap[CurrentFrame - 1].X, PositionMap[CurrentFrame - 1].Y, SpriteSheet.FrameWidth, SpriteSheet.FrameHeight);
         }
 
         /// <summary>

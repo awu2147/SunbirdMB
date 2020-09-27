@@ -94,15 +94,26 @@
                               VerticalAlignment="Top" 
                               Panel.ZIndex="1"/>
             </Grid>
-            <DockPanel x:Name="MainGamePanel" 
-                       Grid.Column="1"
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <gui:MainToolbar>
+                    <gui:MainToolbar.DataContext>
+                        <Binding Path="MainToolbarViewModel" Mode="TwoWay"/>
+                    </gui:MainToolbar.DataContext>
+                </gui:MainToolbar>
+                <DockPanel x:Name="MainGamePanel" 
+                       Grid.Row="1"
                        Background="{StaticResource VSDark3Brush}">
-                <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                    <Border BorderBrush="{StaticResource VSDark1Brush}" 
                         BorderThickness="0">
-                    <local:SunbirdMBGame x:Name="MainGame" FocusVisualStyle="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        <local:SunbirdMBGame x:Name="MainGame" FocusVisualStyle="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                          Width="{Binding GameWidth}" Height="{Binding GameHeight}"/>
-                </Border>
-            </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Grid>            
             <GridSplitter Background="Transparent" 
                           Width="4"
                           HorizontalAlignment="Right" 

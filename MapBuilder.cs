@@ -44,6 +44,7 @@ namespace SunbirdMB
         public bool InFocus;
         public bool IsLoading { get; set; }
         public int Altitude { get; set; }
+        public GhostMarker GhostMarker { get; set; }
         public Cube CubePreview { get; set; }
         public Deco DecoPreview { get; set; }
         public Authorization Authorization { get; set; }
@@ -94,6 +95,16 @@ namespace SunbirdMB
 
         }
 
+        internal void CreateGhostMarker()
+        {
+
+            CubePreview = CubeFactory.CreateCurrentCube(MainGame, Coord.Zero, Coord.Zero, 0);
+            // Instantiated BuildMode is _Cube. GhostMarker needs CubePreview to exist to morph so we must create it after the latter (which belongs to the overlay).
+            GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
+            GhostMarker.MorphImage(CubePreview, MainGame, GraphicsDevice, Content);
+            LayerMap[Altitude].Add(GhostMarker);
+        }
+
         private void LoadContentFromFile()
         {
             IsLoading = true;
@@ -106,6 +117,10 @@ namespace SunbirdMB
             {
                 foreach (var sprite in layer.Value)
                 {
+                    if (sprite is GhostMarker)
+                    {
+                        GhostMarker = sprite as GhostMarker;
+                    }
                     sprite.LoadContent(MainGame, GraphicsDevice, Content);
                 }
             }
@@ -131,7 +146,7 @@ namespace SunbirdMB
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
                     }
                 }
-                else if (!Peripherals.KeyPressed(Keys.LeftControl))
+                else if (!Peripherals.KeyPressed(Keys.LeftControl) && Authorization == Authorization.Builder)
                 {
                     Altitude--;
                     if (LayerMap.ContainsKey(Altitude) == false)
@@ -156,7 +171,7 @@ namespace SunbirdMB
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
                     }
                 }
-                else if (!Peripherals.KeyPressed(Keys.LeftControl))
+                else if (!Peripherals.KeyPressed(Keys.LeftControl) && Authorization == Authorization.Builder)
                 {
                     Altitude++;
                     if (LayerMap.ContainsKey(Altitude) == false)
@@ -231,6 +246,57 @@ namespace SunbirdMB
                         }
                     }
                 }
+
+                // Ghost marker management.
+                if (Authorization == Authorization.Builder)
+                {
+                    GhostMarker.Altitude = Altitude;
+                    GhostMarker.Coords = relativeTopFaceCoords;
+                }
+                else if (Authorization == Authorization.None)
+                {
+                    var l = LayerMap.Keys.ToList();
+                    l.Sort();
+                    l.Reverse();
+
+                    foreach (var key in l)
+                    {
+                        var targetedCoord = World.GetRelativeCoord(topFaceCoords, key);
+                        if (LayerMap[key].OccupiedCoords.Contains(targetedCoord))
+                        {
+                            Altitude = key;
+                            GhostMarker.Altitude = Altitude;
+                            break;
+                        }
+                    }
+                    GhostMarker.Coords = World.TopFace_PointToRelativeCoord(MainGame, Altitude);
+                }
+
+                GhostMarker.Position = World.TopFace_CoordToLocalOrigin(topFaceCoords);
+
+                if (LayerMap[Altitude].OccupiedCoords.Contains(relativeTopFaceCoords) || Authorization == Authorization.None)
+                {
+                    GhostMarker.DrawDefaultMarker = true;
+                }
+                else if (Authorization == Authorization.Builder)
+                {
+                    GhostMarker.DrawDefaultMarker = false;
+                }
+
+                if (LayerMap[Altitude].OccupiedCoords.Contains(relativeTopFaceCoords))
+                {
+                    GhostMarker.DrawPriority = 1;
+                }
+                else if (Authorization == Authorization.Builder)
+                {
+                    GhostMarker.DrawPriority = 0;
+                }
+                else if (Authorization == Authorization.None)
+                {
+                    GhostMarker.DrawPriority = -1000;
+                }
+
+                GhostMarker.IsHidden = !MainGame.IsMouseOver;
 
                 #region Pre Loop
 

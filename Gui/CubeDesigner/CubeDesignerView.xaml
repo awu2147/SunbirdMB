@@ -20,7 +20,6 @@
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <local:SelectedStyleConverter x:Key="SelectedStyleConverter"/>
-            <local:SigFigConverter x:Key="SigFigConverter"/>
             <ObjectDataProvider x:Key="AnimStateEnum" MethodName="GetValues"
                             ObjectType="{x:Type System:Enum}">
                 <ObjectDataProvider.MethodParameters>

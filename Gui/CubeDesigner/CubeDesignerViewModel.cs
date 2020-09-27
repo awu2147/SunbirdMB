@@ -61,6 +61,7 @@ namespace SunbirdMB.Gui
 
             PropertyChanged += CubeDesignerViewModel_PropertyChanged;
         }
+
         internal void OnMainGameLoaded(SunbirdMBGame mainGame)
         {
             // Once the main game has loaded, we have access to the content manager. We can now build our cube factory
@@ -73,6 +74,9 @@ namespace SunbirdMB.Gui
             // Currently our metadata to display in the Properties window is just the current cube top.
             // This just depends on which tab is selected on start-up.
             CurrentMetadata = CubeFactory.CurrentCubeTopMetadata;
+            // Now that a current cube exists, go ahead and create the ghost marker for the map builder state.
+            //Debug.Assert((mainGame.CurrentState as MapBuilder) != null);
+            //(mainGame.CurrentState as MapBuilder).CreateGhostMarker();
         }
 
         private void CubeDesignerViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

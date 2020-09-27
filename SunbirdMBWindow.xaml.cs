@@ -51,8 +51,7 @@ namespace SunbirdMB
             SunbirdMBGame = MainGame;
             SunbirdMBGame.Loaded += Game_Loaded;
 
-            SunbirdMBWindowViewModel = new SunbirdMBWindowViewModel();
-            SunbirdMBWindowViewModel.SunbirdMBGame = SunbirdMBGame;
+            SunbirdMBWindowViewModel = new SunbirdMBWindowViewModel(SunbirdMBGame);
             DataContext = SunbirdMBWindowViewModel;
 
             if (File.Exists("Config.xml"))

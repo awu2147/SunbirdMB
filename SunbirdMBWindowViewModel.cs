@@ -38,6 +38,13 @@ namespace SunbirdMB
             set { SetProperty(ref loggerViewModel, value); }
         }
 
+        private MainToolbarViewModel mainToolbarViewModel;
+        public MainToolbarViewModel MainToolbarViewModel
+        {
+            get { return mainToolbarViewModel; }
+            set { SetProperty(ref mainToolbarViewModel, value); }
+        }
+
         private int gameWidth = 900;
         public int GameWidth
         {
@@ -54,15 +61,17 @@ namespace SunbirdMB
 
         public SunbirdMBGame SunbirdMBGame { get; set; }
 
-        public SunbirdMBWindowViewModel()
+        public SunbirdMBWindowViewModel(SunbirdMBGame sunbirdMBGame)
         {
+            SunbirdMBGame = sunbirdMBGame;
+
             C_Import = new RelayCommand((o) => Import());
             C_Build = new RelayCommand((o) => Build());
 
             CubeDesignerViewModel = new CubeDesignerViewModel();
             CubeDesignerViewModel.Initialize();
-
             LoggerViewModel = new LoggerViewModel();
+            MainToolbarViewModel = new MainToolbarViewModel(sunbirdMBGame);
         }
 
         private void Build()

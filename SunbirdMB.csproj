@@ -96,6 +96,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\Cube\CubeFactory.cs" />
     <Compile Include="Core\Cube\CubeMetadata.cs" />
+    <Compile Include="Core\GhostMarker.cs" />
     <Compile Include="Framework\Keyboard.cs" />
     <Compile Include="Framework\Mouse.cs" />
     <Compile Include="Gui\CatalogItemBase.cs" />
@@ -107,11 +108,19 @@
     <Compile Include="Gui\Logger\Logger.xaml.cs">
       <DependentUpon>Logger.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\MainToolbar.xaml.cs">
+      <DependentUpon>MainToolbar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\MainToolbarViewModel.cs" />
     <Compile Include="Gui\SelectedStyleConverter.cs" />
     <Compile Include="Interfaces\IContent.cs" />
     <Compile Include="Interfaces\IMainGame.cs" />
     <Compile Include="Tools\ContentBuilder.cs" />
     <Page Include="Gui\Logger\Logger.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\MainToolbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -213,6 +222,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BuildIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\WorldIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />

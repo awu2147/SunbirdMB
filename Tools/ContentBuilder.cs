@@ -131,6 +131,7 @@ namespace SunbirdMB.Tools
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
             Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
             var tcb = new TextureContentBuilder();
+            // Leave existing files untouched.
             tcb.Mode = BuildMode.Incremental;
             var target = filePath.Replace(appDirectory, "");
             tcb.Targets.Add(target);
