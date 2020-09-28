@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
         mc:Ignorable="d"
-        Title="SunbirdSplash" Height="160" Width="132" WindowStyle="None" WindowStartupLocation="CenterScreen" 
+        Title="SunbirdSplash" Height="320" Width="320" WindowStyle="None" WindowStartupLocation="CenterScreen" 
         AllowsTransparency="True" Background="Transparent">
     <Window.Resources>
         <ResourceDictionary>
@@ -15,11 +16,11 @@
     </Window.Resources>
     <Grid>
         <StackPanel>
-            <Image Source="/SunbirdMB;component/Images/SunbirdSplash.png"/>
-            <ProgressBar Width="132" Height="20" Margin="0,8,0,0" 
+            <Image gif:AnimationBehavior.SourceUri="/SunbirdMB;component/Images/Loading.gif"/>
+            <!--Source="/SunbirdMB;component/Images/SunbirdSplash.png"/>-->
+            <!--<ProgressBar Width="132" Height="20" Margin="0,8,0,0" 
                          Background="{StaticResource VSDark1Brush}" 
-                         Foreground="Aqua" Maximum="100" Minimum="0" Value="{Binding Progress}"
-                         x:Name="MyProgressBar"/>
+                         Foreground="Aqua" Maximum="100" Minimum="0" Value="{Binding Progress}"/>-->
         </StackPanel>
     </Grid>
 </Window>

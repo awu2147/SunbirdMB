@@ -26,33 +26,14 @@ namespace SunbirdMB.Gui
     {
         internal static SunbirdSplashViewModel ViewModel;
 
-        CancellationToken CT;
-
-        public SunbirdSplash(CancellationToken ct)
+        public SunbirdSplash(CancellationToken cancelSplashToken)
         {
-            CT = ct;
             InitializeComponent();
             ViewModel = new SunbirdSplashViewModel(this, Dispatcher);
-            //Loaded += SunbirdSplash_Loaded;
             DataContext = ViewModel;
 
-            Task.Run(() => ViewModel.FakeUpdate(ct));
+            Task.Run(() => ViewModel.StartPolling(cancelSplashToken));
         }
-
-        //private void SunbirdSplash_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    for (int i = 0; i < 30; i++)
-        //    {
-        //        if (CT.IsCancellationRequested)
-        //        {
-        //            Close();
-        //            return;
-        //        }
-        //        Console.WriteLine("yo");
-        //        MyProgressBar.Value += 10;
-        //        Thread.Sleep(200);
-        //    }
-        //}
     }
 
     public class SunbirdSplashViewModel : PropertyChangedBase
@@ -66,28 +47,27 @@ namespace SunbirdMB.Gui
 
         public int Target;
 
-        Window View;
-        Dispatcher D;
+        private Window splashScreen;
+        private Dispatcher splashScreenDispatcher;
 
-        public SunbirdSplashViewModel(Window view, Dispatcher dis) 
+        public SunbirdSplashViewModel(Window window, Dispatcher dispatcher) 
         { 
-            View = view;
-            D = dis;
+            splashScreen = window;
+            splashScreenDispatcher = dispatcher;
         }
 
-        internal async void FakeUpdate(CancellationToken ct)
+        internal async void StartPolling(CancellationToken cancelSplashToken)
         {
             for (int i = 0; i < 30; i++)
             {
-                if (ct.IsCancellationRequested)
+                if (cancelSplashToken.IsCancellationRequested)
                 {
                     break;
                 }
-                Console.WriteLine("yo");
                 Progress = Target;
                 await Task.Delay(100);
             }
-            D.Invoke(() => View.Close());
+            splashScreenDispatcher.Invoke(() => splashScreen.Close());
         }
 
     }

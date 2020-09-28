@@ -16,30 +16,27 @@ namespace SunbirdMB
     /// </summary>
     public partial class App : Application
     {
-        SunbirdSplash SplashScreen;
-
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            // Create the token source.
-            CancellationTokenSource cts = new CancellationTokenSource();
+            // Create the token source for closing the splash screen.
+            CancellationTokenSource cancelSplashTokenSource = new CancellationTokenSource();
 
-            //var splashScreen = new SunbirdSplash();
-            //splashScreen.Show();
-            // TODO: Implement a timeout.
-            Thread splashThread = new Thread(new ThreadStart(() => LaunchSplash(cts.Token)));
+            // Run the splash screen in a new background thread.
+            Thread splashThread = new Thread(new ThreadStart(() => LaunchSplash(cancelSplashTokenSource.Token)));
             splashThread.SetApartmentState(ApartmentState.STA);
             splashThread.IsBackground = true;
             splashThread.Start();
 
-            var mainWindow = new SunbirdMBWindow(cts, splashThread);
-            mainWindow.Show(); // Show the main window
+            // Run the main window.
+            var mainWindow = new SunbirdMBWindow(cancelSplashTokenSource, splashThread);
+            mainWindow.Show();
         }
 
-        private void LaunchSplash(CancellationToken ct)
+        private void LaunchSplash(CancellationToken cancelSplashToken)
         {
             // Create our context, and install it:
             SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
-            SunbirdSplash sunbirdSplash = new SunbirdSplash(ct);
+            SunbirdSplash sunbirdSplash = new SunbirdSplash(cancelSplashToken);
             sunbirdSplash.Closed += (s, e) => Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
             sunbirdSplash.Show();
             Dispatcher.Run();

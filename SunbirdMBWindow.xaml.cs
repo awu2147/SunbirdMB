@@ -45,15 +45,16 @@ namespace SunbirdMB
         private static bool IsResizing = false;
         private static bool WindowWasResized = false;
 
-        CancellationTokenSource CTS;
-        Thread SplashThread;
+        private CancellationTokenSource cancelSplashTokenSource;
+        private Thread splashThread;
 
         public SunbirdMBWindow() { }
 
-        public SunbirdMBWindow(CancellationTokenSource cts, Thread splashThread)
+        public SunbirdMBWindow(CancellationTokenSource cancelSplashTokenSource, Thread splashThread)
         {
-            CTS = cts;
-            SplashThread = splashThread;
+            this.cancelSplashTokenSource = cancelSplashTokenSource;
+            this.splashThread = splashThread;
+
             InitializeComponent();
 
             SnapsToDevicePixels = true;
@@ -74,13 +75,22 @@ namespace SunbirdMB
             {
                 Config = new Config();
             }
-            Dispatcher.FromThread(splashThread).Invoke(() => SunbirdSplash.ViewModel.Target += 20);
+
+            PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
+        }
+
+        /// <summary>
+        /// Execute action on the splash screen thread's dispatcher.
+        /// </summary>
+        /// <param name="action"></param>
+        private void PumpToSplash(Action action)
+        {
+            Dispatcher.FromThread(splashThread).Invoke(action);
         }
 
         private void SunbirdMBWindow_ContentRendered(object sender, EventArgs e)
         {
-            //SunbirdSplash.Close();
-            CTS.Cancel();
+            cancelSplashTokenSource.Cancel();
             WindowState = WindowState.Normal;
         }
 
@@ -141,7 +151,7 @@ namespace SunbirdMB
 
         private void Game_Loaded(object sender, EventArgs e)
         {
-            Dispatcher.FromThread(SplashThread).Invoke(() => SunbirdSplash.ViewModel.Target += 20);
+            PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
 
             Config.LoadGameParameters(SunbirdMBGame);
 
