@@ -174,7 +174,7 @@
         <Setter Property="FocusVisualStyle"
           Value="{StaticResource ButtonFocusVisual}" />
         <Setter Property="MinHeight"
-          Value="23" />
+          Value="22" />
         <Setter Property="MinWidth"
           Value="75" />
         <Setter Property="Template">

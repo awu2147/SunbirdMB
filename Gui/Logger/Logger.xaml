@@ -29,38 +29,38 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Border BorderBrush="{StaticResource VSDark1Brush}" 
-                                        BorderThickness="1">
+                    BorderThickness="1">
                 <TextBlock Text="Logger" 
-                                               Padding="3,2,3,2" 
-                                               Foreground="{StaticResource VSTextBrush}" 
-                                               Margin="1" 
-                                               Background="{StaticResource VSDark1Brush}"
-                                               VerticalAlignment="Center"/>
+                           Padding="3,2,3,2" 
+                           Foreground="{StaticResource VSTextBrush}" 
+                           Margin="1" 
+                           Background="{StaticResource VSDark1Brush}"
+                           VerticalAlignment="Center"/>
             </Border>
             <Border BorderBrush="{StaticResource VSDark1Brush}" 
                                         BorderThickness="1" 
                                         Grid.Column="1">
                 <Button Content="Clear"
-                                            Command="{Binding C_ClearLog}" 
-                                            DockPanel.Dock="Right" 
-                                            Grid.Column="1" Style="{StaticResource DarkRedButton}"
-                                            Foreground="{StaticResource VSTextBrush}"/>
+                        Command="{Binding C_ClearLog}" 
+                        DockPanel.Dock="Right" 
+                        Grid.Column="1" Style="{StaticResource DarkRedButton}"
+                        Foreground="{StaticResource VSTextBrush}"/>
             </Border>
         </Grid>
         <DataGrid ItemsSource="{Binding Log}" 
-                                      Grid.Row="1" 
-                                      AutoGenerateColumns="False" 
-                                      CanUserResizeColumns="False" 
-                                      CanUserSortColumns="False" 
-                                      GridLinesVisibility="None"
-                                      HeadersVisibility="None"                                       
-                                      Background="{StaticResource VSDark3Brush}" 
-                                      BorderBrush="{StaticResource VSDark1Brush}" 
-                                      BorderThickness="1" 
-                                      VerticalScrollBarVisibility="Visible" 
-                                      HorizontalScrollBarVisibility="Hidden"
-                                      ScrollViewer.CanContentScroll="false" 
-                                      Style="{StaticResource LoggerDataGrid}">
+                  Grid.Row="1" 
+                  AutoGenerateColumns="False" 
+                  CanUserResizeColumns="False" 
+                  CanUserSortColumns="False" 
+                  GridLinesVisibility="None"
+                  HeadersVisibility="None"                                       
+                  Background="{StaticResource VSDark3Brush}" 
+                  BorderBrush="{StaticResource VSDark1Brush}" 
+                  BorderThickness="1" 
+                  VerticalScrollBarVisibility="Visible" 
+                  HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.CanContentScroll="false" 
+                  Style="{StaticResource LoggerDataGrid}">
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Background" Value="{StaticResource VSDark3Brush}"/>
@@ -70,13 +70,13 @@
             </DataGrid.CellStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Time}" 
-                                                        Width="50" 
-                                                        Header="Time" 
-                                                        IsReadOnly="True"/>
+                                    Width="50" 
+                                    Header="Time" 
+                                    IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Message}" 
-                                                        Width="*" 
-                                                        Header="Message" 
-                                                        IsReadOnly="True">
+                                    Width="*" 
+                                    Header="Message" 
+                                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
