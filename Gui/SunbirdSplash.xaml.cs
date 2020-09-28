@@ -32,7 +32,7 @@ namespace SunbirdMB.Gui
             ViewModel = new SunbirdSplashViewModel(this, Dispatcher);
             DataContext = ViewModel;
 
-            Task.Run(() => ViewModel.StartPolling(cancelSplashToken));
+            //Task.Run(() => ViewModel.StartPolling(cancelSplashToken));
         }
     }
 
@@ -47,8 +47,8 @@ namespace SunbirdMB.Gui
 
         public int Target;
 
-        private Window splashScreen;
-        private Dispatcher splashScreenDispatcher;
+        public readonly Window splashScreen;
+        private readonly Dispatcher splashScreenDispatcher;
 
         public SunbirdSplashViewModel(Window window, Dispatcher dispatcher) 
         { 
@@ -58,7 +58,7 @@ namespace SunbirdMB.Gui
 
         internal async void StartPolling(CancellationToken cancelSplashToken)
         {
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 50; i++)
             {
                 if (cancelSplashToken.IsCancellationRequested)
                 {

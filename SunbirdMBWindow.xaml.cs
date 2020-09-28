@@ -29,7 +29,6 @@ namespace SunbirdMB
     /// </summary>
     public partial class SunbirdMBWindow : Window
     {
-        internal static SunbirdSplash SunbirdSplash { get; set; }
         internal SunbirdMBGame SunbirdMBGame { get; set; }
         internal SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
         internal Config Config { get; set; }
@@ -45,8 +44,8 @@ namespace SunbirdMB
         private static bool IsResizing = false;
         private static bool WindowWasResized = false;
 
-        private CancellationTokenSource cancelSplashTokenSource;
-        private Thread splashThread;
+        private readonly CancellationTokenSource cancelSplashTokenSource;
+        private readonly Thread splashThread;
 
         public SunbirdMBWindow() { }
 
@@ -76,7 +75,7 @@ namespace SunbirdMB
                 Config = new Config();
             }
 
-            PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
+            //PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
         }
 
         /// <summary>
@@ -90,7 +89,8 @@ namespace SunbirdMB
 
         private void SunbirdMBWindow_ContentRendered(object sender, EventArgs e)
         {
-            cancelSplashTokenSource.Cancel();
+            PumpToSplash(() => SunbirdSplash.ViewModel.splashScreen.Close());
+            // cancelSplashTokenSource.Cancel();
             WindowState = WindowState.Normal;
         }
 
@@ -151,7 +151,7 @@ namespace SunbirdMB
 
         private void Game_Loaded(object sender, EventArgs e)
         {
-            PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
+            //PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
 
             Config.LoadGameParameters(SunbirdMBGame);
 

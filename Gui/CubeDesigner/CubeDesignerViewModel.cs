@@ -57,7 +57,7 @@ namespace SunbirdMB.Gui
             // cube metadata objects to cube factory metadata collection. From the file paths, we can deduce the cube part type.
             Import(CubePart.All);
             // Rebuild the .pngs into .xnb files.
-            //ContentBuilder.RebuildContent();
+            ContentBuilder.RebuildContent();
 
             PropertyChanged += CubeDesignerViewModel_PropertyChanged;
         }

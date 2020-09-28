@@ -35,6 +35,7 @@ namespace SunbirdMB
         private void LaunchSplash(CancellationToken cancelSplashToken)
         {
             // Create our context, and install it:
+            // http://reedcopsey.com/2011/11/28/launching-a-wpf-window-in-a-separate-thread-part-1/#more-321
             SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
             SunbirdSplash sunbirdSplash = new SunbirdSplash(cancelSplashToken);
             sunbirdSplash.Closed += (s, e) => Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
