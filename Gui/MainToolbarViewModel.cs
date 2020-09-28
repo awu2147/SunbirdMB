@@ -20,11 +20,8 @@ namespace SunbirdMB.Gui
         public ICommand C_BuildButtonClick { get; set; }
         public ICommand C_WorldButtonClick { get; set; } 
 
-        private SunbirdMBGame SunbirdMBGame { get; set; }
-
-        public MainToolbarViewModel(SunbirdMBGame sunbirdMBGame)        
+        public MainToolbarViewModel()        
         {
-            SunbirdMBGame = sunbirdMBGame;
             C_BuildButtonClick = new RelayCommand((o) => SetBuildMode(true));
             C_WorldButtonClick = new RelayCommand((o) => SetBuildMode(false));
         }
@@ -32,7 +29,7 @@ namespace SunbirdMB.Gui
         private void SetBuildMode(bool mode)
         {
             IsBuilding = mode;
-            (SunbirdMBGame.CurrentState as MapBuilder).Authorization = mode ? Authorization.Builder : Authorization.None;
+            MapBuilder.Authorization = mode ? Authorization.Builder : Authorization.None;
         }
     }
 }

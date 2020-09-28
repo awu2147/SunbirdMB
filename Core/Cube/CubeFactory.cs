@@ -34,7 +34,7 @@ namespace SunbirdMB.Core
             }
         }
 
-        public static Cube CreateCube(IMainGame mainGame, CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
+        public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
         {
             var cube = new Cube() { Position = World.IsoFlatCoordToWorldPosition(coords), Coords = relativeCoords, Altitude = altitude };
             var rand = new Random();
@@ -66,9 +66,9 @@ namespace SunbirdMB.Core
             return cube;
         }
 
-        public static Cube CreateCurrentCube(IMainGame mainGame, Coord coords, Coord relativeCoords, int altitude)
+        public static Cube CreateCurrentCube(Coord coords, Coord relativeCoords, int altitude)
         {
-            return CreateCube(mainGame, CurrentCubeTopMetadata, CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
+            return CreateCube(CurrentCubeTopMetadata, CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
         }
 
         /// <summary>

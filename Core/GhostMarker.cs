@@ -20,22 +20,23 @@ namespace SunbirdMB.Core
 
         public GhostMarker(IMainGame mainGame, SpriteSheet spriteSheet) : base(mainGame, spriteSheet) { Alpha = 0.3f; }
 
-        public void MorphImage(Sprite image, IMainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
+        public void MorphImage(Sprite image)
         {
             // Morph the ghost marker into the given sprite by serialization.
-            Serializer.WriteXML<Sprite>(SpriteSerializer, image, "DynamicCache.xml");
-            Image = Serializer.ReadXML<Sprite>(SpriteSerializer, "DynamicCache.xml");
+            //Serializer.WriteXML<Sprite>(SpriteSerializer, image, "DynamicCache.xml");
+            //Image = Serializer.ReadXML<Sprite>(SpriteSerializer, "DynamicCache.xml");
+            Image = Serializer.CloneBySerialization(image, SpriteSerializer);
             // Apply ghost marker properties to the deserialized image.
             Image.IsHidden = IsHidden;
             Image.Position = Position;
             // Load the image content.
-            Image.LoadContent(mainGame, graphicsDevice, content);
+            Image.LoadContent(MainGame, MainGame.Content);
         }
 
-        public override void LoadContent(IMainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
+        public override void LoadContent(IMainGame mainGame, ContentManager content)
         {
-            base.LoadContent(mainGame, graphicsDevice, content);
-            Image.LoadContent(mainGame, graphicsDevice, content);
+            base.LoadContent(mainGame, content);
+            Image.LoadContent(mainGame, content);
         }
 
         public override void Update(GameTime gameTime)

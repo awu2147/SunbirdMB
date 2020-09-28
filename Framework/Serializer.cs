@@ -32,6 +32,12 @@ namespace SunbirdMB.Framework
         {
             return new XmlSerializer(type, extraTypes);
         }
+
+        public static T CloneBySerialization<T>(T obj, XmlSerializer serializer)
+        {
+            WriteXML<T>(serializer, obj, @"obj\.tempcache");
+            return ReadXML<T>(serializer, @"obj\.tempcache");
+        }
     }
 }
 

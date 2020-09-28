@@ -69,9 +69,8 @@ namespace SunbirdMB
             C_Build = new RelayCommand((o) => Build());
 
             CubeDesignerViewModel = new CubeDesignerViewModel();
-            CubeDesignerViewModel.Initialize();
             LoggerViewModel = new LoggerViewModel();
-            MainToolbarViewModel = new MainToolbarViewModel(sunbirdMBGame);
+            MainToolbarViewModel = new MainToolbarViewModel();
         }
 
         private void Build()

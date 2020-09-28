@@ -44,11 +44,9 @@ namespace SunbirdMB
         public bool InFocus;
         public bool IsLoading { get; set; }
         public int Altitude { get; set; }
-        public GhostMarker GhostMarker { get; set; }
-        public Cube CubePreview { get; set; }
-        public Deco DecoPreview { get; set; }
-        public Authorization Authorization { get; set; }
-        public BuildMode BuildMode { get; set; } = BuildMode._Cube;
+        public static Authorization Authorization { get; set; }
+        public static BuildMode BuildMode { get; set; }
+        public static GhostMarker GhostMarker { get; set; }
 
         public static string ClickedSpriteName = string.Empty;
 
@@ -86,6 +84,10 @@ namespace SunbirdMB
             IsLoading = true;
             // Create first layer at 0 Altitude.
             LayerMap.Add(Altitude, new SpriteList<Sprite>());
+            // Instantiate ghost marker with its default texture and add it to the layer map. Image is null at this point, but will be set
+            // by CubeDesignerViewModel.OnMainGameLoaded() as soon as SunbirdMBGame's constructor resolves.
+            GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
+            LayerMap[Altitude].Add(GhostMarker);
 
             IsLoading = false;
             MainGame.CurrentState = this;
@@ -95,33 +97,24 @@ namespace SunbirdMB
 
         }
 
-        internal void CreateGhostMarker()
-        {
-
-            CubePreview = CubeFactory.CreateCurrentCube(MainGame, Coord.Zero, Coord.Zero, 0);
-            // Instantiated BuildMode is _Cube. GhostMarker needs CubePreview to exist to morph so we must create it after the latter (which belongs to the overlay).
-            GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
-            GhostMarker.MorphImage(CubePreview, MainGame, GraphicsDevice, Content);
-            LayerMap[Altitude].Add(GhostMarker);
-        }
-
         private void LoadContentFromFile()
         {
             IsLoading = true;
             // Most time is spent here...
             var XmlData = Serializer.ReadXML<MapBuilder>(MapBuilderSerializer, saveFilePath);
             Altitude = XmlData.Altitude;
-            BuildMode = XmlData.BuildMode;
             LayerMap = XmlData.LayerMap;
             foreach (var layer in LayerMap)
             {
                 foreach (var sprite in layer.Value)
                 {
+                    // The ghost marker should be somewhere in the serialized collection of sprites.
+                    // Find it and set it as our ghost marker instead of creating a new one.
                     if (sprite is GhostMarker)
                     {
                         GhostMarker = sprite as GhostMarker;
                     }
-                    sprite.LoadContent(MainGame, GraphicsDevice, Content);
+                    sprite.LoadContent(MainGame, Content);
                 }
             }
 
@@ -222,7 +215,7 @@ namespace SunbirdMB
                     {
                         if (BuildMode == BuildMode._Cube)
                         {
-                            var cube = CubeFactory.CreateCurrentCube(MainGame, mouseIsoFlatCoord, mouseIsoCoord, Altitude);
+                            var cube = CubeFactory.CreateCurrentCube(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
                             LayerMap[Altitude].AddCheck(cube, Altitude);
                         }
                     }

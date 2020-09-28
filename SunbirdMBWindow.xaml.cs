@@ -18,6 +18,9 @@ using System.Windows.Media.Animation;
 using System.Windows.Interop;
 using Microsoft.Xna.Framework;
 using SharpDX.Direct3D11;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace SunbirdMB
 {
@@ -26,6 +29,7 @@ namespace SunbirdMB
     /// </summary>
     public partial class SunbirdMBWindow : Window
     {
+        internal static SunbirdSplash SunbirdSplash { get; set; }
         internal SunbirdMBGame SunbirdMBGame { get; set; }
         internal SunbirdMBWindowViewModel SunbirdMBWindowViewModel { get; set; }
         internal Config Config { get; set; }
@@ -41,8 +45,15 @@ namespace SunbirdMB
         private static bool IsResizing = false;
         private static bool WindowWasResized = false;
 
-        public SunbirdMBWindow()
+        CancellationTokenSource CTS;
+        Thread SplashThread;
+
+        public SunbirdMBWindow() { }
+
+        public SunbirdMBWindow(CancellationTokenSource cts, Thread splashThread)
         {
+            CTS = cts;
+            SplashThread = splashThread;
             InitializeComponent();
 
             SnapsToDevicePixels = true;
@@ -63,7 +74,14 @@ namespace SunbirdMB
             {
                 Config = new Config();
             }
+            Dispatcher.FromThread(splashThread).Invoke(() => SunbirdSplash.ViewModel.Target += 20);
+        }
 
+        private void SunbirdMBWindow_ContentRendered(object sender, EventArgs e)
+        {
+            //SunbirdSplash.Close();
+            CTS.Cancel();
+            WindowState = WindowState.Normal;
         }
 
         private void SunbirdMBWindow_KeyDown(object sender, KeyEventArgs e)
@@ -79,12 +97,15 @@ namespace SunbirdMB
             base.OnSourceInitialized(e);
             HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
             source.AddHook(WndProc);
+
+            WindowState = WindowState.Minimized;
+            ContentRendered += SunbirdMBWindow_ContentRendered;
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             IntPtr _wParam = (IntPtr)(wParam.ToInt32() & 0xFFF0);
-            if (msg == WM_SIZING)
+            if (msg == WM_SIZING && gameLoaded)
             {
                 if (IsResizing == false)
                 {
@@ -120,6 +141,8 @@ namespace SunbirdMB
 
         private void Game_Loaded(object sender, EventArgs e)
         {
+            Dispatcher.FromThread(SplashThread).Invoke(() => SunbirdSplash.ViewModel.Target += 20);
+
             Config.LoadGameParameters(SunbirdMBGame);
 
             ResizeGameWindow();

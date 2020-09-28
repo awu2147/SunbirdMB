@@ -88,6 +88,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="XamlAnimatedGif, Version=1.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\XamlAnimatedGif.1.2.3\lib\net45\XamlAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -113,6 +116,9 @@
     </Compile>
     <Compile Include="Gui\MainToolbarViewModel.cs" />
     <Compile Include="Gui\SelectedStyleConverter.cs" />
+    <Compile Include="Gui\SunbirdSplash.xaml.cs">
+      <DependentUpon>SunbirdSplash.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Interfaces\IContent.cs" />
     <Compile Include="Interfaces\IMainGame.cs" />
     <Compile Include="Tools\ContentBuilder.cs" />
@@ -153,6 +159,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\CubeDesigner\CubeDesignerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\SunbirdSplash.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -228,6 +238,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\WorldIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\SunbirdSplash.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />

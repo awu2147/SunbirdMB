@@ -32,7 +32,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Core method used to re-instantiate non-serializable properties and delegates.
         /// </summary>
-        public override void LoadContent(IMainGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
+        public override void LoadContent(IMainGame mainGame, ContentManager content)
         {
             AnimatorTop.LoadContent(content);
             AnimatorTop.Sprite = this;

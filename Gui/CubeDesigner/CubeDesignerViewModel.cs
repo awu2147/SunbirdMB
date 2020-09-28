@@ -47,7 +47,7 @@ namespace SunbirdMB.Gui
         /// <summary>
         /// Call this after the constructor resolves. We leave the constructor empty to maintain compatibility with VS XAML designer.
         /// </summary>
-        internal void Initialize()
+        private void Initialize()
         {
             // We add to the collections below when importing, so it is important to subscribe these handlers before calling Import().
             // This will create garbage if Initialize() is called more than once.
@@ -57,13 +57,14 @@ namespace SunbirdMB.Gui
             // cube metadata objects to cube factory metadata collection. From the file paths, we can deduce the cube part type.
             Import(CubePart.All);
             // Rebuild the .pngs into .xnb files.
-            ContentBuilder.RebuildContent();
+            //ContentBuilder.RebuildContent();
 
             PropertyChanged += CubeDesignerViewModel_PropertyChanged;
         }
 
         internal void OnMainGameLoaded(SunbirdMBGame mainGame)
         {
+            Initialize();
             // Once the main game has loaded, we have access to the content manager. We can now build our cube factory
             // library by creating textures from paths.
             CubeFactory.BuildLibrary(mainGame);
@@ -74,9 +75,9 @@ namespace SunbirdMB.Gui
             // Currently our metadata to display in the Properties window is just the current cube top.
             // This just depends on which tab is selected on start-up.
             CurrentMetadata = CubeFactory.CurrentCubeTopMetadata;
-            // Now that a current cube exists, go ahead and create the ghost marker for the map builder state.
-            //Debug.Assert((mainGame.CurrentState as MapBuilder) != null);
-            //(mainGame.CurrentState as MapBuilder).CreateGhostMarker();
+            // Now that a current cube exists, go ahead and create a ghost marker image from it. It is important that this gets ddone
+            // before the first update and draw calls.
+            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
         }
 
         private void CubeDesignerViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

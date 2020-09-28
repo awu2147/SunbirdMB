@@ -37,6 +37,8 @@ namespace SunbirdMB
         public Keyboard Keyboard { get; set; }
         public Mouse Mouse { get; set; }
 
+        public MapBuilder MapBuilder { get; set; }
+
         public bool cleanLoad = false;
 
         //public event EventHandler Loaded;
@@ -74,7 +76,8 @@ namespace SunbirdMB
 
             Content.RootDirectory = "Content";
 
-            CurrentState = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
+            MapBuilder = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
+            CurrentState = MapBuilder;
 
         }
 
