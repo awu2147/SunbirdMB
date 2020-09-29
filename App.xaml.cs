@@ -1,11 +1,5 @@
 ﻿using SunbirdMB.Gui;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -37,7 +31,7 @@ namespace SunbirdMB
             // Create our context, and install it:
             // http://reedcopsey.com/2011/11/28/launching-a-wpf-window-in-a-separate-thread-part-1/#more-321
             SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
-            SunbirdSplash sunbirdSplash = new SunbirdSplash(cancelSplashToken);
+            SunbirdMBSplash sunbirdSplash = new SunbirdMBSplash(cancelSplashToken);
             sunbirdSplash.Closed += (s, e) => Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
             sunbirdSplash.Show();
             Dispatcher.Run();

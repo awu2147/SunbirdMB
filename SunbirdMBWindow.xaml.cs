@@ -45,21 +45,20 @@ namespace SunbirdMB
         private static bool WindowWasResized = false;
 
         private readonly CancellationTokenSource cancelSplashTokenSource;
-        private readonly Thread splashThread;
+        private static Dispatcher splashThreadDispatcher;
 
         public SunbirdMBWindow() { }
 
         public SunbirdMBWindow(CancellationTokenSource cancelSplashTokenSource, Thread splashThread)
         {
             this.cancelSplashTokenSource = cancelSplashTokenSource;
-            this.splashThread = splashThread;
+            splashThreadDispatcher = Dispatcher.FromThread(splashThread);
 
             InitializeComponent();
 
-            SnapsToDevicePixels = true;
-            KeyDown += SunbirdMBWindow_KeyDown;
-
             SunbirdMBGame = MainGame;
+            SunbirdMBGame.BeforeContentBuild += Game_BeforeContentBuild;
+            SunbirdMBGame.AfterContentBuild += Game_AfterContentBuild;
             SunbirdMBGame.Loaded += Game_Loaded;
 
             SunbirdMBWindowViewModel = new SunbirdMBWindowViewModel(SunbirdMBGame);
@@ -75,31 +74,46 @@ namespace SunbirdMB
                 Config = new Config();
             }
 
-            //PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
+            SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Loading Game...");
+        }
+
+        private void Game_BeforeContentBuild(object sender, EventArgs e)
+        {
+            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnBeforeContentBuild(SunbirdMBGame);
+        }
+
+        private void Game_AfterContentBuild(object sender, EventArgs e)
+        {
+            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnAfterContentBuild(SunbirdMBGame);
+        }
+
+        private void Game_Loaded(object sender, EventArgs e)
+        {
+            SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Configurating Settings...");
+            Config.LoadGameParameters(SunbirdMBGame);
+
+            ResizeGameWindow();
+            SizeChanged += Window_SizeChanged;
+            Closed += Window_Closed;
+
+            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnGameLoaded(SunbirdMBGame);
+
+            gameLoaded = true;
         }
 
         /// <summary>
         /// Execute action on the splash screen thread's dispatcher.
         /// </summary>
-        /// <param name="action"></param>
-        private void PumpToSplash(Action action)
+        /// <param name="action"> The action to invoke. </param>
+        internal static void PumpToSplash(Action action)
         {
-            Dispatcher.FromThread(splashThread).Invoke(action);
+            splashThreadDispatcher.Invoke(action);
         }
 
-        private void SunbirdMBWindow_ContentRendered(object sender, EventArgs e)
+        private void Window_ContentRendered(object sender, EventArgs e)
         {
-            PumpToSplash(() => SunbirdSplash.ViewModel.splashScreen.Close());
-            // cancelSplashTokenSource.Cancel();
+            cancelSplashTokenSource.Cancel();
             WindowState = WindowState.Normal;
-        }
-
-        private void SunbirdMBWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.W)
-            {
-                Console.WriteLine($"{Width} {Height}");
-            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -109,7 +123,7 @@ namespace SunbirdMB
             source.AddHook(WndProc);
 
             WindowState = WindowState.Minimized;
-            ContentRendered += SunbirdMBWindow_ContentRendered;
+            ContentRendered += Window_ContentRendered;
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -119,11 +133,10 @@ namespace SunbirdMB
             {
                 if (IsResizing == false)
                 {
-                    // Indicate the the user is resizing and not moving the window
+                    // Indicate that the user is resizing and not moving the window.
                     IsResizing = true;
                 }
             }
-            // Handle messages...
             if (msg == WM_EXITSIZEMOVE && IsResizing && gameLoaded)
             {
                 ResizeGameWindow();
@@ -147,21 +160,6 @@ namespace SunbirdMB
             SunbirdMBWindowViewModel.GameHeight = (int)MainGamePanel.ActualHeight;
             // Reposition camera.
             SunbirdMBGame.SetCameraTransformMatrix((int)MainGamePanel.ActualWidth, (int)MainGamePanel.ActualHeight);
-        }
-
-        private void Game_Loaded(object sender, EventArgs e)
-        {
-            //PumpToSplash(() => SunbirdSplash.ViewModel.Target += 20);
-
-            Config.LoadGameParameters(SunbirdMBGame);
-
-            ResizeGameWindow();
-            SizeChanged += Window_SizeChanged;
-            Closed += Window_Closed;
-
-            SunbirdMBWindowViewModel.OnMainGameLoaded(SunbirdMBGame);
-
-            gameLoaded = true;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

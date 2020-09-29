@@ -38,7 +38,7 @@ namespace SunbirdMB.Tools
         internal const string mgcb = "mgcb";
         internal string OutputDir { get; set; } = string.Empty;
         internal string IntermediateDir { get; set; } = "obj";
-        internal BuildMode Mode { get; set; } = BuildMode.Rebuild;
+        internal BuildMode Mode { get; set; } = BuildMode.Incremental;
         internal virtual string Importer { get { return string.Empty; } }
         internal virtual string Processor { get { return string.Empty; } }
         internal virtual string ProcessorParam { get { return string.Empty; } }
@@ -98,19 +98,28 @@ namespace SunbirdMB.Tools
                 process.Start();
                 StreamReader myStreamReader = process.StandardError;
                 Console.WriteLine(myStreamReader.ReadLine());
+                process.WaitForExit();
             }
         }
 
         /// <summary>
-        /// Rebuild the Content folder.
+        /// Rebuild the entire Content folder.
         /// </summary>
         internal static void RebuildContent()
+        {
+            RebuildContent(string.Empty);
+        }
+
+        /// <summary>
+        /// Rebuild a Content sub-folder.
+        /// </summary>
+        internal static void RebuildContent(string subFolder)
         {
             "Rebuilding content...".Log();
             var appPath = Assembly.GetExecutingAssembly().Location;
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
             Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
-            var contentPath = Path.Combine(appDirectory, "Content");
+            var contentPath = subFolder == string.Empty ? Path.Combine(appDirectory, "Content") : Path.Combine(appDirectory, "Content", subFolder);
             var files = Directory.GetFiles(contentPath, "*.png", SearchOption.AllDirectories);
             var tcb = new TextureContentBuilder();
             foreach (var file in files)
@@ -122,7 +131,7 @@ namespace SunbirdMB.Tools
         }
 
         /// <summary>
-        /// Rebuild the Content folder.
+        /// Rebuild a particular file in the Content folder.
         /// </summary>
         internal static void BuildFile(string filePath)
         {
@@ -131,13 +140,28 @@ namespace SunbirdMB.Tools
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
             Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
             var tcb = new TextureContentBuilder();
-            // Leave existing files untouched.
-            tcb.Mode = BuildMode.Incremental;
-            var target = filePath.Replace(appDirectory, "");
-            tcb.Targets.Add(target);
-            tcb.Build();
+            if (ValidateDirectory(appDirectory, filePath))
+            {
+                var target = filePath.Replace(appDirectory, "");
+                tcb.Targets.Add(target);
+                tcb.Build();
+            }
+            else
+            {
+                throw new IOException("File not in Content directory.");
+            }
         }
 
+        private static bool ValidateDirectory(string appDirectory, string pathToValidate)
+        {
+            var contentDirectory = Path.Combine(appDirectory, "Content");
+            var result = pathToValidate.Replace(contentDirectory, "");
+            if (result.Length == pathToValidate.Length)
+            {
+                return false;
+            }
+            return true;
+        }
 
     }
 

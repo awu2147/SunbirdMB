@@ -44,30 +44,25 @@ namespace SunbirdMB.Gui
         /// </summary>
         public CubeDesignerViewModel() { }
 
-        /// <summary>
-        /// Call this after the constructor resolves. We leave the constructor empty to maintain compatibility with VS XAML designer.
-        /// </summary>
-        private void Initialize()
+        internal void OnBeforeContentBuild(SunbirdMBGame mainGame)
         {
             // We add to the collections below when importing, so it is important to subscribe these handlers before calling Import().
-            // This will create garbage if Initialize() is called more than once.
+            // We only subscribe handlers once so it is imprtant the observable collection is not re-instantiated.
             CubeTopCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Top));
             CubeBaseCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Base));
+
+            SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Importing Cube Content...");
             // Start off by populating the cube designer. We can also load/create metadata files here, and add the resulting 
             // cube metadata objects to cube factory metadata collection. From the file paths, we can deduce the cube part type.
             Import(CubePart.All);
-            // Rebuild the .pngs into .xnb files.
-            ContentBuilder.RebuildContent();
-
-            PropertyChanged += CubeDesignerViewModel_PropertyChanged;
         }
 
-        internal void OnMainGameLoaded(SunbirdMBGame mainGame)
+        internal void OnAfterContentBuild(SunbirdMBGame mainGame)
         {
-            Initialize();
-            // Once the main game has loaded, we have access to the content manager. We can now build our cube factory
-            // library by creating textures from paths.
+            SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Building Cube Designer Library...");
+            // Build our cube factory library by creating textures from paths.
             CubeFactory.BuildLibrary(mainGame);
+
             // Initial current selections are set here.
             // TODO: Currently we just pick the first item in our tabs.
             SelectTop(CubeTopCollection[0]);
@@ -75,9 +70,15 @@ namespace SunbirdMB.Gui
             // Currently our metadata to display in the Properties window is just the current cube top.
             // This just depends on which tab is selected on start-up.
             CurrentMetadata = CubeFactory.CurrentCubeTopMetadata;
-            // Now that a current cube exists, go ahead and create a ghost marker image from it. It is important that this gets ddone
+        }
+
+        internal void OnGameLoaded(SunbirdMBGame mainGame)
+        {
+            // Now that a current cube and ghost marker exists go ahead and create a ghost marker image from it. It is important that this gets done
             // before the first update and draw calls.
             MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
+
+            PropertyChanged += CubeDesignerViewModel_PropertyChanged;
         }
 
         private void CubeDesignerViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -98,13 +99,14 @@ namespace SunbirdMB.Gui
         }
 
         private void CubeDesignerCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e, CubePart part)
-        {
+        {       
             if (e.NewItems != null)
             {
                 foreach (CubeDesignerItem item in e.NewItems)
                 {
                     // CubeDesignerViewModel outlives CubeDesignerItem so no need to unsubscribe.
-                    item.PropertyChanged += new PropertyChangedEventHandler((_sender, _e) => CubeDesignerCollectionItem_PropertyChanged(_sender, _e, part));
+                    item.PropertyChangedHandler = new PropertyChangedEventHandler((_sender, _e) => CubeDesignerCollectionItem_PropertyChanged(_sender, _e, part));
+                    item.Register();
                 }
             }
         }
@@ -138,6 +140,38 @@ namespace SunbirdMB.Gui
             }
         }
 
+        private void Sort(ObservableCollection<CubeDesignerItem> cubePartCollection)
+        {
+            var cache = new List<CubeDesignerItem>();
+            foreach (var item in cubePartCollection)
+            {
+                item.Unregister();
+                cache.Add(item);
+            }
+            cubePartCollection.Clear();
+            cache.Sort((x, y) => string.Compare(x.ContentPath.Split('\\').Last(), y.ContentPath.Split('\\').Last()));
+            foreach (var item in cache)
+            {
+                cubePartCollection.Add(item);
+            }
+        }
+
+        internal void SortAll()
+        {
+            SortTop();
+            SortBase();
+        }
+
+        internal void SortBase()
+        {
+            Sort(CubeBaseCollection);
+        }
+
+        internal void SortTop()
+        {
+            Sort(CubeTopCollection);
+        }
+
         private void SelectTop(CubeDesignerItem cubeDesignerItem)
         {
             CubeFactory.CurrentCubeTopMetadata = CubeFactory.CubeMetadataLibrary[cubeDesignerItem.ContentPath];
@@ -153,7 +187,7 @@ namespace SunbirdMB.Gui
         /// <summary>
         /// Import a single cube part into the cube designer and cube factory metadata collection (unbuilt).
         /// </summary>
-        internal void Import(string path, CubePart part)
+        internal void Import(string path)
         {
             var appPath = Assembly.GetExecutingAssembly().Location;
             var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
@@ -165,13 +199,17 @@ namespace SunbirdMB.Gui
                 "Import cancelled. Attempt was made to import from outside of the Content directory.".Log();
                 return;
             }
+            var part = contentPath.Split('\\')[1];
+            CubePart _part = CubePart.Top;
             // Ask what cube part we are importing.
-            if (part == CubePart.Top)
+            if (part == CubePart.Top.ToString())
             {
+                _part = CubePart.Top;
                 CubeTopCollection.Add(new CubeDesignerItem(this, path, contentPath));
             }
-            else if (part == CubePart.Base)
+            else if (part == CubePart.Base.ToString())
             {
+                _part = CubePart.Base;
                 CubeBaseCollection.Add(new CubeDesignerItem(this, path, contentPath));
             }
             // Find or create cube metadata.
@@ -183,7 +221,7 @@ namespace SunbirdMB.Gui
             }
             else
             {
-                cmd = new CubeMetadata() { ContentPath = contentPath, Part = part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
+                cmd = new CubeMetadata() { ContentPath = contentPath, Part = _part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
                 cmd.Serialize(metadata);
                 $"Creating {Path.GetFileName(metadata)}...".Log();
             }
@@ -191,7 +229,7 @@ namespace SunbirdMB.Gui
         }
 
         /// <summary>
-        /// Import cube parts into the cube designer and cube library (unbuilt).
+        /// Import cube parts into the cube designer and cube library (unbuilt) from the Content\Cubes folder.
         /// </summary>
         internal void Import(CubePart part)
         {

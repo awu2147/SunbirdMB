@@ -133,7 +133,7 @@ namespace SunbirdMB.Core
 
         public CubeMetadata() { }
 
-        internal void SubscribeHandlers()
+        internal void Register()
         {
             PropertyChanged += CubeMetaData_PropertyChanged;
         }
@@ -145,6 +145,7 @@ namespace SunbirdMB.Core
             var contentDirectory = Path.Combine(appDirectory, @"Content\");
             var metadataPath = Path.ChangeExtension(Path.Combine(contentDirectory, ContentPath), ".metadata");
             Serialize(metadataPath);
+            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
         }
 
         /// <summary>
@@ -153,7 +154,7 @@ namespace SunbirdMB.Core
         public void LoadContent(IMainGame mainGame)
         {
             Texture = mainGame.Content.Load<Texture2D>(ContentPath);
-            SubscribeHandlers();
+            Register();
         }
 
         public void Serialize(string path)

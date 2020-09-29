@@ -75,14 +75,7 @@ namespace SunbirdMB
 
         private void Build()
         {
-            //CubeDesignerViewModel.Initialize();
-            //View.CubeDesignerViewModel.ImportBase();
-            //View.CubeDesignerViewModel.ImportTop();
-        }
-
-        internal void OnMainGameLoaded(SunbirdMBGame mainGame)
-        {
-            CubeDesignerViewModel.OnMainGameLoaded(mainGame);
+            CubeDesignerViewModel.SortAll();
         }
 
         private void Import()
@@ -110,18 +103,18 @@ namespace SunbirdMB
                 if (Path.GetExtension(openFileDialog.FileName) == ".png")
                 {
                     var newFilePath = Path.Combine(contentDirectory, Path.GetFileName(openFileDialog.FileName));
-                    File.Copy(openFileDialog.FileName, newFilePath);
-                    if (selectedTab.Header.ToString() == "Top")
+                    if (File.Exists(newFilePath))
                     {
-                        CubeDesignerViewModel.Import(newFilePath, CubePart.Top);
+                        "Cannot copy to directory, file already exists.".Log();
                     }
-                    else if (selectedTab.Header.ToString() == "Base")
+                    else
                     {
-                        CubeDesignerViewModel.Import(newFilePath, CubePart.Base);
+                        File.Copy(openFileDialog.FileName, newFilePath);
+                        CubeDesignerViewModel.Import(newFilePath);
+                        // We don't need to rebuild everything, only the .png we just imported.
+                        ContentBuilder.BuildFile(newFilePath);
+                        CubeFactory.BuildLibrary(SunbirdMBGame);
                     }
-                    // We don't need to rebuild everything, only the .png we just imported.
-                    ContentBuilder.BuildFile(newFilePath);
-                    CubeFactory.BuildLibrary(SunbirdMBGame);
                 }
                 else
                 {

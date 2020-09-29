@@ -16,10 +16,22 @@ namespace SunbirdMB.Gui
         public CubeDesignerViewModel CubeDesigner { get; set; }
         public string ContentPath { get; set; }
 
+        public PropertyChangedEventHandler PropertyChangedHandler;
+
         public CubeDesignerItem(CubeDesignerViewModel cubeDesigner, string imagePath, string contentPath) : base(imagePath, new Int32Rect(0, 0, 72, 75))
         {
             CubeDesigner = cubeDesigner;
             ContentPath = contentPath;
+        }
+
+        internal void Register()
+        {
+            PropertyChanged += PropertyChangedHandler;
+        }
+
+        internal void Unregister()
+        {
+            PropertyChanged -= PropertyChangedHandler;
         }
 
         internal override void MouseDown()

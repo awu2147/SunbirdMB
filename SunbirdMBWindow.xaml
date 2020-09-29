@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SunbirdMB"
         xmlns:gui="clr-namespace:SunbirdMB.Gui"
         mc:Ignorable="d"
-        Title="Sunbird Map Builder" Height="820" Width="900">
+        Title="Sunbird Map Builder" Height="820" Width="900" SnapsToDevicePixels="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

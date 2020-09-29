@@ -116,8 +116,8 @@
     </Compile>
     <Compile Include="Gui\MainToolbarViewModel.cs" />
     <Compile Include="Gui\SelectedStyleConverter.cs" />
-    <Compile Include="Gui\SunbirdSplash.xaml.cs">
-      <DependentUpon>SunbirdSplash.xaml</DependentUpon>
+    <Compile Include="SunbirdMBSplash.xaml.cs">
+      <DependentUpon>SunbirdMBSplash.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IContent.cs" />
     <Compile Include="Interfaces\IMainGame.cs" />
@@ -162,7 +162,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\SunbirdSplash.xaml">
+    <Page Include="SunbirdMBSplash.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,6 +6,7 @@ using Sunbird.Core;
 using SunbirdMB.Core;
 using SunbirdMB.Framework;
 using SunbirdMB.Interfaces;
+using SunbirdMB.Tools;
 using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
@@ -37,6 +38,22 @@ namespace SunbirdMB
         public Keyboard Keyboard { get; set; }
         public Mouse Mouse { get; set; }
 
+        public event EventHandler BeforeContentBuild;
+
+        protected virtual void OnBeforeContentBuild()
+        {
+            EventHandler handler = BeforeContentBuild;
+            handler?.Invoke(this, null);
+        }
+
+        public event EventHandler AfterContentBuild;
+
+        protected virtual void OnAfterContentBuild()
+        {
+            EventHandler handler = AfterContentBuild;
+            handler?.Invoke(this, null);
+        }
+
         public MapBuilder MapBuilder { get; set; }
 
         public bool cleanLoad = false;
@@ -58,6 +75,7 @@ namespace SunbirdMB
             services = new ServiceContainer();
             services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceManager);
             Content = new ContentManager(services);
+            Content.RootDirectory = "Content";
 
             Serializer.ExtraTypes = new Type[]
             {
@@ -74,7 +92,14 @@ namespace SunbirdMB
 
             // content loading now possible
 
-            Content.RootDirectory = "Content";
+            OnBeforeContentBuild();
+
+            SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Building Content...");
+            // Rebuild the .pngs into .xnb files.
+            ContentBuilder.RebuildContent("Cubes");
+            ContentBuilder.RebuildContent("Temp");
+
+            OnAfterContentBuild();
 
             MapBuilder = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
             CurrentState = MapBuilder;

@@ -1,4 +1,4 @@
-﻿<Window x:Class="SunbirdMB.Gui.SunbirdSplash"
+﻿<Window x:Class="SunbirdMB.SunbirdMBSplash"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,12 +15,12 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <StackPanel>
-            <Image gif:AnimationBehavior.SourceUri="/SunbirdMB;component/Images/Loading.gif"/>
+        <TextBlock Text="{Binding Message}" Foreground="LightGray" Margin="0,295,0,0" Width="Auto" Height="Auto" Padding="10,0,0,0"
+                   Panel.ZIndex="1"/>
+        <Image gif:AnimationBehavior.SourceUri="/SunbirdMB;component/Images/Loading.gif"/>
             <!--Source="/SunbirdMB;component/Images/SunbirdSplash.png"/>-->
             <!--<ProgressBar Width="132" Height="20" Margin="0,8,0,0" 
                          Background="{StaticResource VSDark1Brush}" 
                          Foreground="Aqua" Maximum="100" Minimum="0" Value="{Binding Progress}"/>-->
-        </StackPanel>
     </Grid>
 </Window>

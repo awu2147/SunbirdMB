@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SunbirdMB.Gui;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -17,26 +18,26 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace SunbirdMB.Gui
-{
+namespace SunbirdMB
+{ 
     /// <summary>
     /// Interaction logic for SunbirdSplash.xaml
     /// </summary>
-    public partial class SunbirdSplash : Window
+    public partial class SunbirdMBSplash : Window
     {
-        internal static SunbirdSplashViewModel ViewModel;
+        internal static SunbirdMBSplashViewModel ViewModel;
 
-        public SunbirdSplash(CancellationToken cancelSplashToken)
+        public SunbirdMBSplash(CancellationToken cancelSplashToken)
         {
             InitializeComponent();
-            ViewModel = new SunbirdSplashViewModel(this, Dispatcher);
+            ViewModel = new SunbirdMBSplashViewModel(this, Dispatcher);
             DataContext = ViewModel;
 
-            //Task.Run(() => ViewModel.StartPolling(cancelSplashToken));
+            Task.Run(() => ViewModel.StartPolling(cancelSplashToken));
         }
     }
 
-    public class SunbirdSplashViewModel : PropertyChangedBase
+    public class SunbirdMBSplashViewModel : PropertyChangedBase
     {
         private int progress;
         public int Progress
@@ -45,12 +46,19 @@ namespace SunbirdMB.Gui
             set { SetProperty(ref progress, value); }
         }
 
+        private string message = "Initializing...";
+        public string Message
+        {
+            get { return message; }
+            set { SetProperty(ref message, value); }
+        }
+
         public int Target;
 
         public readonly Window splashScreen;
         private readonly Dispatcher splashScreenDispatcher;
 
-        public SunbirdSplashViewModel(Window window, Dispatcher dispatcher) 
+        public SunbirdMBSplashViewModel(Window window, Dispatcher dispatcher) 
         { 
             splashScreen = window;
             splashScreenDispatcher = dispatcher;
