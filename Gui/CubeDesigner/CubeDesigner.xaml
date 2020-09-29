@@ -79,11 +79,16 @@
                             <TabItem Header="Top" 
                                      Foreground="{StaticResource VSTextBrush}"
                                      Width="78">
-                                <ScrollViewer Style="{StaticResource LeftScrollViewer}">
+                                <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeTopCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button Command="{Binding C_MouseDown}">
+                                                <Button>
+                                                    <Button.InputBindings>
+                                                        <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
+                                                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                    </Button.InputBindings>
                                                     <Button.Style>
                                                         <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
                                                             <Binding Path="Selected"/>
@@ -111,14 +116,19 @@
                             <TabItem Header="Base"
                                      Foreground="{StaticResource VSTextBrush}" 
                                      Width="78">
-                                <ScrollViewer Style="{StaticResource LeftScrollViewer}">
+                                <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeBaseCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button Command="{Binding C_MouseDown}">
+                                                <Button>
+                                                    <Button.InputBindings>
+                                                        <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
+                                                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                    </Button.InputBindings>
                                                     <Button.Style>
                                                         <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
-                                                            <Binding Path="Selected"/>
+                                                            <Binding Path="{Binding ConverterTarget}"/>
                                                             <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
                                                             <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
                                                         </MultiBinding>

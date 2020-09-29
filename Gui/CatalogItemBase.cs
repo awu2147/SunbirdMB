@@ -36,7 +36,9 @@ namespace SunbirdMB.Gui
             set { SetProperty(ref selected, value); }
         }
 
-        public ICommand C_MouseDown { get; set; }
+        public ICommand C_LeftClick { get; set; }
+        public ICommand C_LeftDoubleClick { get; set; }
+        public ICommand C_RightClick { get; set; }
 
         public CatalogItemBase(string imagePath) : this(imagePath, Int32Rect.Empty) { }
 
@@ -44,13 +46,24 @@ namespace SunbirdMB.Gui
         {
             ImagePath = imagePath;
             SourceRect = sourceRect;
-            C_MouseDown = new RelayCommand((o) => MouseDown());
+            C_LeftClick = new RelayCommand((o) => LeftClick());
+            C_LeftDoubleClick = new RelayCommand((o) => LeftDoubleClick());
+            C_RightClick = new RelayCommand((o) => RightClick());
         }
 
-        internal virtual void MouseDown()
+        internal virtual void LeftClick()
         {
-            $"Clicked {Path.GetFileName(ImagePath)}".Log();
-            Selected = true;
+            $"LeftClick".Log();
+        }
+
+        internal virtual void LeftDoubleClick()
+        {
+            $"LeftDoubleClick".Log();
+        }
+
+        internal virtual void RightClick()
+        {
+            $"RightClick".Log();
         }
     }
 

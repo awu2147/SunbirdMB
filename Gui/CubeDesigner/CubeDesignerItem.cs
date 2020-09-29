@@ -3,6 +3,8 @@ using SunbirdMB.Framework;
 using SunbirdMB.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -16,6 +18,15 @@ namespace SunbirdMB.Gui
         public CubeMetadata CubeMetadata { get; set; }
 
         public PropertyChangedEventHandler PropertyChangedHandler;
+
+        public bool Active;
+
+        private string converterTarget = "Selected";
+        public string ConverterTarget
+        {
+            get { return converterTarget; }
+            set { SetProperty(ref converterTarget, value); }
+        }
 
         public CubeDesignerItem(string imagePath, CubeMetadata cmd) : base(imagePath, new Int32Rect(0, 0, 72, 75))
         {
@@ -32,12 +43,28 @@ namespace SunbirdMB.Gui
             PropertyChanged -= PropertyChangedHandler;
         }
 
-        internal override void MouseDown()
+        internal override void LeftClick()
         {
-            CubeDesignerViewModel.CurrentMetadata = CubeMetadata; //CubeFactory.CubeMetadataLibrary[ContentPath];
-            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
-            Selected = true;
+            if (!CubeDesignerViewModel.IsSubLevel)
+            {
+                CubeDesignerViewModel.CurrentMetadata = CubeMetadata;
+                MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
+                Selected = true;
+            }
+            else
+            {
+                Active = !Active;
+            }
         }
 
+        internal override void LeftDoubleClick()
+        {
+            CubeDesignerViewModel.EnterSubLevel(this);
+        }
+
+        internal override void RightClick()
+        {
+            CubeDesignerViewModel.ExitSubLevel();
+        }
     }
 }

@@ -26,11 +26,38 @@ namespace SunbirdMB.Gui
     {
         private static readonly PropertyChangedEventArgs SelectedTabPropertyEventArgs = new PropertyChangedEventArgs(nameof(SelectedTab));
         private static readonly PropertyChangedEventArgs CurrentMetadataPropertyEventArgs = new PropertyChangedEventArgs(nameof(CurrentMetadata));
+        private static readonly PropertyChangedEventArgs CubeTopCollectionPropertyEventArgs = new PropertyChangedEventArgs(nameof(CubeTopCollection));
+        private static readonly PropertyChangedEventArgs CubeBaseCollectionPropertyEventArgs = new PropertyChangedEventArgs(nameof(CubeBaseCollection));
 
         public static event PropertyChangedEventHandler StaticPropertyChanged;
 
-        public static ObservableCollection<CubeDesignerItem> CubeTopCollection { get; private set; } = new ObservableCollection<CubeDesignerItem>();
-        public static ObservableCollection<CubeDesignerItem> CubeBaseCollection { get; set; } = new ObservableCollection<CubeDesignerItem>();
+
+        private static ObservableCollection<CubeDesignerItem> cubeTopCollection = new ObservableCollection<CubeDesignerItem>();
+        public static ObservableCollection<CubeDesignerItem> CubeTopCollection
+        {
+            get { return cubeTopCollection; }
+            set
+            {
+                if (cubeTopCollection == value) { return; }
+                cubeTopCollection = value;
+                StaticPropertyChanged?.Invoke(null, CubeTopCollectionPropertyEventArgs);
+            }
+        }
+
+        private static ObservableCollection<CubeDesignerItem> cubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
+        public static ObservableCollection<CubeDesignerItem> CubeBaseCollection
+        {
+            get { return cubeBaseCollection; }
+            set
+            {
+                if (cubeBaseCollection == value) { return; }
+                cubeBaseCollection = value;
+                StaticPropertyChanged?.Invoke(null, CubeBaseCollectionPropertyEventArgs);
+            }
+        }
+
+        public static ObservableCollection<CubeDesignerItem> CachedCubeTopCollection { get; set; }
+        public static ObservableCollection<CubeDesignerItem> CachedCubeBaseCollection { get; set; }
 
         public static CubeMetadata CurrentCubeTopMetadata { get; private set; }
         public static CubeMetadata CurrentCubeBaseMetadata { get; private set; }
@@ -76,6 +103,8 @@ namespace SunbirdMB.Gui
             }
         }
 
+        public static bool IsSubLevel { get; set; }
+
         public ICommand C_Import { get; set; }
         public ICommand C_Sort { get; set; }
 
@@ -85,10 +114,15 @@ namespace SunbirdMB.Gui
         {
             MainGame = mainGame;
             C_Import = new RelayCommand((o) => Import());
-            C_Sort = new RelayCommand((o) => SortAll());
+            C_Sort = new RelayCommand((o) => Uncache());
         }
 
         IMainGame MainGame { get; set; }
+
+        private void Uncache()
+        {
+            CubeTopCollection = CachedCubeTopCollection;
+        }
 
         internal void OnBeforeContentBuild()
         {
@@ -125,7 +159,7 @@ namespace SunbirdMB.Gui
             MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
         }
 
-        private void CubeDesignerCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e, CubePart part)
+        public static void CubeDesignerCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e, CubePart part)
         {
             if (e.NewItems != null)
             {
@@ -138,7 +172,7 @@ namespace SunbirdMB.Gui
             }
         }
 
-        private void CubeDesignerCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e, CubePart part)
+        private static void CubeDesignerCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e, CubePart part)
         {
             CubeDesignerItem cdi = sender as CubeDesignerItem;
             // Manage the selection and deselction of cube designer items here.
@@ -165,6 +199,58 @@ namespace SunbirdMB.Gui
                     }
                 }
             }
+        }
+
+        internal static void EnterSubLevel(CubeDesignerItem cdi)
+        {
+            if (!IsSubLevel)
+            {
+                if (SelectedTab.Header.ToString() == "Top")
+                {
+                    CachedCubeTopCollection = CubeTopCollection;
+                    CubeTopCollection = new ObservableCollection<CubeDesignerItem>();
+                    CubeTopCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Top));
+
+                    for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+                    {
+                        for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
+                        {
+                            CubeTopCollection.Add(new CubeDesignerItem(cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75) });
+                        }
+                    }
+                }
+                else if (SelectedTab.Header.ToString() == "Base")
+                {
+                    CachedCubeBaseCollection = CubeBaseCollection;
+                    CubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
+                    CubeBaseCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Base));
+
+                    for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+                    {
+                        for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
+                        {
+                            CubeBaseCollection.Add(new CubeDesignerItem(cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75) });
+                        }
+                    }
+                }
+                IsSubLevel = true;
+            }
+        }
+
+        internal static void ExitSubLevel()
+        {
+            if (IsSubLevel)
+            {
+                if (SelectedTab.Header.ToString() == "Top")
+                {
+                    CubeTopCollection = CachedCubeTopCollection;
+                }
+                else if (SelectedTab.Header.ToString() == "Base")
+                {
+                    CubeBaseCollection = CachedCubeBaseCollection;
+                }
+            }
+            IsSubLevel = false;
         }
 
         private void Sort(ObservableCollection<CubeDesignerItem> cubePartCollection)

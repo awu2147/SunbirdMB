@@ -42,7 +42,7 @@
                                 <VisualState x:Name="Normal" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false" Background="Black" 
+                        <ScrollViewer Focusable="false" Background="Black" 
                                       gui:AutoScrollBehavior.AutoScroll="True">
                             <ScrollViewer.Template>
                                 <ControlTemplate TargetType="{x:Type ScrollViewer}">

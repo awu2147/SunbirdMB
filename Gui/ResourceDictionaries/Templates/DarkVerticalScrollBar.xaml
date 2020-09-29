@@ -235,7 +235,7 @@
         </Grid>
     </ControlTemplate>
     <!--Style and template for the ScrollViewer.-->
-    <Style x:Key="LeftScrollViewer"
+    <Style x:Key="DarkScrollViewer"
        TargetType="{x:Type ScrollViewer}">
         <Setter Property="OverridesDefaultStyle"
           Value="True" />
