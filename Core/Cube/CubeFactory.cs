@@ -1,5 +1,4 @@
-﻿using Sunbird.Core;
-using SunbirdMB.Framework;
+﻿using SunbirdMB.Framework;
 using SunbirdMB.Gui;
 using SunbirdMB.Interfaces;
 using System;

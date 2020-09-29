@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SunbirdMB.Interfaces;
 using SunbirdMB.Framework;
-using Sunbird.Core;
 
 namespace SunbirdMB.Core
 {

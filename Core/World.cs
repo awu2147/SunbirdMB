@@ -23,7 +23,7 @@ using SunbirdMB;
 /// - 2DWorldPosition: Position in the 2D game world.
 /// </summary>
 
-namespace Sunbird.Core
+namespace SunbirdMB.Core
 {
     public static class World
     {

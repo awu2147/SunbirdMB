@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Sunbird.Core;
 using SunbirdMB.Core;
 using SunbirdMB.Framework;
 using SunbirdMB.Gui;

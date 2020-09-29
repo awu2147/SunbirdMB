@@ -16,7 +16,7 @@ using MonoGame.Framework.WpfInterop.Input;
 using SunbirdMB;
 using SunbirdMB.Interfaces;
 
-namespace Sunbird.Core
+namespace SunbirdMB.Core
 {
     public class KeyReleasedEventArgs : EventArgs
     {

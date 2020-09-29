@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.WpfInterop;
-using Sunbird.Core;
 using SunbirdMB.Core;
 using SunbirdMB.Framework;
 using SunbirdMB.Interfaces;
