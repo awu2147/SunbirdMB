@@ -23,7 +23,6 @@ namespace SunbirdMB.Core
         [XmlIgnore]
         public string Name { get { return ContentPath.Split('\\').Last(); } }
         public string ContentPath { get; set; }
-        public CubePart Part { get; set; }
 
         private int sheetRows = 1;
         public int SheetRows
@@ -46,7 +45,7 @@ namespace SunbirdMB.Core
         public int SheetColumns
         {
             get { return sheetColumns; }
-            set 
+            set
             {
                 if (value < 1)
                 {

@@ -9,12 +9,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/LoggerDataGrid.xaml"/>
-                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkVerticalScrollBar.xaml"/>
-                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkTabControl.xaml"/>
-                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkTextBox.xaml"/>
-                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/CubeDesignerButtonItem.xaml"/>
-                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
+                <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/MasterDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>

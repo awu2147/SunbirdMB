@@ -135,13 +135,25 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\ResourceDictionaries\Templates\CubeDesignerButtonItem.xaml">
+    <Page Include="Gui\ResourceDictionaries\MasterDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\ResourceDictionaries\Templates\CubeDesignerItemSelectedStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\ResourceDictionaries\Templates\CubeDesignerItemDefaultStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\ResourceDictionaries\Templates\DarkComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\ResourceDictionaries\Templates\DarkRedButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\ResourceDictionaries\Templates\DarkTabControl.xaml">
       <SubType>Designer</SubType>

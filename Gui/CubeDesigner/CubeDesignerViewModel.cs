@@ -50,7 +50,7 @@ namespace SunbirdMB.Gui
 
         public static CubeMetadata CurrentMetadata
         {
-            get 
+            get
             {
                 if (SelectedTab?.Header.ToString() == "Top")
                 {
@@ -60,7 +60,7 @@ namespace SunbirdMB.Gui
                 {
                     return CurrentCubeBaseMetadata;
                 }
-                return null; 
+                return null;
             }
             set
             {
@@ -104,7 +104,7 @@ namespace SunbirdMB.Gui
             SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Importing Cube Content...");
             // Start off by populating the cube designer. We can also load/create metadata files here, and add the resulting 
             // cube metadata objects to cube factory metadata collection. From the file paths, we can deduce the cube part type.
-            Import(CubePart.All);
+            ImportAll();
 
             //SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Building Cube Designer Library...");
             // Build our cube factory library by creating textures from paths.
@@ -127,7 +127,7 @@ namespace SunbirdMB.Gui
         }
 
         private void CubeDesignerCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e, CubePart part)
-        {       
+        {
             if (e.NewItems != null)
             {
                 foreach (CubeDesignerItem item in e.NewItems)
@@ -202,16 +202,19 @@ namespace SunbirdMB.Gui
 
         private void SelectTop(CubeDesignerItem cubeDesignerItem)
         {
-            CurrentCubeTopMetadata = cubeDesignerItem.CubeMetadata; 
+            CurrentCubeTopMetadata = cubeDesignerItem.CubeMetadata;
             cubeDesignerItem.Selected = true;
         }
 
         private void SelectBase(CubeDesignerItem cubeDesignerItem)
         {
-            CurrentCubeBaseMetadata = cubeDesignerItem.CubeMetadata; 
+            CurrentCubeBaseMetadata = cubeDesignerItem.CubeMetadata;
             cubeDesignerItem.Selected = true;
         }
 
+        /// <summary> 
+        /// Copy a single cube part from another directory into the Content\Cubes folder, and import it.
+        /// </summary>
         private void Import()
         {
             var importDirectory = string.Empty;
@@ -237,6 +240,8 @@ namespace SunbirdMB.Gui
                     else
                     {
                         File.Copy(openFileDialog.FileName, newFilePath);
+                        // We don't need to rebuild everything, only the .png we just imported.
+                        ContentBuilder.BuildFile(newFilePath);
                         Import(newFilePath);
                     }
                 }
@@ -248,92 +253,66 @@ namespace SunbirdMB.Gui
 
         }
 
-        /// <summary>
-        /// Import a single cube part into the cube designer and cube factory metadata collection (unbuilt).
+        /// <summary> 
+        /// Import a single cube part into the cube designer from the Content\Cubes folder.
         /// </summary>
-        internal void Import(string path)
+        private void Import(string path)
         {
-            var contentPath = path.MakeContentRelative();
-            if (contentPath == string.Empty) { return; }
-            // We don't need to rebuild everything, only the .png we just imported.
-            ContentBuilder.BuildFile(path);
-            var _part = contentPath.Split('\\')[1];
-            CubePart part = (CubePart)Enum.Parse(typeof(CubePart), _part, true);
-            // Find or create cube metadata.
-            var metadataPath = Path.ChangeExtension(path, ".metadata");
-            CubeMetadata cmd;
-            if (File.Exists(metadataPath))
+            try
             {
-                cmd = Serializer.ReadXML<CubeMetadata>(CubeMetadata.CubeMetaDataSerializer, metadataPath);
-                cmd.LoadContent(MainGame);
+                var contentPath = path.MakeContentRelative();
+                if (contentPath == string.Empty) { return; }
+
+                // Find or create cube metadata.
+                var metadataPath = Path.ChangeExtension(path, ".metadata");
+                CubeMetadata cmd;
+                if (File.Exists(metadataPath))
+                {
+                    cmd = Serializer.ReadXML<CubeMetadata>(CubeMetadata.CubeMetaDataSerializer, metadataPath);
+                    cmd.LoadContent(MainGame);
+                }
+                else
+                {
+                    cmd = new CubeMetadata() { ContentPath = contentPath, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
+                    cmd.LoadContent(MainGame);
+                    cmd.Serialize(metadataPath);
+                    $"Creating {Path.GetFileName(metadataPath)}...".Log();
+                }
+
+                // Deduce part type from path.
+                var _part = contentPath.Split('\\')[1];
+                CubePart part = (CubePart)Enum.Parse(typeof(CubePart), _part, true);
+
+                // Add to part specific collection.
+                if (part == CubePart.Top)
+                {
+                    CubeTopCollection.Add(new CubeDesignerItem(path, cmd));
+                }
+                else if (part == CubePart.Base)
+                {
+                    CubeBaseCollection.Add(new CubeDesignerItem(path, cmd));
+                }
             }
-            else
+            catch (Exception e)
             {
-                cmd = new CubeMetadata() { ContentPath = contentPath, Part = part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
-                cmd.LoadContent(MainGame);
-                cmd.Serialize(metadataPath);
-                $"Creating {Path.GetFileName(metadataPath)}...".Log();
-            }
-            // Ask what cube part we are importing.
-            if (part == CubePart.Top)
-            {
-                CubeTopCollection.Add(new CubeDesignerItem(path, cmd));
-            }
-            else if (part == CubePart.Base)
-            {
-                CubeBaseCollection.Add(new CubeDesignerItem(path, cmd));
+                e.Message.Log();
             }
         }
 
         /// <summary>
-        /// Import cube parts into the cube designer and cube library from the Content\Cubes folder.
+        /// Import all cube parts into the cube designer from the Content\Cubes folder.
         /// </summary>
-        internal void Import(CubePart part)
+        private void ImportAll()
         {
-            if (part == CubePart.All)
+            var cubeTops = Directory.GetFiles(UriHelper.CubeTopDirectory, "*.png", SearchOption.AllDirectories);
+            foreach (var cubeTop in cubeTops)
             {
-                Import(CubePart.Top);
-                Import(CubePart.Base);
+                Import(cubeTop);
             }
-            else
+            var cubeBases = Directory.GetFiles(UriHelper.CubeBaseDirectory, "*.png", SearchOption.AllDirectories);
+            foreach (var cubeBase in cubeBases)
             {
-                var importDirectory = string.Empty;
-                if (part == CubePart.Top)
-                {
-                    importDirectory = UriHelper.CubeTopDirectory;
-                }
-                else if (part == CubePart.Base)
-                {
-                    importDirectory = UriHelper.CubeBaseDirectory;
-                }
-                var files = Directory.GetFiles(importDirectory, "*.png", SearchOption.AllDirectories);
-                foreach (var file in files)
-                {
-                    var contentPath = file.MakeContentRelative();
-                    if (contentPath == string.Empty) { return; }
-                    var metadata = Path.ChangeExtension(file, ".metadata");
-                    CubeMetadata cmd;
-                    if (File.Exists(metadata))
-                    {
-                        cmd = Serializer.ReadXML<CubeMetadata>(CubeMetadata.CubeMetaDataSerializer, metadata);
-                        cmd.LoadContent(MainGame);
-                    }
-                    else
-                    {
-                        cmd = new CubeMetadata() { ContentPath = contentPath, Part = part, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
-                        cmd.LoadContent(MainGame);
-                        cmd.Serialize(metadata);
-                        $"Creating {Path.GetFileName(metadata)}...".Log();
-                    }
-                    if (part == CubePart.Top)
-                    {
-                        CubeTopCollection.Add(new CubeDesignerItem(file, cmd));
-                    }
-                    else if (part == CubePart.Base)
-                    {
-                        CubeBaseCollection.Add(new CubeDesignerItem(file, cmd));
-                    }
-                }
+                Import(cubeBase);
             }
         }
     }
