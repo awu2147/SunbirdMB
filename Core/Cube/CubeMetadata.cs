@@ -19,6 +19,9 @@ namespace SunbirdMB.Core
 
         [XmlIgnore]
         public Texture2D Texture;
+
+        [XmlIgnore]
+        public string Name { get { return ContentPath.Split('\\').Last(); } }
         public string ContentPath { get; set; }
         public CubePart Part { get; set; }
 

@@ -18,9 +18,9 @@ namespace SunbirdMB.Gui
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class CubeDesignerView : UserControl
+    public partial class CubeDesigner : UserControl
     {
-        public CubeDesignerView()
+        public CubeDesigner()
         {
             InitializeComponent();
         }

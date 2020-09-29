@@ -174,5 +174,6 @@ namespace SunbirdMB.Tools
         public TextureContentBuilder() : base() { }
 
         public TextureContentBuilder(string outputDir, string intermediateDir) : base(outputDir, intermediateDir) { }
+
     }
 }

@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;
+using SunbirdMB.Interfaces;
 
 namespace SunbirdMB.Core
 {
@@ -48,9 +49,9 @@ namespace SunbirdMB.Core
             PositionMap = ConstructPositionMap();
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent(IMainGame mainGame)
         {
-            Texture = content.Load<Texture2D>(TexturePath);
+            Texture = mainGame.Content.Load<Texture2D>(TexturePath);
             PositionMap = ConstructPositionMap();
         }
 

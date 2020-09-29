@@ -30,9 +30,9 @@
         <Setter Property="FocusVisualStyle"
           Value="{StaticResource ButtonFocusVisual}" />
         <Setter Property="MinHeight"
-          Value="23" />
+          Value="22" />
         <Setter Property="MinWidth"
-          Value="75" />
+          Value="60" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -310,9 +310,9 @@
         <Setter Property="FocusVisualStyle"
           Value="{StaticResource ButtonFocusVisual}" />
         <Setter Property="MinHeight"
-          Value="23" />
+          Value="22" />
         <Setter Property="MinWidth"
-          Value="75" />
+          Value="60" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">

@@ -17,13 +17,14 @@
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <gui:SelectedStyleConverter x:Key="SelectedStyleConverter"/>
+            <gui:AuthorizationStyleConverter x:Key="AuthorizationStyleConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <TabControl Background="{StaticResource VSDark2Brush}" 
                                     BorderThickness="0">
         <TabItem Header="Tools"  Foreground="{StaticResource VSTextBrush}" Width="78">
             <StackPanel Width="Auto" HorizontalAlignment="left" Orientation="Horizontal" Margin="1">
-                <Button Width="Auto" Height="Auto" Command="{Binding C_WorldButtonClick}">
+                <Button Width="75" Height="Auto" Command="{Binding C_WorldButtonClick}">
                     <Button.Content>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -35,14 +36,14 @@
                         </Grid>
                     </Button.Content>
                     <Button.Style>
-                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
-                            <Binding Path="IsBuilding"/>
+                        <MultiBinding Converter="{StaticResource AuthorizationStyleConverter}">
+                            <Binding Path="(gui:MainToolbarViewModel.Authorization)"/>
                             <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
                             <Binding Source="{StaticResource CubeDesignerItemStyle}" />
                         </MultiBinding>
                     </Button.Style>
                 </Button>
-                <Button Width="Auto" Height="Auto" Command="{Binding C_BuildButtonClick}" Margin="2,0,0,0" >
+                <Button Width="75" Height="Auto" Command="{Binding C_BuildButtonClick}" Margin="2,0,0,0" >
                     <Button.Content>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -54,8 +55,8 @@
                         </Grid>
                     </Button.Content>
                     <Button.Style>
-                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
-                            <Binding Path="IsBuilding"/>
+                        <MultiBinding Converter="{StaticResource AuthorizationStyleConverter}">
+                            <Binding Path="(gui:MainToolbarViewModel.Authorization)"/>
                             <Binding Source="{StaticResource CubeDesignerItemStyle}" />
                             <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
                         </MultiBinding>

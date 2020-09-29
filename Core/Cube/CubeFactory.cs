@@ -1,5 +1,6 @@
 ﻿using Sunbird.Core;
 using SunbirdMB.Framework;
+using SunbirdMB.Gui;
 using SunbirdMB.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,25 +15,7 @@ namespace SunbirdMB.Core
         public static bool IsRandomTop { get; set; }
         public static bool IsRandomBase { get; set; }
 
-        public static CubeMetadata CurrentCubeTopMetadata { get; set; }
-        public static CubeMetadata CurrentCubeBaseMetadata { get; set; }
-
-        public static List<CubeMetadata> CubeMetadataCollection { get; set; } = new List<CubeMetadata>();
-
-        public static XDictionary<string, CubeMetadata> CubeMetadataLibrary { get; set; }
-
-        public static void SetCurrent(string contentPath)
-        {
-            var cmd = CubeMetadataLibrary[contentPath];
-            if (cmd.Part == CubePart.Top)
-            {
-                CurrentCubeTopMetadata = cmd;
-            }
-            else if (cmd.Part == CubePart.Base)
-            {
-                CurrentCubeBaseMetadata = cmd;
-            }
-        }
+        //public static XDictionary<string, CubeMetadata> CubeMetadataLibrary { get; set; }
 
         public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
         {
@@ -68,23 +51,31 @@ namespace SunbirdMB.Core
 
         public static Cube CreateCurrentCube(Coord coords, Coord relativeCoords, int altitude)
         {
-            return CreateCube(CurrentCubeTopMetadata, CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
+            return CreateCube(CubeDesignerViewModel.CurrentCubeTopMetadata, CubeDesignerViewModel.CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
         }
 
-        /// <summary>
-        /// Build the cube metadata library by using path to load textures into memory.
-        /// </summary>
-        public static void BuildLibrary(IMainGame mainGame)
-        {
-            CubeMetadataLibrary = new XDictionary<string, CubeMetadata>();
-            foreach (var cmd in CubeMetadataCollection)
-            {
-                cmd.LoadContent(mainGame);
-                if (!CubeMetadataLibrary.ContainsKey(cmd.ContentPath))
-                {
-                    CubeMetadataLibrary.Add(cmd.ContentPath, cmd);
-                }
-            }
-        }
+        ///// <summary>
+        ///// Build the cube metadata library by using path to load textures into memory.
+        ///// </summary>
+        //public static void BuildLibrary(IMainGame mainGame)
+        //{
+        //    CubeMetadataLibrary = new XDictionary<string, CubeMetadata>();
+        //    foreach (var cmd in CubeMetadataCollection)
+        //    {
+        //        if (!CubeMetadataLibrary.ContainsKey(cmd.ContentPath))
+        //        {
+        //            cmd.LoadContent(mainGame);
+        //            CubeMetadataLibrary.Add(cmd.ContentPath, cmd);
+        //        }
+        //    }
+        //    foreach (var cdi in CubeDesignerViewModel.CubeTopCollection)
+        //    {
+        //        if (!CubeMetadataLibrary.ContainsKey(cdi.CubeMetadata.ContentPath))
+        //        {
+        //            cmd.LoadContent(mainGame);
+        //            CubeMetadataLibrary.Add(cmd.ContentPath, cmd);
+        //        }
+        //    }
+        //}
     }
 }

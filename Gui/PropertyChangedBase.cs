@@ -30,5 +30,6 @@ namespace SunbirdMB.Gui
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
     }
 }

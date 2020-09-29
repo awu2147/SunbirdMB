@@ -16,8 +16,6 @@ namespace SunbirdMB.Core
     /// </summary>
     public abstract class State
     {
-        protected ContentManager Content { get; set; }
-        protected GraphicsDevice GraphicsDevice { get; set; }
         protected SunbirdMBGame MainGame { get; set; }
 
         public event EventHandler StateChanged;
@@ -30,10 +28,8 @@ namespace SunbirdMB.Core
 
         }
 
-        public State(SunbirdMBGame mainGame, GraphicsDevice graphicsDevice, ContentManager content)
+        public State(SunbirdMBGame mainGame)
         {
-            Content = content;
-            GraphicsDevice = graphicsDevice;
             MainGame = mainGame;
         }
 

@@ -102,19 +102,20 @@
     <Compile Include="Core\GhostMarker.cs" />
     <Compile Include="Framework\Keyboard.cs" />
     <Compile Include="Framework\Mouse.cs" />
+    <Compile Include="Framework\UriHelper.cs" />
     <Compile Include="Gui\CatalogItemBase.cs" />
     <Compile Include="Gui\CubeDesigner\CubeDesignerItem.cs" />
     <Compile Include="Gui\CubeDesigner\CubeDesignerViewModel.cs" />
-    <Compile Include="Gui\CubeDesigner\CubeDesignerView.xaml.cs">
-      <DependentUpon>CubeDesignerView.xaml</DependentUpon>
+    <Compile Include="Gui\CubeDesigner\CubeDesigner.xaml.cs">
+      <DependentUpon>CubeDesigner.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Logger\Logger.xaml.cs">
       <DependentUpon>Logger.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\MainToolbar.xaml.cs">
+    <Compile Include="Gui\MainToolbar\MainToolbar.xaml.cs">
       <DependentUpon>MainToolbar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\MainToolbarViewModel.cs" />
+    <Compile Include="Gui\MainToolbar\MainToolbarViewModel.cs" />
     <Compile Include="Gui\SelectedStyleConverter.cs" />
     <Compile Include="SunbirdMBSplash.xaml.cs">
       <DependentUpon>SunbirdMBSplash.xaml</DependentUpon>
@@ -126,7 +127,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\MainToolbar.xaml">
+    <Page Include="Gui\MainToolbar\MainToolbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -158,7 +159,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\CubeDesigner\CubeDesignerView.xaml">
+    <Page Include="Gui\CubeDesigner\CubeDesigner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -192,7 +193,7 @@
     <Compile Include="Core\Sprite.cs" />
     <Compile Include="Core\SpriteSheet.cs" />
     <Compile Include="Core\State.cs" />
-    <Compile Include="Core\Timer.cs" />
+    <Compile Include="Framework\Timer.cs" />
     <Compile Include="Framework\XDictionary.cs" />
     <Compile Include="Gui\Logger\LoggerViewModel.cs" />
     <Compile Include="Gui\RelayCommand.cs" />

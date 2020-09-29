@@ -65,10 +65,9 @@ namespace SunbirdMB
         {
             SunbirdMBGame = sunbirdMBGame;
 
-            C_Import = new RelayCommand((o) => Import());
             C_Build = new RelayCommand((o) => Build());
 
-            CubeDesignerViewModel = new CubeDesignerViewModel();
+            CubeDesignerViewModel = new CubeDesignerViewModel(sunbirdMBGame);
             LoggerViewModel = new LoggerViewModel();
             MainToolbarViewModel = new MainToolbarViewModel();
         }
@@ -78,51 +77,7 @@ namespace SunbirdMB
             CubeDesignerViewModel.SortAll();
         }
 
-        private void Import()
-        {
-            var selectedTab = CubeDesignerViewModel.SelectedTab;
-
-            var appPath = Assembly.GetExecutingAssembly().Location;
-            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
-            Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
-            var contentDirectory = string.Empty;
-            if (selectedTab.Header.ToString() == "Top")
-            {
-                contentDirectory = Path.Combine(appDirectory, "Content", "Cubes", "Top");
-                Debug.Assert(contentDirectory == @"D:\SunbirdMB\bin\Debug\Content\Cubes\Top");
-            }
-            else if (selectedTab.Header.ToString() == "Base")
-            {
-                contentDirectory = Path.Combine(appDirectory, "Content", "Cubes", "Base");
-                Debug.Assert(contentDirectory == @"D:\SunbirdMB\bin\Debug\Content\Cubes\Base");
-            }
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                if (Path.GetExtension(openFileDialog.FileName) == ".png")
-                {
-                    var newFilePath = Path.Combine(contentDirectory, Path.GetFileName(openFileDialog.FileName));
-                    if (File.Exists(newFilePath))
-                    {
-                        "Cannot copy to directory, file already exists.".Log();
-                    }
-                    else
-                    {
-                        File.Copy(openFileDialog.FileName, newFilePath);
-                        CubeDesignerViewModel.Import(newFilePath);
-                        // We don't need to rebuild everything, only the .png we just imported.
-                        ContentBuilder.BuildFile(newFilePath);
-                        CubeFactory.BuildLibrary(SunbirdMBGame);
-                    }
-                }
-                else
-                {
-                    "Incorrect file format".Log();
-                }
-            }
-            
-        }
+       
     }
 
 }

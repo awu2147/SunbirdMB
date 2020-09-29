@@ -1,4 +1,5 @@
-﻿using SunbirdMB.Gui;
+﻿using SunbirdMB.Framework;
+using SunbirdMB.Gui;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -12,6 +13,8 @@ namespace SunbirdMB
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            UriHelper.Intiailize();
+
             // Create the token source for closing the splash screen.
             CancellationTokenSource cancelSplashTokenSource = new CancellationTokenSource();
 

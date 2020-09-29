@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.Xml.Serialization;
 using SunbirdMB.Framework;
+using SunbirdMB.Interfaces;
 
 namespace SunbirdMB.Core
 {
@@ -80,9 +81,9 @@ namespace SunbirdMB.Core
             };
         }
 
-        public virtual void LoadContent(ContentManager content)
+        public virtual void LoadContent(IMainGame mainGame)
         {
-            SpriteSheet.LoadContent(content);
+            SpriteSheet.LoadContent(mainGame);
             Timer.OnCompleted = () =>
             {
                 CurrentFrame++;

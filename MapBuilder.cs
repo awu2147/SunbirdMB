@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Input;
 using Sunbird.Core;
 using SunbirdMB.Core;
 using SunbirdMB.Framework;
+using SunbirdMB.Gui;
 using SunbirdMB.Interfaces;
 
 namespace SunbirdMB
@@ -44,7 +45,14 @@ namespace SunbirdMB
         public bool InFocus;
         public bool IsLoading { get; set; }
         public int Altitude { get; set; }
-        public static Authorization Authorization { get; set; }
+
+        [XmlIgnore]
+        public Authorization Authorization 
+        { 
+            get { return MainToolbarViewModel.Authorization; }
+            set { MainToolbarViewModel.Authorization = value; } 
+        }
+
         public static BuildMode BuildMode { get; set; }
         public static GhostMarker GhostMarker { get; set; }
 
@@ -58,8 +66,8 @@ namespace SunbirdMB
 
         }
 
-        public MapBuilder(SunbirdMBGame mainGame, GraphicsDevice graphicsDevice, ContentManager content, string path) 
-            : base(mainGame, graphicsDevice, content)
+        public MapBuilder(SunbirdMBGame mainGame, string path) 
+            : base(mainGame)
         {
             SunbirdMBGame = mainGame;
             this.saveFilePath = path;
@@ -114,7 +122,7 @@ namespace SunbirdMB
                     {
                         GhostMarker = sprite as GhostMarker;
                     }
-                    sprite.LoadContent(MainGame, Content);
+                    sprite.LoadContent(MainGame);
                 }
             }
 

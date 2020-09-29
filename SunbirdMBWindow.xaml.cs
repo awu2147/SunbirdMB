@@ -79,12 +79,12 @@ namespace SunbirdMB
 
         private void Game_BeforeContentBuild(object sender, EventArgs e)
         {
-            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnBeforeContentBuild(SunbirdMBGame);
+            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnBeforeContentBuild();
         }
 
         private void Game_AfterContentBuild(object sender, EventArgs e)
         {
-            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnAfterContentBuild(SunbirdMBGame);
+            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnAfterContentBuild();
         }
 
         private void Game_Loaded(object sender, EventArgs e)
@@ -96,7 +96,7 @@ namespace SunbirdMB
             SizeChanged += Window_SizeChanged;
             Closed += Window_Closed;
 
-            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnGameLoaded(SunbirdMBGame);
+            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnGameLoaded();
 
             gameLoaded = true;
         }

@@ -129,12 +129,12 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Core method used to re-instantiate non-serializable properties and delegates. This can create garbage if called during runtime.
         /// </summary>
-        public virtual void LoadContent(IMainGame mainGame, ContentManager content)
+        public virtual void LoadContent(IMainGame mainGame)
         {
             MainGame = mainGame;
             if (Animator != null)
             {
-                Animator.LoadContent(content);
+                Animator.LoadContent(mainGame);
                 Animator.Sprite = this;
             }
         }

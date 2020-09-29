@@ -3,11 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SunbirdMB.Framework;
 using SunbirdMB.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SunbirdMB.Core
 {
@@ -23,20 +18,18 @@ namespace SunbirdMB.Core
         public void MorphImage(Sprite image)
         {
             // Morph the ghost marker into the given sprite by serialization.
-            //Serializer.WriteXML<Sprite>(SpriteSerializer, image, "DynamicCache.xml");
-            //Image = Serializer.ReadXML<Sprite>(SpriteSerializer, "DynamicCache.xml");
             Image = Serializer.CloneBySerialization(image, SpriteSerializer);
             // Apply ghost marker properties to the deserialized image.
             Image.IsHidden = IsHidden;
             Image.Position = Position;
             // Load the image content.
-            Image.LoadContent(MainGame, MainGame.Content);
+            Image.LoadContent(MainGame);
         }
 
-        public override void LoadContent(IMainGame mainGame, ContentManager content)
+        public override void LoadContent(IMainGame mainGame)
         {
-            base.LoadContent(mainGame, content);
-            Image.LoadContent(mainGame, content);
+            base.LoadContent(mainGame);
+            Image.LoadContent(mainGame);
         }
 
         public override void Update(GameTime gameTime)

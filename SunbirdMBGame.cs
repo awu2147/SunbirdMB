@@ -101,7 +101,7 @@ namespace SunbirdMB
 
             OnAfterContentBuild();
 
-            MapBuilder = new MapBuilder(this, GraphicsDevice, Content, "MapBuilderSave.xml");
+            MapBuilder = new MapBuilder(this, "MapBuilderSave.xml");
             CurrentState = MapBuilder;
 
         }
