@@ -42,14 +42,11 @@ namespace SunbirdMB.Core
             WindowTop = window.Top;
         }
 
-        public string OutputDir { get; set; }
-        public string IntermediateDir { get; set; }
         public int WorldZoom { get; set; } = 3;
 
         internal void LoadGameParameters(SunbirdMBGame game)
         {
             World.Zoom = WorldZoom;
-            //World.ReconstructTopFaceArea();
         }
 
         internal void SaveGameParameters(SunbirdMBGame game)

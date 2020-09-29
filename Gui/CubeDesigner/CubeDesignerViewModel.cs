@@ -102,8 +102,7 @@ namespace SunbirdMB.Gui
         internal void OnAfterContentBuild()
         {
             SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Importing Cube Content...");
-            // Start off by populating the cube designer. We can also load/create metadata files here, and add the resulting 
-            // cube metadata objects to cube factory metadata collection. From the file paths, we can deduce the cube part type.
+            // Import all cube parts into the cube designer from the Content\Cubes folder.
             ImportAll();
 
             //SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Building Cube Designer Library...");
@@ -250,7 +249,7 @@ namespace SunbirdMB.Gui
                     "Incorrect file format".Log();
                 }
             }
-
+            SortAll();
         }
 
         /// <summary> 
