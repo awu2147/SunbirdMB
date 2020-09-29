@@ -102,7 +102,9 @@ namespace SunbirdMB.Gui
             }
         }
 
-        public static bool IsSubLevel { get; set; }
+        public static bool IsTopSubLevel { get; set; }
+
+        public static bool IsBaseSubLevel { get; set; }
 
         public ICommand C_Import { get; set; }
         public ICommand C_Sort { get; set; }
@@ -175,7 +177,7 @@ namespace SunbirdMB.Gui
         {
             CubeDesignerItem cdi = sender as CubeDesignerItem;
             // Manage the selection and deselction of cube designer items here.
-            if (e.PropertyName == "Selection" && cdi.Selection == SelectionMode.Selected)
+            if (e.PropertyName == nameof(cdi.Selection) && cdi.Selection == SelectionMode.Selected)
             {
                 if (part == CubePart.Top)
                 {
@@ -202,54 +204,60 @@ namespace SunbirdMB.Gui
 
         internal static void EnterSubLevel(CubeDesignerItem cdi)
         {
-            if (!IsSubLevel)
+            if (!IsTopSubLevel && SelectedTab.Header.ToString() == CubePart.Top.ToString())
             {
-                if (SelectedTab.Header.ToString() == "Top")
-                {
-                    CachedCubeTopCollection = CubeTopCollection;
-                    CubeTopCollection = new ObservableCollection<CubeDesignerItem>();
-                    CubeTopCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Top));
+                CachedCubeTopCollection = CubeTopCollection;
+                CubeTopCollection = new ObservableCollection<CubeDesignerItem>();
+                CubeTopCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Top));
 
-                    for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+                int count = 0;
+                for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+                {
+                    for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
                     {
-                        for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
-                        {
-                            CubeTopCollection.Add(new CubeDesignerItem(cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75) });
-                        }
+                        count++;
+                        SelectionMode selection = cdi.CubeMetadata.ActiveFrames.Contains(count) ? SelectionMode.Active : SelectionMode.None;
+                        CubeTopCollection.Add(new CubeDesignerItem(cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75), Selection = selection });
                     }
                 }
-                else if (SelectedTab.Header.ToString() == "Base")
-                {
-                    CachedCubeBaseCollection = CubeBaseCollection;
-                    CubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
-                    CubeBaseCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Base));
 
-                    for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+                IsTopSubLevel = true;
+            }
+            else if (!IsBaseSubLevel && SelectedTab.Header.ToString() == CubePart.Base.ToString())
+            {
+                CachedCubeBaseCollection = CubeBaseCollection;
+                CubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
+                CubeBaseCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Base));
+
+                int count = 0;
+                for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+                {
+                    for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
                     {
-                        for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
-                        {
-                            CubeBaseCollection.Add(new CubeDesignerItem(cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75) });
-                        }
+                        count++;
+                        SelectionMode selection = cdi.CubeMetadata.ActiveFrames.Contains(count) ? SelectionMode.Active : SelectionMode.None;
+                        CubeBaseCollection.Add(new CubeDesignerItem(cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75), Selection = selection });
                     }
                 }
-                IsSubLevel = true;
+
+                IsBaseSubLevel = true;
             }
         }
 
         internal static void ExitSubLevel()
         {
-            if (IsSubLevel)
+            // Set the cube collections back to their upper level cached copy.
+            if (IsTopSubLevel && SelectedTab.Header.ToString() == CubePart.Top.ToString())
             {
-                if (SelectedTab.Header.ToString() == "Top")
-                {
-                    CubeTopCollection = CachedCubeTopCollection;
-                }
-                else if (SelectedTab.Header.ToString() == "Base")
-                {
-                    CubeBaseCollection = CachedCubeBaseCollection;
-                }
+                CubeTopCollection = CachedCubeTopCollection;
+                IsTopSubLevel = false;
             }
-            IsSubLevel = false;
+            else if (IsBaseSubLevel && SelectedTab.Header.ToString() == CubePart.Base.ToString())
+            {
+                CubeBaseCollection = CachedCubeBaseCollection;
+                IsBaseSubLevel = false;
+            }
+            
         }
 
         private void Sort(ObservableCollection<CubeDesignerItem> cubePartCollection)
@@ -302,11 +310,11 @@ namespace SunbirdMB.Gui
         private void Import()
         {
             var importDirectory = string.Empty;
-            if (SelectedTab.Header.ToString() == "Top")
+            if (SelectedTab.Header.ToString() == CubePart.Top.ToString())
             {
                 importDirectory = UriHelper.CubeTopDirectory;
             }
-            else if (SelectedTab.Header.ToString() == "Base")
+            else if (SelectedTab.Header.ToString() == CubePart.Base.ToString())
             {
                 importDirectory = UriHelper.CubeBaseDirectory;
             }

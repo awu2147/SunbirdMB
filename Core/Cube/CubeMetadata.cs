@@ -24,6 +24,9 @@ namespace SunbirdMB.Core
         public string Name { get { return ContentPath.Split('\\').Last(); } }
         public string ContentPath { get; set; }
 
+        [XmlIgnore]
+        public HashSet<int> ActiveFrames { get; set; } = new HashSet<int>() { 1 };
+
         private int sheetRows = 1;
         public int SheetRows
         {
