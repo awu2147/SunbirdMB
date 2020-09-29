@@ -87,8 +87,9 @@
                                                     <Button.InputBindings>
                                                         <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
                                                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
-                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
                                                         <MouseBinding Gesture="Shift+LeftClick" Command="{Binding C_ShiftLeftClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                        <MouseBinding Gesture="RightDoubleClick" Command="{Binding C_RightDoubleClick}" />
                                                     </Button.InputBindings>
                                                     <Button.Style>
                                                         <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
@@ -126,8 +127,9 @@
                                                     <Button.InputBindings>
                                                         <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
                                                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
-                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
                                                         <MouseBinding Gesture="Shift+LeftClick" Command="{Binding C_ShiftLeftClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                        <MouseBinding Gesture="RightDoubleClick" Command="{Binding C_RightDoubleClick}" />
                                                     </Button.InputBindings>
                                                     <Button.Style>
                                                         <MultiBinding Converter="{StaticResource SelectedStyleConverter}">

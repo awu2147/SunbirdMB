@@ -31,8 +31,9 @@ namespace SunbirdMB.Gui
 
         public ICommand C_LeftClick { get; set; }
         public ICommand C_LeftDoubleClick { get; set; }
-        public ICommand C_RightClick { get; set; }
         public ICommand C_ShiftLeftClick { get; set; }
+        public ICommand C_RightClick { get; set; }
+        public ICommand C_RightDoubleClick { get; set; }
 
         public CatalogItemBase(string imagePath) : this(imagePath, Int32Rect.Empty) { }
 
@@ -42,8 +43,9 @@ namespace SunbirdMB.Gui
             SourceRect = sourceRect;
             C_LeftClick = new RelayCommand((o) => LeftClick());
             C_LeftDoubleClick = new RelayCommand((o) => LeftDoubleClick());
-            C_RightClick = new RelayCommand((o) => RightClick());
             C_ShiftLeftClick = new RelayCommand((o) => ShiftLeftClick());
+            C_RightClick = new RelayCommand((o) => RightClick());
+            C_RightDoubleClick = new RelayCommand((o) => RightDoubleClick());
         }
 
         internal virtual void LeftClick()
@@ -56,15 +58,20 @@ namespace SunbirdMB.Gui
             $"LeftDoubleClick".Log();
         }
 
+        internal virtual void ShiftLeftClick()
+        {
+            $"ShiftLeftClick".Log();
+        }
+
         internal virtual void RightClick()
         {
             $"RightClick".Log();
         }
 
-        internal virtual void ShiftLeftClick()
+        internal virtual void RightDoubleClick()
         {
-            $"ShiftLeftClick".Log();
+            $"RightDoubleClick".Log();
         }
-    }
 
+    }
 }

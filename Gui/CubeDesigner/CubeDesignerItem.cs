@@ -77,28 +77,33 @@ namespace SunbirdMB.Gui
             }
             else
             {
-                if (Selection == SelectionMode.None)
-                {
-                    Selection = SelectionMode.Active;
-                    CubeMetadata.ActiveFrames.Add(GetIndex());
-                    DeactivateAllButThis();
-                }
-                //else if (selection == SelectionMode.Active && CubeMetadata.ActiveFrames.Count > 1)
-                //{
-                //    Selection = SelectionMode.None;
-                //    CubeMetadata.ActiveFrames.Remove(GetIndex());
-                //}
+                Selection = SelectionMode.Active;
+                CubeMetadata.ActiveFrames.Add(GetIndex());
+                DeactivateAllButThis();
             }
-        }
-
-        internal override void LeftDoubleClick()
-        {
-            CubeDesignerViewModel.EnterSubLevel(this);
         }
 
         internal override void RightClick()
         {
-            CubeDesignerViewModel.ExitSubLevel();
+
+        }
+
+        internal override void LeftDoubleClick()
+        {
+
+        }
+
+        internal override void RightDoubleClick()
+        {
+            if ((!CubeDesignerViewModel.IsTopSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == "Top") ||
+                (!CubeDesignerViewModel.IsBaseSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == "Base"))
+            {
+                CubeDesignerViewModel.EnterSubLevel(this);
+            }
+            else
+            {
+                CubeDesignerViewModel.ExitSubLevel();
+            }
         }
 
         internal override void ShiftLeftClick()
