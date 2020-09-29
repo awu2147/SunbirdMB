@@ -11,7 +11,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/MasterDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <gui:SelectedStyleConverter x:Key="SelectedStyleConverter"/>
             <gui:AuthorizationStyleConverter x:Key="AuthorizationStyleConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -33,7 +32,7 @@
                     <Button.Style>
                         <MultiBinding Converter="{StaticResource AuthorizationStyleConverter}">
                             <Binding Path="(gui:MainToolbarViewModel.Authorization)"/>
-                            <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
+                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
                             <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
                         </MultiBinding>
                     </Button.Style>
@@ -53,7 +52,7 @@
                         <MultiBinding Converter="{StaticResource AuthorizationStyleConverter}">
                             <Binding Path="(gui:MainToolbarViewModel.Authorization)"/>
                             <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
-                            <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
+                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
                         </MultiBinding>
                     </Button.Style>
                 </Button>

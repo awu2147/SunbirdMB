@@ -29,13 +29,6 @@ namespace SunbirdMB.Gui
             set { SetProperty(ref sourceRect, value); }
         }
 
-        private bool selected;
-        public bool Selected
-        {
-            get { return selected; }
-            set { SetProperty(ref selected, value); }
-        }
-
         public ICommand C_LeftClick { get; set; }
         public ICommand C_LeftDoubleClick { get; set; }
         public ICommand C_RightClick { get; set; }

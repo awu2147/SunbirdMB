@@ -1,4 +1,5 @@
-﻿using SunbirdMB.Framework;
+﻿using SharpDX.MediaFoundation;
+using SunbirdMB.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,22 @@ namespace SunbirdMB.Gui
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            bool? dataValue = values[0] as bool?;
-            Style firstStyle = values[1] as Style;
-            Style secondStyle = values[2] as Style;
+            SelectionMode dataValue = (SelectionMode)values[0];
+            Style defaultStyle = values[1] as Style;
+            Style selectedStyle = values[2] as Style;
+            Style activeStyle = values[3] as Style;
 
-            return dataValue.Equals(false) ? firstStyle : secondStyle;
+            switch (dataValue)
+            {
+                case SelectionMode.None:
+                    return defaultStyle;
+                case SelectionMode.Selected:
+                    return selectedStyle;
+                case SelectionMode.Active:
+                    return activeStyle;
+                default:
+                    return defaultStyle;
+            }
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)

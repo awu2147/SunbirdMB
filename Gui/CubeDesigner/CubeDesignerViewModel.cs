@@ -13,7 +13,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Collections.Specialized;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -62,8 +61,8 @@ namespace SunbirdMB.Gui
         public static CubeMetadata CurrentCubeTopMetadata { get; private set; }
         public static CubeMetadata CurrentCubeBaseMetadata { get; private set; }
 
-        private static TabItem selectedTab;
-        public static TabItem SelectedTab
+        private static System.Windows.Controls.TabItem selectedTab;
+        public static System.Windows.Controls.TabItem SelectedTab
         {
             get { return selectedTab; }
             set
@@ -176,7 +175,7 @@ namespace SunbirdMB.Gui
         {
             CubeDesignerItem cdi = sender as CubeDesignerItem;
             // Manage the selection and deselction of cube designer items here.
-            if (e.PropertyName == "Selected" && cdi.Selected == true)
+            if (e.PropertyName == "Selection" && cdi.Selection == SelectionMode.Selected)
             {
                 if (part == CubePart.Top)
                 {
@@ -184,7 +183,7 @@ namespace SunbirdMB.Gui
                     {
                         if (item != cdi)
                         {
-                            item.Selected = false;
+                            item.Selection = SelectionMode.None;
                         }
                     }
                 }
@@ -194,7 +193,7 @@ namespace SunbirdMB.Gui
                     {
                         if (item != cdi)
                         {
-                            item.Selected = false;
+                            item.Selection = SelectionMode.None;
                         }
                     }
                 }
@@ -288,13 +287,13 @@ namespace SunbirdMB.Gui
         private void SelectTop(CubeDesignerItem cubeDesignerItem)
         {
             CurrentCubeTopMetadata = cubeDesignerItem.CubeMetadata;
-            cubeDesignerItem.Selected = true;
+            cubeDesignerItem.Selection = SelectionMode.Selected;
         }
 
         private void SelectBase(CubeDesignerItem cubeDesignerItem)
         {
             CurrentCubeBaseMetadata = cubeDesignerItem.CubeMetadata;
-            cubeDesignerItem.Selected = true;
+            cubeDesignerItem.Selection = SelectionMode.Selected;
         }
 
         /// <summary> 

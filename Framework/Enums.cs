@@ -59,4 +59,11 @@ namespace SunbirdMB.Framework
         Loop
     }
 
+    public enum SelectionMode
+    { 
+        None,
+        Selected,
+        Active    
+    }
+
 }

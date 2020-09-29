@@ -91,9 +91,10 @@
                                                     </Button.InputBindings>
                                                     <Button.Style>
                                                         <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
-                                                            <Binding Path="Selected"/>
+                                                            <Binding Path="Selection"/>
                                                             <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
-                                                            <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
                                                         </MultiBinding>
                                                     </Button.Style>
                                                     <Image Height="75">
@@ -128,9 +129,10 @@
                                                     </Button.InputBindings>
                                                     <Button.Style>
                                                         <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
-                                                            <Binding Path="{Binding ConverterTarget}"/>
+                                                            <Binding Path="Selection"/>
                                                             <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
-                                                            <Binding Source="{StaticResource CubeDesignerSelectedItemStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
                                                         </MultiBinding>
                                                     </Button.Style>
                                                     <Image Height="75">

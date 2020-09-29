@@ -9,6 +9,7 @@
         <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkTextBox.xaml"/>
         <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkComboBox.xaml"/>
         <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/CubeDesignerItemSelectedStyle.xaml"/>
+        <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/CubeDesignerItemActiveStyle.xaml"/>
         <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/CubeDesignerItemDefaultStyle.xaml"/>
         <ResourceDictionary Source="/SunbirdMB;component/Gui/ResourceDictionaries/Templates/DarkRedButton.xaml"/>
     </ResourceDictionary.MergedDictionaries>

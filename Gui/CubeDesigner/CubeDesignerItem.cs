@@ -19,13 +19,11 @@ namespace SunbirdMB.Gui
 
         public PropertyChangedEventHandler PropertyChangedHandler;
 
-        public bool Active;
-
-        private string converterTarget = "Selected";
-        public string ConverterTarget
+        private SelectionMode selection;
+        public SelectionMode Selection
         {
-            get { return converterTarget; }
-            set { SetProperty(ref converterTarget, value); }
+            get { return selection; }
+            set { SetProperty(ref selection, value); }
         }
 
         public CubeDesignerItem(string imagePath, CubeMetadata cmd) : base(imagePath, new Int32Rect(0, 0, 72, 75))
@@ -49,11 +47,11 @@ namespace SunbirdMB.Gui
             {
                 CubeDesignerViewModel.CurrentMetadata = CubeMetadata;
                 MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
-                Selected = true;
+                Selection = SelectionMode.Selected;
             }
             else
             {
-                Active = !Active;
+                Selection = SelectionMode.Active;
             }
         }
 
