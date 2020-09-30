@@ -6,6 +6,7 @@
              xmlns:gui="clr-namespace:SunbirdMB.Gui"             
              xmlns:framework="clr-namespace:SunbirdMB.Framework"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="400">
     <UserControl.Resources>
@@ -205,31 +206,59 @@
 
                             <Label Grid.Row="0" Content="Name" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox  Grid.Row="0" Grid.Column="1" Text="{Binding Name, Mode=OneTime}" IsReadOnly="True"
-                                                 Style="{StaticResource DarkTextBox}"/>
+                                                 Style="{StaticResource DarkTextBox}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
 
                             <Label Grid.Row="1" Content="Sheet Rows" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding SheetRows}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
-
+                                                 Style="{StaticResource DarkTextBox}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
+                            
                             <Label Grid.Row="2" Content="Sheet Columns" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SheetColumns}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
+                                                 Style="{StaticResource DarkTextBox}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
 
                             <Label Grid.Row="3" Content="Frame Count" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding FrameCount}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
+                                                 Style="{StaticResource DarkTextBox}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
 
                             <Label Grid.Row="4" Content="Start Frame" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding StartFrame}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
+                                                 Style="{StaticResource DarkTextBox}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
 
                             <Label Grid.Row="5" Content="Current Frame" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding CurrentFrame}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
+                                                 Style="{StaticResource DarkTextBox}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
 
                             <Label Grid.Row="6" Content="Frame Speed" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly"
-                                                 Style="{StaticResource DarkTextBox}"/>
+                                                 Style="{StaticResource DarkTextBox}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
 
                             <Label Grid.Row="7" Content="Animation State" Foreground="{StaticResource VSTextBrush}"/>
                             <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Source={StaticResource AnimStateEnum}}" 
