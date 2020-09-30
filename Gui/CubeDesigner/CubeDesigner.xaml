@@ -61,7 +61,7 @@
                                     Grid.Column="1" Style="{StaticResource CubeDesignerItemDefaultStyle}"
                                     Foreground="{StaticResource VSTextBrush}"/>
                         </Border>
-                        <Border BorderBrush="{StaticResource VSDark1Brush}" 
+                        <!--<Border BorderBrush="{StaticResource VSDark1Brush}" 
                                         BorderThickness="1" 
                                         Grid.Column="2">
                             <Button Content="Sort"
@@ -69,7 +69,7 @@
                                     Command="{Binding C_Sort}"
                                     Grid.Column="1" Style="{StaticResource CubeDesignerItemDefaultStyle}"
                                     Foreground="{StaticResource VSTextBrush}"/>
-                        </Border>
+                        </Border>-->
                     </Grid>
 
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 

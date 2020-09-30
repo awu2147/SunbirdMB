@@ -72,15 +72,15 @@ namespace SunbirdMB.Gui
                 (!CubeDesignerViewModel.IsBaseSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == "Base"))
             {
                 CubeDesignerViewModel.CurrentMetadata = CubeMetadata;
-                MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
                 Selection = SelectionMode.Selected;
             }
             else
             {
                 Selection = SelectionMode.Active;
                 CubeMetadata.ActiveFrames.Add(GetIndex());
-                DeactivateAllButThis();
+                DeactivateAllButThis();                
             }
+            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
         }
 
         internal override void RightClick()
@@ -120,6 +120,10 @@ namespace SunbirdMB.Gui
                 {
                     Selection = SelectionMode.None;
                     CubeMetadata.ActiveFrames.Remove(GetIndex());
+                }
+                if (CubeMetadata.ActiveFrames.Count == 1)
+                {
+                    MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
                 }
             }
         }

@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using Microsoft.Xaml.Behaviors;
-using Microsoft.Xna.Framework.Input;
-using SunbirdMB.Framework;
 
 namespace SunbirdMB.Gui
 {
+    // https://stackoverflow.com/questions/23613171/wpf-how-to-make-textbox-lose-focus-after-hitting-enter
     public class TextBoxEnterKeyUpdateBehavior : Behavior<TextBox>
     {
         protected override void OnAttached()
@@ -49,4 +41,5 @@ namespace SunbirdMB.Gui
             }
         }
     }
+
 }
