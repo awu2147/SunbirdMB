@@ -48,7 +48,7 @@
                         <MenuItem Header="Save"/>
                         <MenuItem Header="Import"/>
                         <MenuItem Header="Build" Command="{Binding C_Build}"/>
-                        <Separator />
+                        <Separator/>
                         <MenuItem Header="Exit" />
                     </MenuItem>
                 </Menu>
@@ -64,11 +64,23 @@
                     <RowDefinition Height="480"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <gui:CubeDesigner>
-                    <gui:CubeDesigner.DataContext>
-                        <Binding Path="CubeDesignerViewModel" Mode="TwoWay"/>
-                    </gui:CubeDesigner.DataContext>
-                </gui:CubeDesigner>
+                <TabControl TabStripPlacement="Left"
+                            BorderThickness="0" 
+                            Style="{StaticResource DarkTabControl}"
+                            SelectedIndex="{Binding CubeDecoSelectedIndex}">
+                    <TabItem Header="Cube Designer"
+                             Visibility="Collapsed"
+                             Padding="0" Margin="0" BorderThickness="0">
+                        <gui:CubeDesigner>
+                            <gui:CubeDesigner.DataContext>
+                                <Binding Path="CubeDesignerViewModel" Mode="TwoWay"/>
+                            </gui:CubeDesigner.DataContext>
+                        </gui:CubeDesigner>
+                    </TabItem>
+                    <TabItem Header="Deco Catalog"
+                             Visibility="Collapsed">                            
+                    </TabItem>
+                </TabControl>
                 <DockPanel Grid.Row="1" 
                            Background="{StaticResource VSDark3Brush}">
                     <Border BorderBrush="{StaticResource VSDark1Brush}" 

@@ -59,6 +59,13 @@ namespace SunbirdMB
             set { SetProperty(ref gameHeight, value); }
         }
 
+        private int cubeDecoSelectedIndex = 0;
+        public int CubeDecoSelectedIndex
+        {
+            get { return cubeDecoSelectedIndex; }
+            set { SetProperty(ref cubeDecoSelectedIndex, value); }
+        }
+
         public SunbirdMBGame SunbirdMBGame { get; set; }
 
         public SunbirdMBWindowViewModel(SunbirdMBGame sunbirdMBGame)
@@ -69,7 +76,7 @@ namespace SunbirdMB
 
             CubeDesignerViewModel = new CubeDesignerViewModel(sunbirdMBGame);
             LoggerViewModel = new LoggerViewModel();
-            MainToolbarViewModel = new MainToolbarViewModel();
+            MainToolbarViewModel = new MainToolbarViewModel(this);
         }
 
         private void Build()

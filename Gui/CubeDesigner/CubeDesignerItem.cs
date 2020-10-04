@@ -8,8 +8,9 @@ namespace SunbirdMB.Gui
 {
     public class CubeDesignerItem : CatalogItemBase
     {
-        private const int ViewWidth = 72;
-        private const int ViewHeight = 75;
+        private CubeDesignerViewModel ViewModel;
+        private const int ItemWidth = 72;
+        private const int ItemHeight = 75;
 
         public CubeMetadata CubeMetadata { get; set; }
 
@@ -22,8 +23,9 @@ namespace SunbirdMB.Gui
             set { SetProperty(ref selection, value); }
         }
 
-        public CubeDesignerItem(string imagePath, CubeMetadata cmd) : base(imagePath, new Int32Rect(0, 0, 72, 75))
+        public CubeDesignerItem(CubeDesignerViewModel viewModel, string imagePath, CubeMetadata cmd) : base(imagePath, new Int32Rect(0, 0, 72, 75))
         {
+            ViewModel = viewModel;
             CubeMetadata = cmd;
         }
 
@@ -39,16 +41,16 @@ namespace SunbirdMB.Gui
 
         internal int GetIndex()
         {
-            int xPos = SourceRect.X / ViewWidth;
-            int yPos = SourceRect.Y / ViewHeight;
+            int xPos = SourceRect.X / ItemWidth;
+            int yPos = SourceRect.Y / ItemHeight;
             int index = CubeMetadata.SheetColumns * yPos + xPos;
             return index + 1;
         }
 
         internal int GetIndex(CubeDesignerItem cdi)
         {
-            int xPos = cdi.SourceRect.X / ViewWidth;
-            int yPos = cdi.SourceRect.Y / ViewHeight;
+            int xPos = cdi.SourceRect.X / ItemWidth;
+            int yPos = cdi.SourceRect.Y / ItemHeight;
             int index = cdi.CubeMetadata.SheetColumns * yPos + xPos;
             return index + 1;
         }
@@ -63,10 +65,9 @@ namespace SunbirdMB.Gui
 
         internal override void LeftClick()
         {
-            if ((!CubeDesignerViewModel.IsTopSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Top.ToString()) ||
-                (!CubeDesignerViewModel.IsBaseSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Base.ToString()))
+            if (!ViewModel.IsSubLevel)
             {
-                CubeDesignerViewModel.CurrentMetadata = CubeMetadata;
+                ViewModel.CurrentMetadata = CubeMetadata;
                 Selection = SelectionMode.Selected;
             }
             else
@@ -90,21 +91,19 @@ namespace SunbirdMB.Gui
 
         internal override void RightDoubleClick()
         {
-            if ((!CubeDesignerViewModel.IsTopSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Top.ToString()) ||
-                (!CubeDesignerViewModel.IsBaseSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Base.ToString()))
+            if (!ViewModel.IsSubLevel)
             {
-                CubeDesignerViewModel.EnterSubLevel(this);
+                ViewModel.EnterSubLevel(this);
             }
             else
             {
-                CubeDesignerViewModel.ExitSubLevel();
+                ViewModel.ExitSubLevel();
             }
         }
 
         internal override void ShiftLeftClick()
         {
-            if ((CubeDesignerViewModel.IsTopSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Top.ToString()) ||
-                (CubeDesignerViewModel.IsBaseSubLevel && CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Base.ToString()))
+            if (ViewModel.IsSubLevel)
             {
                 if (Selection == SelectionMode.None)
                 {
@@ -125,9 +124,9 @@ namespace SunbirdMB.Gui
 
         internal void DeactivateAllButThis()
         {
-            if (CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Top.ToString())
+            if (ViewModel.SelectedTab.Header.ToString() == CubePart.Top.ToString())
             {
-                foreach (var item in CubeDesignerViewModel.CubeTopCollection)
+                foreach (var item in ViewModel.CubeTopCollection)
                 {
                     if (item != this)
                     {
@@ -136,9 +135,9 @@ namespace SunbirdMB.Gui
                     }
                 }
             }
-            else if (CubeDesignerViewModel.SelectedTab.Header.ToString() == CubePart.Base.ToString())
+            else if (ViewModel.SelectedTab.Header.ToString() == CubePart.Base.ToString())
             {
-                foreach (var item in CubeDesignerViewModel.CubeBaseCollection)
+                foreach (var item in ViewModel.CubeBaseCollection)
                 {
                     if (item != this)
                     {

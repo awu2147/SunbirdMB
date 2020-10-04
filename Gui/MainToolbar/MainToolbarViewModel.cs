@@ -11,6 +11,12 @@ namespace SunbirdMB.Gui
 {
     public class MainToolbarViewModel : PropertyChangedBase
     {
+        public static event PropertyChangedEventHandler StaticPropertyChanged;
+
+        private static readonly PropertyChangedEventArgs AuthorizationPropertyEventArgs = new PropertyChangedEventArgs(nameof(Authorization));
+
+        private SunbirdMBWindowViewModel SunbirdMBWindowViewModel;
+
         private bool isBuilding;
         public bool IsBuilding
         {
@@ -20,7 +26,8 @@ namespace SunbirdMB.Gui
 
         public ICommand C_BuildButtonClick { get; set; }
         public ICommand C_WorldButtonClick { get; set; }
-
+        public ICommand C_ShowCubeDesigner { get; set; }
+        public ICommand C_ShowDecoCatalog { get; set; }
 
         private static Authorization authorization;
         public static Authorization Authorization
@@ -35,25 +42,27 @@ namespace SunbirdMB.Gui
             }
         }
 
-        private static readonly PropertyChangedEventArgs AuthorizationPropertyEventArgs = new PropertyChangedEventArgs(nameof(Authorization));
-        public static event PropertyChangedEventHandler StaticPropertyChanged;
-
-        public MainToolbarViewModel()        
+        internal MainToolbarViewModel(SunbirdMBWindowViewModel sunbirdMBWindowViewModel)        
         {
+            SunbirdMBWindowViewModel = sunbirdMBWindowViewModel;
             C_BuildButtonClick = new RelayCommand((o) => SetBuildMode(Authorization.Builder));
             C_WorldButtonClick = new RelayCommand((o) => SetBuildMode(Authorization.None));
-        }
-
-        private void SetBuildMode(bool mode)
-        {
-            IsBuilding = mode;
-            //MapBuilder.Authorization = mode ? Authorization.Builder : Authorization.None;
+            C_ShowCubeDesigner = new RelayCommand((o) => ShowCubeDesigner());
+            C_ShowDecoCatalog = new RelayCommand((o) => ShowDecoCatalog());
         }
 
         private void SetBuildMode(Authorization auth)
         {
             Authorization = auth;
-            //MapBuilder.Authorization = auth; // ? Authorization.Builder : Authorization.None;
+        }
+
+        private void ShowCubeDesigner()
+        {
+            SunbirdMBWindowViewModel.CubeDecoSelectedIndex = 0;
+        }
+        private void ShowDecoCatalog()
+        {
+            SunbirdMBWindowViewModel.CubeDecoSelectedIndex = 1;
         }
 
     }

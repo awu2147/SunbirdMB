@@ -18,7 +18,7 @@ namespace SunbirdMB.Gui
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
                 field = value;
-                OnPropertyChanged(name);
+                NotifyPropertyChanged(name);
                 propertyChanged = true;
             }
 
@@ -26,7 +26,7 @@ namespace SunbirdMB.Gui
         }
 
         //The C#6 version of the common implementation
-        protected void OnPropertyChanged([CallerMemberName]string name = null)
+        protected void NotifyPropertyChanged([CallerMemberName]string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
