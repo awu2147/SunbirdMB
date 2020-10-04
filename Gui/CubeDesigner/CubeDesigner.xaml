@@ -213,58 +213,59 @@
                             </TextBox>
 
                             <Label Grid.Row="1" Content="Sheet Rows" Foreground="{StaticResource VSTextBrush}"/>
-                            <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding SheetRows}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}">
+                            <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding SheetRows}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBox}" 
+                                      IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsReadOnly, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
                             </TextBox>
                             
                             <Label Grid.Row="2" Content="Sheet Columns" Foreground="{StaticResource VSTextBrush}"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SheetColumns}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}">
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SheetColumns}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBox}"
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsReadOnly, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
                             </TextBox>
 
                             <Label Grid.Row="3" Content="Frame Count" Foreground="{StaticResource VSTextBrush}"/>
-                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding FrameCount}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}">
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding FrameCount}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBox}"
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsReadOnly, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
                             </TextBox>
 
-                            <Label Grid.Row="4" Content="Start Frame" Foreground="{StaticResource VSTextBrush}"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding StartFrame}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}">
-                                <behaviors:Interaction.Behaviors>
-                                    <gui:TextBoxEnterKeyUpdateBehavior/>
-                                </behaviors:Interaction.Behaviors>
-                            </TextBox>
-
-                            <Label Grid.Row="5" Content="Current Frame" Foreground="{StaticResource VSTextBrush}"/>
-                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding CurrentFrame}" PreviewTextInput="TextBox_IntegerOnly"
-                                                 Style="{StaticResource DarkTextBox}">
-                                <behaviors:Interaction.Behaviors>
-                                    <gui:TextBoxEnterKeyUpdateBehavior/>
-                                </behaviors:Interaction.Behaviors>
-                            </TextBox>
-
-                            <Label Grid.Row="6" Content="Frame Speed" Foreground="{StaticResource VSTextBrush}"/>
-                            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly"
-                                                 Style="{StaticResource DarkTextBox}">
-                                <behaviors:Interaction.Behaviors>
-                                    <gui:TextBoxEnterKeyUpdateBehavior/>
-                                </behaviors:Interaction.Behaviors>
-                            </TextBox>
-
-                            <Label Grid.Row="7" Content="Animation State" Foreground="{StaticResource VSTextBrush}"/>
-                            <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Source={StaticResource AnimStateEnum}}" 
+                            <Label Grid.Row="4" Content="Animation State" Foreground="{StaticResource VSTextBrush}"/>
+                            <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Source={StaticResource AnimStateEnum}}" 
                                       SelectedItem="{Binding AnimState}" Foreground="{StaticResource VSTextBrush}" Margin="1" 
-                                      Style="{StaticResource DarkComboBox}" ItemContainerStyle="{StaticResource DarkComboBoxItem}">
+                                      Style="{StaticResource DarkComboBox}" ItemContainerStyle="{StaticResource DarkComboBoxItem}"
+                                      IsEnabled ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsAnimationComboBoxEnabled, Mode=OneWay}">
                             </ComboBox>
+
+                            <Label Grid.Row="5" Content="Start Frame" Foreground="{StaticResource VSTextBrush}"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding StartFrame}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBoxAnim}"
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsReadOnly, Mode=OneWay}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
+
+                            <Label Grid.Row="6" Content="Current Frame" Foreground="{StaticResource VSTextBrush}"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CurrentFrame}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBoxAnim}"
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsReadOnly, Mode=OneWay}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
+
+                            <Label Grid.Row="7" Content="Frame Speed" Foreground="{StaticResource VSTextBrush}"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly" Style="{StaticResource DarkTextBoxAnim}"
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsReadOnly, Mode=OneWay}">
+                                <behaviors:Interaction.Behaviors>
+                                    <gui:TextBoxEnterKeyUpdateBehavior/>
+                                </behaviors:Interaction.Behaviors>
+                            </TextBox>
 
                         </Grid>
                     </Border>

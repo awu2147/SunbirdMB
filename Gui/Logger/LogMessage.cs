@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SunbirdMB.Framework
+namespace SunbirdMB.Gui
 {
     public class LogMessage : PropertyChangedBase
     {

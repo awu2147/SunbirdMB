@@ -103,7 +103,11 @@
     </ApplicationDefinition>
     <Compile Include="Core\Cube\CubeFactory.cs" />
     <Compile Include="Core\Cube\CubeMetadata.cs" />
+    <Compile Include="Core\Deco\Deco.cs" />
+    <Compile Include="Core\Deco\DecoFactory.cs" />
+    <Compile Include="Core\Deco\DecoMetadata.cs" />
     <Compile Include="Core\GhostMarker.cs" />
+    <Compile Include="Core\MetadataBase.cs" />
     <Compile Include="Framework\Keyboard.cs" />
     <Compile Include="Framework\Mouse.cs" />
     <Compile Include="Framework\UriHelper.cs" />
@@ -204,12 +208,11 @@
     <Compile Include="Core\SpriteList.cs" />
     <Compile Include="Core\World.cs" />
     <Compile Include="Framework\Coord.cs" />
-    <Compile Include="Core\Deco.cs" />
     <Compile Include="Framework\Dimension.cs" />
     <Compile Include="Core\GraphicsHelper.cs" />
     <Compile Include="Framework\Enums.cs" />
     <Compile Include="Framework\Extensions.cs" />
-    <Compile Include="Framework\LogMessage.cs" />
+    <Compile Include="Gui\Logger\LogMessage.cs" />
     <Compile Include="Framework\Serializer.cs" />
     <Compile Include="Core\Sprite.cs" />
     <Compile Include="Core\SpriteSheet.cs" />

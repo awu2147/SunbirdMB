@@ -65,17 +65,13 @@ namespace SunbirdMB
 
         }
 
-        public MapBuilder(SunbirdMBGame mainGame, string path) 
-            : base(mainGame)
+        public MapBuilder(SunbirdMBGame mainGame, string path) : base(mainGame)
         {
             SunbirdMBGame = mainGame;
             this.saveFilePath = path;
-            var appPath = Assembly.GetExecutingAssembly().Location;
-            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
-            Debug.Assert(appDirectory == @"D:\SunbirdMB\bin\Debug\");
-            var svp = Path.Combine(appDirectory, path);
-            Debug.Assert(svp == @"D:\SunbirdMB\bin\Debug\MapBuilderSave.xml");
-            if (mainGame.cleanLoad || !File.Exists(svp))
+            var sfp = Path.Combine(UriHelper.AppDirectory, path);
+            Debug.Assert(sfp == @"D:\SunbirdMB\bin\Debug\MapBuilderSave.xml");
+            if (mainGame.cleanLoad || !File.Exists(sfp))
             {
                 CreateContent();
             }
@@ -83,7 +79,6 @@ namespace SunbirdMB
             {
                 LoadContentFromFile();
             }
-            CubeFactory.IsRandomTop = true;
         }
 
         private void CreateContent()

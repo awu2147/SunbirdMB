@@ -11,14 +11,16 @@ namespace SunbirdMB.Core
 {
     public static class CubeFactory
     {
-        public static bool IsRandomTop { get; set; }
-        public static bool IsRandomBase { get; set; }
-
         //public static XDictionary<string, CubeMetadata> CubeMetadataLibrary { get; set; }
 
         public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
         {
-            var cube = new Cube() { Position = World.IsoFlatCoordToWorldPosition(coords), Coords = relativeCoords, Altitude = altitude };
+            var cube = new Cube() 
+            { 
+                Position = World.IsoFlatCoordToWorldPosition(coords), 
+                Coords = relativeCoords, 
+                Altitude = altitude 
+            };
             var rand = new Random();
 
             // Create cube top animator.
