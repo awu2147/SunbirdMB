@@ -58,30 +58,15 @@ namespace SunbirdMB.Gui
             PropertyChanged -= PropertyChangedHandler;
         }
 
-        internal virtual void LeftClick()
-        {
-            $"LeftClick".Log();
-        }
+        internal virtual void LeftClick() { $"LeftClick".Log(); }
 
-        internal virtual void LeftDoubleClick()
-        {
-            $"LeftDoubleClick".Log();
-        }
+        internal virtual void LeftDoubleClick() { $"LeftDoubleClick".Log(); }
 
-        internal virtual void ShiftLeftClick()
-        {
-            $"ShiftLeftClick".Log();
-        }
+        internal virtual void ShiftLeftClick() { $"ShiftLeftClick".Log(); }
 
-        internal virtual void RightClick()
-        {
-            $"RightClick".Log();
-        }
+        internal virtual void RightClick() { $"RightClick".Log(); }
 
-        internal virtual void RightDoubleClick()
-        {
-            $"RightDoubleClick".Log();
-        }
+        internal virtual void RightDoubleClick() { $"RightDoubleClick".Log(); }
 
     }
 

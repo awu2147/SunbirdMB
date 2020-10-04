@@ -27,7 +27,7 @@ namespace SunbirdMB.Gui
     {
         private ObservableCollection<DecoCatalogItem> deco1x1x1Collection = new ObservableCollection<DecoCatalogItem>();
         private TabItem selectedTab;
-        private bool isdeco1x1x1SubLevel;
+        private bool is1x1x1SubLevel;
 
         internal const string _1x1x1 = "1x1x1";
 
@@ -58,6 +58,17 @@ namespace SunbirdMB.Gui
             }
         }
 
+        public bool Is1x1x1SubLevel
+        {
+            get { return is1x1x1SubLevel; }
+            set
+            {
+                is1x1x1SubLevel = value;
+                NotifyPropertyChanged(nameof(IsSubLevel));
+                NotifyPropertyChanged(nameof(IsAnimationComboBoxEnabled));
+            }
+        }
+
         public DecoMetadata CurrentMetadata
         {
             get
@@ -70,6 +81,16 @@ namespace SunbirdMB.Gui
                 NotifyPropertyChanged(nameof(CurrentMetadata));
             }
         }
+
+        public bool IsSubLevel
+        {
+            get
+            {
+                return ((Is1x1x1SubLevel && SelectedTab.Header.ToString() == _1x1x1));
+            }
+        }
+
+        public bool IsAnimationComboBoxEnabled { get { return !IsSubLevel; } }
 
         public ICommand C_Import { get; set; }
         public ICommand C_Sort { get; set; }
@@ -107,6 +128,39 @@ namespace SunbirdMB.Gui
         }
 
         internal void OnGameLoaded() { }
+
+        internal void EnterSubLevel(DecoCatalogItem dci)
+        {
+            if (!Is1x1x1SubLevel && SelectedTab.Header.ToString() == _1x1x1)
+            {
+                CachedDeco1x1x1Collection = Deco1x1x1Collection;
+                Deco1x1x1Collection = new ObservableCollection<DecoCatalogItem>();
+
+                int count = 0;
+                for (int y = 0; y < dci.DecoMetadata.SheetRows; y++)
+                {
+                    for (int x = 0; x < dci.DecoMetadata.SheetColumns; x++)
+                    {
+                        count++;
+                        SelectionMode selection = dci.DecoMetadata.ActiveFrames.Contains(count) ? SelectionMode.Active : SelectionMode.None;
+                        Deco1x1x1Collection.Add(new DecoCatalogItem1x1x1(this, dci.ImagePath, dci.DecoMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75), Selection = selection });
+                    }
+                }
+
+                Is1x1x1SubLevel = true;
+            }
+        }
+
+        internal void ExitSubLevel()
+        {
+            // Set the cube collections back to their upper level cached copy.
+            if (Is1x1x1SubLevel && SelectedTab.Header.ToString() == _1x1x1)
+            {
+                Deco1x1x1Collection = CachedDeco1x1x1Collection;
+                Is1x1x1SubLevel = false;
+            }
+
+        }
 
         private void SelectDeco(DecoCatalogItem decoCatalogItem)
         {
@@ -203,6 +257,7 @@ namespace SunbirdMB.Gui
                 // Add to part specific collection.
                 if (dimension == _1x1x1)
                 {
+                    dmd.Dimensions = new Dimension(1, 1, 1);
                     Deco1x1x1Collection.Add(new DecoCatalogItem1x1x1(this, path, dmd));
                 }
 

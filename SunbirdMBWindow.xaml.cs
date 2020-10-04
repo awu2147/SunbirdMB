@@ -64,6 +64,8 @@ namespace SunbirdMB
             SunbirdMBWindowViewModel = new SunbirdMBWindowViewModel(SunbirdMBGame);
             DataContext = SunbirdMBWindowViewModel;
 
+            KeyDown += SunbirdMBWindow_KeyDown;
+
             if (File.Exists("Config.xml"))
             {
                 Config = Serializer.ReadXML<Config>(Config.ConfigSerializer, "Config.xml");
@@ -75,6 +77,17 @@ namespace SunbirdMB
             }
 
             SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Loading Game...");
+        }
+
+        private void SunbirdMBWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.P)
+            {
+                SunbirdMBWindowViewModel.GameWidth.ToString().Log();
+                MainGamePanel.ActualWidth.ToString().Log();
+                SunbirdMBWindowViewModel.GameHeight.ToString().Log();
+                MainGamePanel.ActualHeight.ToString().Log(); 
+            }
         }
 
         private void Game_BeforeContentBuild(object sender, EventArgs e)
@@ -117,6 +130,7 @@ namespace SunbirdMB
         {
             cancelSplashTokenSource.Cancel();
             WindowState = WindowState.Normal;
+            ResizeGameWindow();
         }
 
         protected override void OnSourceInitialized(EventArgs e)

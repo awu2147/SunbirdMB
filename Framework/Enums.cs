@@ -21,10 +21,8 @@ namespace SunbirdMB.Framework
 
     public enum BuildMode
     {
-        _Cube,
-        _1x1,
-        _2x2,
-        _3x3,
+        Cube,
+        Deco
     }
 
     public enum Orientation

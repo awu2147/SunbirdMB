@@ -1,4 +1,5 @@
 ﻿using SunbirdMB.Framework;
+using SunbirdMB.Gui;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ namespace SunbirdMB.Core
 {
     public static class DecoFactory
     {
-        public static Deco CreateDeco(SunbirdMBGame mainGame, DecoMetadata decoMD, Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateDeco(DecoMetadata decoMD, Coord coords, Coord relativeCoords, int altitude)
         {
             Type type = Type.GetType(decoMD.TypeName);
             var deco = Activator.CreateInstance(type) as Deco;
@@ -37,9 +38,9 @@ namespace SunbirdMB.Core
                 {
                     for (int j = 0; j < decoMD.Dimensions.Y; j++)
                     {
-#if DEBUG
+
                         Debug.Assert(decoMD.Dimensions.X == decoMD.Dimensions.Y);
-#endif
+
                         int offset = decoMD.Dimensions.Y / 2;
                         deco.OccupiedCoords[altitude + k].Add(deco.Coords + new Coord(i - offset, -j + offset));
                     }
@@ -60,10 +61,9 @@ namespace SunbirdMB.Core
             return deco;
         }
 
-        public static Deco CreateCurrentDeco(SunbirdMBGame mainGame, Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateCurrentDeco(Coord coords, Coord relativeCoords, int altitude)
         {
-            throw new NotImplementedException();
-            //return CreateDeco(mainGame, CurrentDecoMetadata, coords, relativeCoords, altitude);
+            return CreateDeco(DecoCatalogViewModel.CurrentDecoMetadata, coords, relativeCoords, altitude);
         }        
 
     }

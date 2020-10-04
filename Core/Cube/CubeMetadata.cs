@@ -26,10 +26,7 @@ namespace SunbirdMB.Core
 
         private void CubeMetaData_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            var appPath = Assembly.GetExecutingAssembly().Location;
-            var appDirectory = appPath.TrimEnd(Path.GetFileName(appPath));
-            var contentDirectory = Path.Combine(appDirectory, @"Content\");
-            var metadataPath = Path.ChangeExtension(Path.Combine(contentDirectory, ContentPath), ".metadata");
+            var metadataPath = Path.ChangeExtension(Path.Combine(UriHelper.ContentDirectory, ContentPath), ".metadata");
             Serialize(metadataPath);
             MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
         }

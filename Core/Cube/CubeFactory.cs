@@ -11,8 +11,6 @@ namespace SunbirdMB.Core
 {
     public static class CubeFactory
     {
-        //public static XDictionary<string, CubeMetadata> CubeMetadataLibrary { get; set; }
-
         public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
         {
             var cube = new Cube() 
@@ -59,28 +57,5 @@ namespace SunbirdMB.Core
             return CreateCube(CubeDesignerViewModel.CurrentCubeTopMetadata, CubeDesignerViewModel.CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
         }
 
-        ///// <summary>
-        ///// Build the cube metadata library by using path to load textures into memory.
-        ///// </summary>
-        //public static void BuildLibrary(IMainGame mainGame)
-        //{
-        //    CubeMetadataLibrary = new XDictionary<string, CubeMetadata>();
-        //    foreach (var cmd in CubeMetadataCollection)
-        //    {
-        //        if (!CubeMetadataLibrary.ContainsKey(cmd.ContentPath))
-        //        {
-        //            cmd.LoadContent(mainGame);
-        //            CubeMetadataLibrary.Add(cmd.ContentPath, cmd);
-        //        }
-        //    }
-        //    foreach (var cdi in CubeDesignerViewModel.CubeTopCollection)
-        //    {
-        //        if (!CubeMetadataLibrary.ContainsKey(cdi.CubeMetadata.ContentPath))
-        //        {
-        //            cmd.LoadContent(mainGame);
-        //            CubeMetadataLibrary.Add(cmd.ContentPath, cmd);
-        //        }
-        //    }
-        //}
     }
 }

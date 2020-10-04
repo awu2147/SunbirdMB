@@ -52,7 +52,13 @@ namespace SunbirdMB
             set { MainToolbarViewModel.Authorization = value; } 
         }
 
-        public static BuildMode BuildMode { get; set; }
+        [XmlIgnore]
+        public BuildMode BuildMode
+        {
+            get { return MainToolbarViewModel.BuildMode; }
+            set { MainToolbarViewModel.BuildMode = value; }
+        }
+
         public static GhostMarker GhostMarker { get; set; }
 
         public static string ClickedSpriteName = string.Empty;
@@ -215,17 +221,22 @@ namespace SunbirdMB
                 {
                     if (Peripherals.LeftButtonPressed() && MainGame.IsActive)
                     {
-                        if (BuildMode == BuildMode._Cube)
+                        if (BuildMode == BuildMode.Cube)
                         {
                             var cube = CubeFactory.CreateCurrentCube(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
                             LayerMap[Altitude].AddCheck(cube, Altitude);
+                        }
+                        else if (BuildMode == BuildMode.Deco)
+                        {
+                            var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
+                            LayerMap[Altitude].AddCheck(deco, Altitude);
                         }
                     }
 
                     if (Peripherals.RightButtonPressed() && MainGame.IsActive)
                     {
                         //var rect = new Rectangle(Peripherals.GetScaledMouseWorldPosition(MainGame.Camera), new Point(200,200));
-                        if (BuildMode == BuildMode._Cube)
+                        if (BuildMode == BuildMode.Cube)
                         {
                             for (int i = 0; i < LayerMap[Altitude].Count(); i++)
                             {
@@ -234,10 +245,21 @@ namespace SunbirdMB
                                 {
                                     LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
                                 }
-                                //if (sprite is Cube && rect.Contains(sprite.Position.ToPoint()))
-                                //{
-                                //    LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
-                                //}
+                            }
+                        }
+                        else if (BuildMode == BuildMode.Deco)
+                        {
+                            for (int i = 0; i < LayerMap[Altitude].Count(); i++)
+                            {
+                                var sprite = LayerMap[Altitude][i];
+                                if (sprite is Deco)
+                                {
+                                    var mc = sprite as Deco;
+                                    if (mc.OccupiedCoords[Altitude].Contains(mouseIsoCoord))
+                                    {
+                                        LayerMap[Altitude].RemoveCheck(mc, Altitude); i--;
+                                    }
+                                }
                             }
                         }
                     }

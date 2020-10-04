@@ -1,4 +1,5 @@
-﻿using SunbirdMB.Framework;
+﻿using SunbirdMB.Core;
+using SunbirdMB.Framework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +15,7 @@ namespace SunbirdMB.Gui
         public static event PropertyChangedEventHandler StaticPropertyChanged;
 
         private static readonly PropertyChangedEventArgs AuthorizationPropertyEventArgs = new PropertyChangedEventArgs(nameof(Authorization));
+        private static readonly PropertyChangedEventArgs BuildModePropertyEventArgs = new PropertyChangedEventArgs(nameof(BuildMode));
 
         private SunbirdMBWindowViewModel SunbirdMBWindowViewModel;
 
@@ -42,6 +44,19 @@ namespace SunbirdMB.Gui
             }
         }
 
+        private static BuildMode buildMode;
+        public static BuildMode BuildMode
+        {
+            get { return buildMode; }
+            set
+            {
+                if (buildMode == value)
+                    return;
+                buildMode = value;
+                StaticPropertyChanged?.Invoke(null, BuildModePropertyEventArgs);
+            }
+        }
+
         internal MainToolbarViewModel(SunbirdMBWindowViewModel sunbirdMBWindowViewModel)        
         {
             SunbirdMBWindowViewModel = sunbirdMBWindowViewModel;
@@ -58,11 +73,15 @@ namespace SunbirdMB.Gui
 
         private void ShowCubeDesigner()
         {
+            BuildMode = BuildMode.Cube;
             SunbirdMBWindowViewModel.CubeDecoSelectedIndex = 0;
+            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
         }
         private void ShowDecoCatalog()
         {
+            BuildMode = BuildMode.Deco;
             SunbirdMBWindowViewModel.CubeDecoSelectedIndex = 1;
+            MapBuilder.GhostMarker.MorphImage(DecoFactory.CreateCurrentDeco(Coord.Zero, Coord.Zero, 0));
         }
 
     }

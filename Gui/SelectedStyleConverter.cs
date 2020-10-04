@@ -55,4 +55,22 @@ namespace SunbirdMB.Gui
         }
     }
 
+
+    public class BuildModeStyleConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            BuildMode dataValue = (BuildMode)values[0];
+            Style firstStyle = values[1] as Style;
+            Style secondStyle = values[2] as Style;
+
+            return dataValue.Equals(BuildMode.Cube) ? firstStyle : secondStyle;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
 }
