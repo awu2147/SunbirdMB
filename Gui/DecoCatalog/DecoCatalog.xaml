@@ -117,7 +117,89 @@
                                         </ItemsControl.ItemsPanel>
                                     </ItemsControl>
                                 </ScrollViewer>
-                            </TabItem>                           
+                            </TabItem>
+                            <TabItem Header="1x1x2" 
+                                     Foreground="{StaticResource VSTextBrush}"
+                                     Width="78" Height="22"
+                                     Style="{StaticResource TabItemHorizontal}">
+                                <ScrollViewer Style="{StaticResource DarkScrollViewer}">
+                                    <ItemsControl ItemsSource="{Binding Deco1x1x2Collection}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button>
+                                                    <Button.InputBindings>
+                                                        <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
+                                                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
+                                                        <MouseBinding Gesture="Shift+LeftClick" Command="{Binding C_ShiftLeftClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                        <MouseBinding Gesture="RightDoubleClick" Command="{Binding C_RightDoubleClick}" />
+                                                    </Button.InputBindings>
+                                                    <Button.Style>
+                                                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
+                                                            <Binding Path="Selection"/>
+                                                            <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
+                                                        </MultiBinding>
+                                                    </Button.Style>
+                                                    <Image Height="111">
+                                                        <Image.Source>
+                                                            <CroppedBitmap Source="{Binding ImagePath}" 
+                                                                           SourceRect="{Binding SourceRect}"/>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem Header="1x1x3" 
+                                     Foreground="{StaticResource VSTextBrush}"
+                                     Width="78" Height="22"
+                                     Style="{StaticResource TabItemHorizontal}">
+                                <ScrollViewer Style="{StaticResource DarkScrollViewer}">
+                                    <ItemsControl ItemsSource="{Binding Deco1x1x3Collection}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button>
+                                                    <Button.InputBindings>
+                                                        <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
+                                                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
+                                                        <MouseBinding Gesture="Shift+LeftClick" Command="{Binding C_ShiftLeftClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                        <MouseBinding Gesture="RightDoubleClick" Command="{Binding C_RightDoubleClick}" />
+                                                    </Button.InputBindings>
+                                                    <Button.Style>
+                                                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
+                                                            <Binding Path="Selection"/>
+                                                            <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
+                                                        </MultiBinding>
+                                                    </Button.Style>
+                                                    <Image Height="147">
+                                                        <Image.Source>
+                                                            <CroppedBitmap Source="{Binding ImagePath}" 
+                                                                           SourceRect="{Binding SourceRect}"/>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </TabItem>
                         </TabControl>
                     </Border>
                 </Grid>
@@ -175,7 +257,7 @@
 
                             <Label Grid.Row="1" Content="Sheet Rows" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding SheetRows}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBox}" 
-                                      IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
+                                      IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:DecoCatalog}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
@@ -183,7 +265,7 @@
 
                             <Label Grid.Row="2" Content="Sheet Columns" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SheetColumns}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBox}"
-                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:DecoCatalog}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
@@ -191,7 +273,7 @@
 
                             <Label Grid.Row="3" Content="Frame Count" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding FrameCount}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBox}"
-                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:DecoCatalog}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
@@ -201,12 +283,12 @@
                             <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Source={StaticResource AnimStateEnum}}" 
                                       SelectedItem="{Binding AnimState}" Foreground="{StaticResource VSTextBrush}" Margin="1" 
                                       Style="{StaticResource DarkComboBox}" ItemContainerStyle="{StaticResource DarkComboBoxItem}"
-                                      IsEnabled ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsAnimationComboBoxEnabled, Mode=OneWay}">
+                                      IsEnabled ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:DecoCatalog}}, Path=DataContext.IsAnimationComboBoxEnabled, Mode=OneWay}">
                             </ComboBox>
 
                             <Label Grid.Row="5" Content="Start Frame" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding StartFrame}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBoxAnim}"
-                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:DecoCatalog}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
@@ -214,7 +296,7 @@
 
                             <Label Grid.Row="6" Content="Current Frame" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CurrentFrame}" PreviewTextInput="TextBox_IntegerOnly" Style="{StaticResource DarkTextBoxAnim}"
-                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:DecoCatalog}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
@@ -222,7 +304,7 @@
 
                             <Label Grid.Row="7" Content="Frame Speed" Foreground="{StaticResource VSTextBrush}"/>
                             <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding FrameSpeed}" PreviewTextInput="TextBox_DoubleOnly" Style="{StaticResource DarkTextBoxAnim}"
-                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:CubeDesigner}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
+                                     IsReadOnly="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type gui:DecoCatalog}}, Path=DataContext.IsSubLevel, Mode=OneWay}">
                                 <behaviors:Interaction.Behaviors>
                                     <gui:TextBoxEnterKeyUpdateBehavior/>
                                 </behaviors:Interaction.Behaviors>
