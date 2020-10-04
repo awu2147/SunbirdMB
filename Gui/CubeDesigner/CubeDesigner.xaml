@@ -79,7 +79,7 @@
                                     BorderThickness="0" SelectedItem="{Binding SelectedTab, Mode=OneWayToSource}">
                             <TabItem Header="Top" 
                                      Foreground="{StaticResource VSTextBrush}"
-                                     Width="78" 
+                                     Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeTopCollection}">
@@ -120,7 +120,7 @@
                             </TabItem>
                             <TabItem Header="Base"
                                      Foreground="{StaticResource VSTextBrush}" 
-                                     Width="78"
+                                     Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding CubeBaseCollection}">

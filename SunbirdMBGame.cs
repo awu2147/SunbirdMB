@@ -96,6 +96,7 @@ namespace SunbirdMB
             SunbirdMBWindow.PumpToSplash(() => SunbirdMBSplash.ViewModel.Message = "Building Content...");
             // Rebuild the .pngs into .xnb files.
             ContentBuilder.RebuildContent("Cubes");
+            ContentBuilder.RebuildContent("Decos");
             ContentBuilder.RebuildContent("Temp");
 
             OnAfterContentBuild();

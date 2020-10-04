@@ -69,8 +69,7 @@
                             Style="{StaticResource DarkTabControl}"
                             SelectedIndex="{Binding CubeDecoSelectedIndex}">
                     <TabItem Header="Cube Designer"
-                             Visibility="Collapsed"
-                             Padding="0" Margin="0" BorderThickness="0">
+                             Visibility="Collapsed">
                         <gui:CubeDesigner>
                             <gui:CubeDesigner.DataContext>
                                 <Binding Path="CubeDesignerViewModel" Mode="TwoWay"/>
@@ -78,7 +77,12 @@
                         </gui:CubeDesigner>
                     </TabItem>
                     <TabItem Header="Deco Catalog"
-                             Visibility="Collapsed">                            
+                             Visibility="Collapsed">
+                        <gui:DecoCatalog>
+                            <gui:DecoCatalog.DataContext>
+                                <Binding Path="DecoCatalogViewModel" Mode="TwoWay"/>
+                            </gui:DecoCatalog.DataContext>
+                        </gui:DecoCatalog>
                     </TabItem>
                 </TabControl>
                 <DockPanel Grid.Row="1" 

@@ -144,18 +144,9 @@ namespace SunbirdMB.Gui
             C_Sort = new RelayCommand((o) => Uncache());
         }
 
-        private void Uncache()
-        {
+        private void Uncache() { }
 
-        }
-
-        internal void OnBeforeContentBuild()
-        {
-            // We add to the collections below when importing, so it is important to subscribe these handlers before calling Import().
-            CubeTopCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Top));
-            CubeBaseCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Base));
-
-        }
+        internal void OnBeforeContentBuild() { }
 
         internal void OnAfterContentBuild()
         {
@@ -183,55 +174,12 @@ namespace SunbirdMB.Gui
             MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
         }
 
-        public void CubeDesignerCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e, CubePart part)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (CubeDesignerItem item in e.NewItems)
-                {
-                    // CubeDesignerViewModel outlives CubeDesignerItem so no need to unsubscribe.
-                    item.PropertyChangedHandler = new PropertyChangedEventHandler((_sender, _e) => CubeDesignerCollectionItem_PropertyChanged(_sender, _e, part));
-                    item.Register();
-                }
-            }
-        }
-
-        private void CubeDesignerCollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e, CubePart part)
-        {
-            CubeDesignerItem cdi = sender as CubeDesignerItem;
-            // Manage the selection and deselction of cube designer items here.
-            if (e.PropertyName == nameof(cdi.Selection) && cdi.Selection == SelectionMode.Selected)
-            {
-                if (part == CubePart.Top)
-                {
-                    foreach (var item in CubeTopCollection)
-                    {
-                        if (item != cdi)
-                        {
-                            item.Selection = SelectionMode.None;
-                        }
-                    }
-                }
-                else if (part == CubePart.Base)
-                {
-                    foreach (var item in CubeBaseCollection)
-                    {
-                        if (item != cdi)
-                        {
-                            item.Selection = SelectionMode.None;
-                        }
-                    }
-                }
-            }
-        }
-
         internal void EnterSubLevel(CubeDesignerItem cdi)
         {
             if (!IsTopSubLevel && SelectedTab.Header.ToString() == CubePart.Top.ToString())
             {
                 CachedCubeTopCollection = CubeTopCollection;
                 CubeTopCollection = new ObservableCollection<CubeDesignerItem>();
-                CubeTopCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Top));
 
                 int count = 0;
                 for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
@@ -250,7 +198,6 @@ namespace SunbirdMB.Gui
             {
                 CachedCubeBaseCollection = CubeBaseCollection;
                 CubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
-                CubeBaseCollection.CollectionChanged += new NotifyCollectionChangedEventHandler((sender, e) => CubeDesignerCollection_CollectionChanged(sender, e, CubePart.Base));
 
                 int count = 0;
                 for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)

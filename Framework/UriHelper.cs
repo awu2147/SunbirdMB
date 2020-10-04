@@ -20,6 +20,8 @@ namespace SunbirdMB.Framework
         public static string CubeDirectory;
         public static string CubeTopDirectory;
         public static string CubeBaseDirectory;
+        public static string DecoDirectory;
+        public static string Deco1x1x1Directory;
 
         public static void Intiailize()
         {
@@ -40,6 +42,12 @@ namespace SunbirdMB.Framework
 
             CubeBaseDirectory = Path.Combine(CubeDirectory, "Base");
             Debug.Assert(CubeBaseDirectory == @"D:\SunbirdMB\bin\Debug\Content\Cubes\Base");
+
+            DecoDirectory = Path.Combine(ContentDirectory, "Decos");
+            Debug.Assert(DecoDirectory == @"D:\SunbirdMB\bin\Debug\Content\Decos");
+
+            Deco1x1x1Directory = Path.Combine(DecoDirectory, "1x1x1");
+            Debug.Assert(Deco1x1x1Directory == @"D:\SunbirdMB\bin\Debug\Content\Decos\1x1x1");
         }
 
         public static string MakeContentRelative(this string path)

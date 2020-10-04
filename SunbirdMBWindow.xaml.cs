@@ -80,11 +80,13 @@ namespace SunbirdMB
         private void Game_BeforeContentBuild(object sender, EventArgs e)
         {
             SunbirdMBWindowViewModel.CubeDesignerViewModel.OnBeforeContentBuild();
+            SunbirdMBWindowViewModel.DecoCatalogViewModel.OnBeforeContentBuild();
         }
 
         private void Game_AfterContentBuild(object sender, EventArgs e)
         {
             SunbirdMBWindowViewModel.CubeDesignerViewModel.OnAfterContentBuild();
+            SunbirdMBWindowViewModel.DecoCatalogViewModel.OnAfterContentBuild();
         }
 
         private void Game_Loaded(object sender, EventArgs e)
@@ -97,6 +99,7 @@ namespace SunbirdMB
             Closed += Window_Closed;
 
             SunbirdMBWindowViewModel.CubeDesignerViewModel.OnGameLoaded();
+            SunbirdMBWindowViewModel.DecoCatalogViewModel.OnGameLoaded();
 
             gameLoaded = true;
         }

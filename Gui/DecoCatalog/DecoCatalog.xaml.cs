@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SunbirdMB.Gui.DecoCatalog
+namespace SunbirdMB.Gui
 {
     /// <summary>
     /// Interaction logic for DecoCatalog.xaml
@@ -24,5 +24,33 @@ namespace SunbirdMB.Gui.DecoCatalog
         {
             InitializeComponent();
         }
+        private void TextBox_IntegerOnly(object sender, TextCompositionEventArgs e)
+        {
+            try
+            {
+                Convert.ToDouble(e.Text);
+            }
+            catch
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TextBox_DoubleOnly(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text != ".")
+            {
+                try
+                {
+                    Convert.ToDouble(e.Text);
+                }
+                catch
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
     }
+
 }

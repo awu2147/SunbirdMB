@@ -31,6 +31,13 @@ namespace SunbirdMB
             set { SetProperty(ref cubeDesignerViewModel, value); }
         }
 
+        private DecoCatalogViewModel decoCatalogViewModel;
+        public DecoCatalogViewModel DecoCatalogViewModel
+        {
+            get { return decoCatalogViewModel; }
+            set { SetProperty(ref decoCatalogViewModel, value); }
+        }
+
         private LoggerViewModel loggerViewModel;
         public LoggerViewModel LoggerViewModel
         {
@@ -75,6 +82,7 @@ namespace SunbirdMB
             C_Build = new RelayCommand((o) => Build());
 
             CubeDesignerViewModel = new CubeDesignerViewModel(sunbirdMBGame);
+            decoCatalogViewModel = new DecoCatalogViewModel(sunbirdMBGame);
             LoggerViewModel = new LoggerViewModel();
             MainToolbarViewModel = new MainToolbarViewModel(this);
         }
