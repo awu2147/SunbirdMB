@@ -17,13 +17,6 @@ namespace SunbirdMB.Gui
 
         public DecoMetadata DecoMetadata { get; set; }
 
-        private SelectionMode selection;
-        public SelectionMode Selection
-        {
-            get { return selection; }
-            set { SetProperty(ref selection, value); }
-        }
-
         internal DecoCatalogItem(DecoCatalogViewModel viewModel, string imagePath, DecoMetadata dmd) : base(imagePath, dmd)
         {
             ViewModel = viewModel;
@@ -73,7 +66,7 @@ namespace SunbirdMB.Gui
                     DecoMetadata.ActiveFrames.Add(GetIndex());
                 }
                 else 
-                if (selection == SelectionMode.Active && DecoMetadata.ActiveFrames.Count > 1)
+                if (Selection == SelectionMode.Active && DecoMetadata.ActiveFrames.Count > 1)
                 {
                     Selection = SelectionMode.None;
                     DecoMetadata.ActiveFrames.Remove(GetIndex());

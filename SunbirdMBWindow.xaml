@@ -61,7 +61,7 @@
             </Grid.ColumnDefinitions>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="480"/>
+                    <RowDefinition Height="580"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <TabControl TabStripPlacement="Left"

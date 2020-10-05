@@ -78,6 +78,13 @@ namespace SunbirdMB.Gui
 
         internal readonly MetadataBase Metadata;
 
+        private SelectionMode selection;
+        public SelectionMode Selection
+        {
+            get { return selection; }
+            set { SetProperty(ref selection, value); }
+        }
+
         public MetadataItemBase(string imagePath, MetadataBase md) : base(imagePath)
         {
             Metadata = md;

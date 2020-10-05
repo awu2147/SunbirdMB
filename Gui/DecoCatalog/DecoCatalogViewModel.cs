@@ -10,6 +10,7 @@ using SunbirdMB.Interfaces;
 using SelectionMode = SunbirdMB.Framework.SelectionMode;
 using Microsoft.Xna.Framework;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Linq;
 
 namespace SunbirdMB.Gui
 {
@@ -73,7 +74,33 @@ namespace SunbirdMB.Gui
         public TabItem SelectedTab
         {
             get { return selectedTab; }
-            set { SetProperty(ref selectedTab, value, nameof(SelectedTab), nameof(CurrentMetadata)); }
+            set 
+            { 
+                SetProperty(ref selectedTab, value, nameof(SelectedTab), nameof(CurrentMetadata));
+                OnSelectedTabChanged();
+            }
+        }
+
+        private void OnSelectedTabChanged()
+        {
+            if (SelectedTab != null)
+            {
+                if (SelectedTab.Header.ToString() == _1x1x1)
+                {
+                    CurrentMetadata = Deco1x1x1Collection.Where(d => (d.Selection == SelectionMode.Selected) || (d.Selection == SelectionMode.Active)).First().DecoMetadata;
+                }
+                else
+                if (SelectedTab.Header.ToString() == _1x1x2)
+                {
+                    CurrentMetadata = Deco1x1x2Collection.Where(d => (d.Selection == SelectionMode.Selected) || (d.Selection == SelectionMode.Active)).First().DecoMetadata;
+                }
+                else
+                if (SelectedTab.Header.ToString() == _1x1x3)
+                {
+                    CurrentMetadata = Deco1x1x3Collection.Where(d => (d.Selection == SelectionMode.Selected) || (d.Selection == SelectionMode.Active)).First().DecoMetadata;
+                }
+                MapBuilder.GhostMarker.MorphImage(DecoFactory.CreateCurrentDeco(Coord.Zero, Coord.Zero, 0));
+            }
         }
 
         public DecoMetadata CurrentMetadata

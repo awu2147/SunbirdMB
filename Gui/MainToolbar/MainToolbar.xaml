@@ -29,7 +29,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Image Source="/SunbirdMB;component/Images/WorldIcon.png" SnapsToDevicePixels="True" Width="48" Height="48"/>
+                            <Image Source="/SunbirdMB;component/Images/WorldIcon.png" SnapsToDevicePixels="True"
+                                   Width="48" Height="48" Margin="2,2,2,0"/>
                             <Label Grid.Row="1" Content="World" Foreground="WhiteSmoke" Padding="1" HorizontalAlignment="Center"/>
                         </Grid>
                     </Button.Content>
@@ -48,7 +49,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Image Source="/SunbirdMB;component/Images/BuildIcon.png" SnapsToDevicePixels="True" Width="48" Height="48"/>
+                            <Image Source="/SunbirdMB;component/Images/BuildIcon.png" SnapsToDevicePixels="True" 
+                                   Width="48" Height="48" Margin="2,2,2,0"/>
                             <Label Grid.Row="1" Content="Build" Foreground="WhiteSmoke" Padding="1" HorizontalAlignment="Center"/>
                         </Grid>
                     </Button.Content>
@@ -62,7 +64,7 @@
                 </Button>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" 
                            Width="2"
-                           Background="{StaticResource VSDark1Brush}"/>
+                           Background="Gray"/>
                 <Button Width="90" Height="Auto" Command="{Binding C_ShowCubeDesigner}" Margin="1,0,1,0" >
                     <Button.Content>
                         <Grid>
@@ -70,7 +72,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Image Source="/SunbirdMB;component/Images/BuildIcon.png" SnapsToDevicePixels="True" Width="48" Height="48"/>
+                            <Image Source="/SunbirdMB;component/Images/CubeDesignerIcon.png" SnapsToDevicePixels="True" 
+                                   Width="48" Height="48" Margin="2,2,2,0"/>
                             <Label Grid.Row="1" Content="Cube Designer" Foreground="WhiteSmoke" Padding="1" HorizontalAlignment="Center"/>
                         </Grid>
                     </Button.Content>
@@ -89,7 +92,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Image Source="/SunbirdMB;component/Images/BuildIcon.png" SnapsToDevicePixels="True" Width="48" Height="48"/>
+                            <Image Source="/SunbirdMB;component/Images/DecoCatalogIcon.png" SnapsToDevicePixels="True" 
+                                   Width="48" Height="48" Margin="2,2,2,0"/>
                             <Label Grid.Row="1" Content="Deco Catalog" Foreground="WhiteSmoke" Padding="1" HorizontalAlignment="Center"/>
                         </Grid>
                     </Button.Content>

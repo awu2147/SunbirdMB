@@ -15,13 +15,6 @@ namespace SunbirdMB.Gui
 
         public readonly CubeMetadata CubeMetadata;
 
-        private SelectionMode selection;
-        public SelectionMode Selection
-        {
-            get { return selection; }
-            set { SetProperty(ref selection, value); }
-        }
-
         public CubeDesignerItem(CubeDesignerViewModel viewModel, string imagePath, CubeMetadata cmd) : base(imagePath, cmd)
         {
             SourceRect = new Int32Rect(0, 0, 72, 75);
@@ -71,7 +64,8 @@ namespace SunbirdMB.Gui
                     Selection = SelectionMode.Active;
                     CubeMetadata.ActiveFrames.Add(GetIndex());
                 }
-                else if (selection == SelectionMode.Active && CubeMetadata.ActiveFrames.Count > 1)
+                else 
+                if (Selection == SelectionMode.Active && CubeMetadata.ActiveFrames.Count > 1)
                 {
                     Selection = SelectionMode.None;
                     CubeMetadata.ActiveFrames.Remove(GetIndex());
