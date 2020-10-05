@@ -96,6 +96,7 @@
     </Style>    
 
     <Style TargetType="TabItem" x:Key="TabItemHorizontal">
+        <Setter Property="Padding" Value="3,0,3,0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
@@ -161,9 +162,9 @@
                             </Border.Background>
                             <ContentPresenter x:Name="ContentSite"
                               VerticalAlignment="Center"
-                              HorizontalAlignment="Left"
+                              HorizontalAlignment="Center"
                               ContentSource="Header"
-                              Margin="3,2,3,2"
+                              Margin="10,2,10,2"
                               RecognizesAccessKey="True">
                             </ContentPresenter>
                         </Border>

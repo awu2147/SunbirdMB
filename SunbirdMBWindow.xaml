@@ -125,10 +125,10 @@
                     </Border>
                 </DockPanel>
             </Grid>            
-            <GridSplitter Background="Transparent" 
+            <!--<GridSplitter Background="Transparent" 
                           Width="4"
                           HorizontalAlignment="Right" 
-                          VerticalAlignment="Stretch" DragCompleted="GridSplitter_DragCompleted"/>
+                          VerticalAlignment="Stretch" DragCompleted="GridSplitter_DragCompleted"/>-->
         </Grid>
     </Grid>
 </Window>

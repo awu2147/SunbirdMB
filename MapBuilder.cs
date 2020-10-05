@@ -354,44 +354,44 @@ namespace SunbirdMB
 
                 #region Pre Loop
 
-                // Rearrange sprites into their correct altitude layer.
-                var altitudeList = LayerMap.Keys.ToList();
-                altitudeList.Sort();
+                //// Rearrange sprites into their correct altitude layer.
+                //var altitudeList = LayerMap.Keys.ToList();
+                //altitudeList.Sort();
 
-                foreach (var altitude in altitudeList)
-                {
-                    for (int i = 0; i < LayerMap[altitude].Count(); i++)
-                    {
-                        var sprite = LayerMap[altitude][i];
-                        if (sprite.Altitude != altitude)
-                        {
-                            LayerMap[altitude].Remove(sprite); i--;
-                            if (!LayerMap.ContainsKey(sprite.Altitude))
-                            {
-                                LayerMap.Add(sprite.Altitude, new SpriteList<Sprite>() { sprite });
-                            }
-                            else
-                            {
-                                if (!(sprite is IWorldObject))
-                                {
-                                    LayerMap[sprite.Altitude].Add(sprite);
-                                }
-                                else
-                                {
-                                    throw new NotImplementedException("Cube/Deco trying to move between layers, is this correct? Use AddCheck if so.");
-                                }
-                            }
-                        }
-                    }
-                }
+                //foreach (var altitude in altitudeList)
+                //{
+                //    for (int i = 0; i < LayerMap[altitude].Count(); i++)
+                //    {
+                //        var sprite = LayerMap[altitude][i];
+                //        if (sprite.Altitude != altitude)
+                //        {
+                //            LayerMap[altitude].Remove(sprite); i--;
+                //            if (!LayerMap.ContainsKey(sprite.Altitude))
+                //            {
+                //                LayerMap.Add(sprite.Altitude, new SpriteList<Sprite>() { sprite });
+                //            }
+                //            else
+                //            {
+                //                if (!(sprite is IWorldObject))
+                //                {
+                //                    LayerMap[sprite.Altitude].Add(sprite);
+                //                }
+                //                else
+                //                {
+                //                    throw new NotImplementedException("Cube/Deco trying to move between layers, is this correct? Use AddCheck if so.");
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
 
                 #endregion
 
                 #region Main Loop
 
                 ShadowDict = new Dictionary<Coord, List<Sprite>>();
-
-                foreach (var sprite in World.Sort(LayerMap))
+                OrderedLayerMap = World.Sort(LayerMap);
+                foreach (var sprite in OrderedLayerMap)
                 {
                     sprite.Update(gameTime);
                     // Create dict: Key = coords, Value = column (list) of sprites with same coord different altitude.
@@ -409,6 +409,8 @@ namespace SunbirdMB
             }
         }
 
+        IOrderedEnumerable<Sprite> OrderedLayerMap;
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (!IsLoading)
@@ -416,7 +418,7 @@ namespace SunbirdMB
                 #region Main Loop
 
                 // Draw sorted sprites;
-                foreach (var sprite in World.Sort(LayerMap))
+                foreach (var sprite in OrderedLayerMap)
                 {
                     // Game
                     if (Altitude != sprite.Altitude && sprite is IWorldObject && Authorization == Authorization.Builder)

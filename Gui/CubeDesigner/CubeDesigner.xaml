@@ -192,7 +192,7 @@
                                 <Binding Path="(gui:CubeDesignerViewModel.CurrentMetadata)"/>
                             </Grid.DataContext>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="105"/>
+                                <ColumnDefinition Width="120"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>

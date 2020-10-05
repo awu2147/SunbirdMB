@@ -79,7 +79,6 @@
                                     BorderThickness="0" SelectedItem="{Binding SelectedTab, Mode=OneWayToSource}">
                             <TabItem Header="1x1x1" 
                                      Foreground="{StaticResource VSTextBrush}"
-                                     Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding DecoCatalog1x1x1.DecoCollection}">
@@ -120,7 +119,6 @@
                             </TabItem>
                             <TabItem Header="1x1x2" 
                                      Foreground="{StaticResource VSTextBrush}"
-                                     Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding DecoCatalog1x1x2.DecoCollection}">
@@ -159,9 +157,8 @@
                                     </ItemsControl>
                                 </ScrollViewer>
                             </TabItem>
-                            <TabItem Header="1x1x3" 
+                            <TabItem Header="1x1x3"
                                      Foreground="{StaticResource VSTextBrush}"
-                                     Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding DecoCatalog1x1x3.DecoCollection}">
@@ -202,7 +199,6 @@
                             </TabItem>
                             <TabItem Header="2x2x2" 
                                      Foreground="{StaticResource VSTextBrush}"
-                                     Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding DecoCatalog2x2x2.DecoCollection}">
@@ -243,7 +239,6 @@
                             </TabItem>
                             <TabItem Header="3x3x3" 
                                      Foreground="{StaticResource VSTextBrush}"
-                                     Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
                                     <ItemsControl ItemsSource="{Binding DecoCatalog3x3x3.DecoCollection}">
@@ -315,7 +310,7 @@
                                 <Binding Path="(gui:DecoCatalogViewModel.CurrentMetadata)"/>
                             </Grid.DataContext>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="105"/>
+                                <ColumnDefinition Width="120"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
