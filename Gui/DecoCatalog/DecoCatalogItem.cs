@@ -11,23 +11,29 @@ using System.Windows;
 
 namespace SunbirdMB.Gui
 {
-    public abstract class DecoCatalogItem : MetadataItemBase
+    public class DecoCatalogItem : MetadataItemBase
     {
-        private DecoCatalogViewModel ViewModel;
+        internal override int ItemWidth { get; set; }
+        internal override int ItemHeight { get; set; }
 
-        public DecoMetadata DecoMetadata { get; set; }
+        private readonly DecoCatalogManager CatalogManager;
 
-        internal DecoCatalogItem(DecoCatalogViewModel viewModel, string imagePath, DecoMetadata dmd) : base(imagePath, dmd)
+        internal DecoMetadata DecoMetadata { get; set; }
+
+        internal DecoCatalogItem(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd, int itemWidth, int itemHeight) : base(imagePath, dmd)
         {
-            ViewModel = viewModel;
+            CatalogManager = collectionManager;
             DecoMetadata = dmd;
+            ItemWidth = itemWidth;
+            ItemHeight = itemHeight;
+            SourceRect = new Int32Rect(0, 0, itemWidth, itemHeight);
         }
 
         internal override void LeftClick()
         {
-            if (!ViewModel.IsSubLevel)
+            if (!CatalogManager.IsLocalSubLevel)
             {
-                ViewModel.CurrentMetadata = DecoMetadata;
+                CatalogManager.ViewModel.CurrentMetadata = DecoMetadata;
                 Selection = SelectionMode.Selected;
                 DeselectAllButThis();
             }
@@ -37,7 +43,7 @@ namespace SunbirdMB.Gui
                 DecoMetadata.ActiveFrames.Add(GetIndex());
                 DeactivateAllButThis();
             }
-            MapBuilder.GhostMarker.MorphImage(DecoFactory.CreateCurrentDeco(Coord.Zero, Coord.Zero, 0));
+            MapBuilder.GhostMarker.MorphCurrentDeco();
         }
 
         internal override void RightClick() { }
@@ -46,19 +52,19 @@ namespace SunbirdMB.Gui
 
         internal override void RightDoubleClick()
         {
-            if (!ViewModel.IsSubLevel)
+            if (!CatalogManager.IsLocalSubLevel)
             {
-                ViewModel.EnterSubLevel(this);
+                CatalogManager.EnterSubLevel(this);
             }
             else
             {
-                ViewModel.ExitSubLevel();
+                CatalogManager.ExitSubLevel();
             }
         }
 
         internal override void ShiftLeftClick() 
         {
-            if (ViewModel.IsSubLevel)
+            if (CatalogManager.IsLocalSubLevel)
             {
                 if (Selection == SelectionMode.None)
                 {
@@ -80,93 +86,73 @@ namespace SunbirdMB.Gui
 
         internal void DeselectAllButThis()
         {
-            Deselect(DecoCatalogViewModel._1x1x1, ViewModel.Deco1x1x1Collection);
-            Deselect(DecoCatalogViewModel._1x1x2, ViewModel.Deco1x1x2Collection);
-            Deselect(DecoCatalogViewModel._1x1x3, ViewModel.Deco1x1x3Collection);
-        }
-
-        internal void Deselect(string dimensions, ObservableCollection<DecoCatalogItem> collection)
-        {
-            if (ViewModel.SelectedTab.Header.ToString() == dimensions)
+            foreach (var item in CatalogManager.DecoCollection)
             {
-                foreach (var item in collection)
+                if (item != this)
                 {
-                    if (item != this)
-                    {
-                        item.Selection = SelectionMode.None;
-                    }
+                    item.Selection = SelectionMode.None;
                 }
             }
         }
 
         internal void DeactivateAllButThis()
         {
-            Deactivate(DecoCatalogViewModel._1x1x1, ViewModel.Deco1x1x1Collection);
-            Deactivate(DecoCatalogViewModel._1x1x2, ViewModel.Deco1x1x2Collection);
-            Deactivate(DecoCatalogViewModel._1x1x3, ViewModel.Deco1x1x3Collection);
-        }
-
-        internal void Deactivate(string dimensions, ObservableCollection<DecoCatalogItem> collection)
-        {
-            if (ViewModel.SelectedTab.Header.ToString() == dimensions)
+            foreach (var item in CatalogManager.DecoCollection)
             {
-                foreach (var item in collection)
+                if (item != this)
                 {
-                    if (item != this)
-                    {
-                        item.Selection = SelectionMode.None;
-                        RemoveFromActive(item);
-                    }
+                    item.Selection = SelectionMode.None;
+                    RemoveFromActive(item);
                 }
             }
         }
 
-        internal static DecoCatalogItem CreateNew(DecoCatalogViewModel viewModel, string imagePath, DecoMetadata dmd, string dimensions)
-        {
-            switch (dimensions)
-            {
-                case DecoCatalogViewModel._1x1x1:
-                    return new DecoCatalogItem1x1x1(viewModel, imagePath, dmd);
-                case DecoCatalogViewModel._1x1x2:
-                    return new DecoCatalogItem1x1x2(viewModel, imagePath, dmd);
-                case DecoCatalogViewModel._1x1x3:
-                    return new DecoCatalogItem1x1x3(viewModel, imagePath, dmd);
-                default:
-                    return null;
-            }
-        }
+        //internal static DecoCatalogItem CreateNew(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd, string dimensions)
+        //{
+        //    switch (dimensions)
+        //    {
+        //        case DecoCatalogViewModel._1x1x1:
+        //            return new DecoCatalogItem1x1x1(collectionManager, imagePath, dmd);
+        //        case DecoCatalogViewModel._1x1x2:
+        //            return new DecoCatalogItem1x1x2(collectionManager, imagePath, dmd);
+        //        case DecoCatalogViewModel._1x1x3:
+        //            return new DecoCatalogItem1x1x3(collectionManager, imagePath, dmd);
+        //        default:
+        //            return null;
+        //    }
+        //}
 
     }
 
-    public class DecoCatalogItem1x1x1 : DecoCatalogItem
-    {
-        internal override int ItemWidth { get; set; } = 72;
-        internal override int ItemHeight { get; set; } = 75;
+    //public class DecoCatalogItem1x1x1 : DecoCatalogItem
+    //{
+    //    internal override int ItemWidth { get; set; } = 72;
+    //    internal override int ItemHeight { get; set; } = 75;
 
-        internal DecoCatalogItem1x1x1(DecoCatalogViewModel viewModel, string imagePath, DecoMetadata dmd) : base(viewModel, imagePath, dmd) 
-        {
-            SourceRect = new Int32Rect(0, 0, 72, 75);
-        }
-    }
-    public class DecoCatalogItem1x1x2 : DecoCatalogItem
-    {
-        internal override int ItemWidth { get; set; } = 72;
-        internal override int ItemHeight { get; set; } = 111;
+    //    internal DecoCatalogItem1x1x1(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd) : base(collectionManager, imagePath, dmd) 
+    //    {
+    //        SourceRect = new Int32Rect(0, 0, 72, 75);
+    //    }
+    //}
+    //public class DecoCatalogItem1x1x2 : DecoCatalogItem
+    //{
+    //    internal override int ItemWidth { get; set; } = 72;
+    //    internal override int ItemHeight { get; set; } = 111;
 
-        internal DecoCatalogItem1x1x2(DecoCatalogViewModel viewModel, string imagePath, DecoMetadata dmd) : base(viewModel, imagePath, dmd)
-        {
-            SourceRect = new Int32Rect(0, 0, 72, 111);
-        }
-    }
-    public class DecoCatalogItem1x1x3 : DecoCatalogItem
-    {
-        internal override int ItemWidth { get; set; } = 72;
-        internal override int ItemHeight { get; set; } = 147;
+    //    internal DecoCatalogItem1x1x2(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd) : base(collectionManager, imagePath, dmd)
+    //    {
+    //        SourceRect = new Int32Rect(0, 0, 72, 111);
+    //    }
+    //}
+    //public class DecoCatalogItem1x1x3 : DecoCatalogItem
+    //{
+    //    internal override int ItemWidth { get; set; } = 72;
+    //    internal override int ItemHeight { get; set; } = 147;
 
-        internal DecoCatalogItem1x1x3(DecoCatalogViewModel viewModel, string imagePath, DecoMetadata dmd) : base(viewModel, imagePath, dmd)
-        {
-            SourceRect = new Int32Rect(0, 0, 72, 147);
-        }
-    }
+    //    internal DecoCatalogItem1x1x3(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd) : base(collectionManager, imagePath, dmd)
+    //    {
+    //        SourceRect = new Int32Rect(0, 0, 72, 147);
+    //    }
+    //}
 
 }

@@ -82,7 +82,7 @@
                                      Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
-                                    <ItemsControl ItemsSource="{Binding Deco1x1x1Collection}">
+                                    <ItemsControl ItemsSource="{Binding DecoCatalog1x1x1.DecoCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button>
@@ -123,7 +123,7 @@
                                      Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
-                                    <ItemsControl ItemsSource="{Binding Deco1x1x2Collection}">
+                                    <ItemsControl ItemsSource="{Binding DecoCatalog1x1x2.DecoCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button>
@@ -164,7 +164,7 @@
                                      Width="78" Height="22"
                                      Style="{StaticResource TabItemHorizontal}">
                                 <ScrollViewer Style="{StaticResource DarkScrollViewer}">
-                                    <ItemsControl ItemsSource="{Binding Deco1x1x3Collection}">
+                                    <ItemsControl ItemsSource="{Binding DecoCatalog1x1x3.DecoCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button>

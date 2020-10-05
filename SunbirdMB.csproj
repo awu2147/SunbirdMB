@@ -121,6 +121,8 @@
     <Compile Include="Gui\DecoCatalog\DecoCatalog.xaml.cs">
       <DependentUpon>DecoCatalog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\DecoCatalog\DecoCatalogArgs.cs" />
+    <Compile Include="Gui\DecoCatalog\DecoCatalogManager.cs" />
     <Compile Include="Gui\DecoCatalog\DecoCatalogItem.cs" />
     <Compile Include="Gui\DecoCatalog\DecoCatalogViewModel.cs" />
     <Compile Include="Gui\Logger\Logger.xaml.cs">

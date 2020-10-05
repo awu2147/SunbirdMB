@@ -26,6 +26,16 @@ namespace SunbirdMB.Core
             Image.LoadContent(MainGame);
         }
 
+        public void MorphCurrentDeco()
+        {
+            MorphImage(DecoFactory.CreateCurrentDeco(Coord.Zero, Coord.Zero, 0));
+        }
+
+        public void MorphCurrentCube()
+        {
+            MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
+        }
+
         public override void LoadContent(IMainGame mainGame)
         {
             base.LoadContent(mainGame);

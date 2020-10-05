@@ -73,8 +73,8 @@ namespace SunbirdMB.Gui
 
     public abstract class MetadataItemBase : CatalogItemBase
     {
-        internal abstract int ItemWidth { get; set; } 
-        internal abstract int ItemHeight { get; set; }
+        internal virtual int ItemWidth { get; set; } 
+        internal virtual int ItemHeight { get; set; }
 
         internal readonly MetadataBase Metadata;
 
