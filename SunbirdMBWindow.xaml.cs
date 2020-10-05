@@ -57,7 +57,6 @@ namespace SunbirdMB
             InitializeComponent();
 
             SunbirdMBGame = MainGame;
-            SunbirdMBGame.BeforeContentBuild += Game_BeforeContentBuild;
             SunbirdMBGame.AfterContentBuild += Game_AfterContentBuild;
             SunbirdMBGame.Loaded += Game_Loaded;
 
@@ -88,12 +87,6 @@ namespace SunbirdMB
                 SunbirdMBWindowViewModel.GameHeight.ToString().Log();
                 MainGamePanel.ActualHeight.ToString().Log(); 
             }
-        }
-
-        private void Game_BeforeContentBuild(object sender, EventArgs e)
-        {
-            SunbirdMBWindowViewModel.CubeDesignerViewModel.OnBeforeContentBuild();
-            SunbirdMBWindowViewModel.DecoCatalogViewModel.OnBeforeContentBuild();
         }
 
         private void Game_AfterContentBuild(object sender, EventArgs e)

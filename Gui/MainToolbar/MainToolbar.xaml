@@ -60,7 +60,9 @@
                         </MultiBinding>
                     </Button.Style>
                 </Button>
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Width="2"/>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" 
+                           Width="2"
+                           Background="{StaticResource VSDark1Brush}"/>
                 <Button Width="90" Height="Auto" Command="{Binding C_ShowCubeDesigner}" Margin="1,0,1,0" >
                     <Button.Content>
                         <Grid>

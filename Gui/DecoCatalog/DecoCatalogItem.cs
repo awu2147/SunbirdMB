@@ -72,7 +72,8 @@ namespace SunbirdMB.Gui
                     Selection = SelectionMode.Active;
                     DecoMetadata.ActiveFrames.Add(GetIndex());
                 }
-                else if (selection == SelectionMode.Active && DecoMetadata.ActiveFrames.Count > 1)
+                else 
+                if (selection == SelectionMode.Active && DecoMetadata.ActiveFrames.Count > 1)
                 {
                     Selection = SelectionMode.None;
                     DecoMetadata.ActiveFrames.Remove(GetIndex());

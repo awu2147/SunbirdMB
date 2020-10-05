@@ -33,10 +33,16 @@ namespace SunbirdMB.Core
         /// </summary>
         public override void LoadContent(IMainGame mainGame)
         {
-            AnimatorTop.LoadContent(mainGame);
-            AnimatorTop.Sprite = this;
-            AnimatorBase.LoadContent(mainGame);
-            AnimatorBase.Sprite = this;
+            if (AnimatorTop != null)
+            { 
+                AnimatorTop.LoadContent(mainGame);
+                AnimatorTop.Sprite = this;
+            }
+            if (AnimatorBase != null)
+            {
+                AnimatorBase.LoadContent(mainGame);
+                AnimatorBase.Sprite = this;
+            }
         }
 
         public override void Update(GameTime gameTime)

@@ -1,36 +1,25 @@
 ﻿using SunbirdMB.Core;
 using SunbirdMB.Framework;
-using SunbirdMB.Tools;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.IO.Packaging;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Collections.Specialized;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Controls;
-using Microsoft.Win32;
 using SunbirdMB.Interfaces;
 using SelectionMode = SunbirdMB.Framework.SelectionMode;
 
 namespace SunbirdMB.Gui
 {
-    public class CubeDesignerViewModel : PropertyChangedBase
+    public class CubeDesignerViewModel : PropertyChangedBase, IImporter
     {
         private ObservableCollection<CubeDesignerItem> cubeTopCollection = new ObservableCollection<CubeDesignerItem>();
         private ObservableCollection<CubeDesignerItem> cubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
-        private TabItem selectedTab;
+        
         private bool isTopSubLevel;
         private bool isBaseSubLevel;
 
+        private TabItem selectedTab;
         private IMainGame MainGame { get; set; }
         public static CubeMetadata CurrentCubeTopMetadata { get; private set; }
         public static CubeMetadata CurrentCubeBaseMetadata { get; private set; }
@@ -40,57 +29,31 @@ namespace SunbirdMB.Gui
         public ObservableCollection<CubeDesignerItem> CubeTopCollection
         {
             get { return cubeTopCollection; }
-            set
-            {
-                if (cubeTopCollection == value) { return; }
-                cubeTopCollection = value;
-                NotifyPropertyChanged(nameof(CubeTopCollection));
-            }
+            set { SetProperty(ref cubeTopCollection, value); }
         }
 
         public ObservableCollection<CubeDesignerItem> CubeBaseCollection
         {
             get { return cubeBaseCollection; }
-            set
-            {
-                if (cubeBaseCollection == value) { return; }
-                cubeBaseCollection = value;
-                NotifyPropertyChanged(nameof(CubeBaseCollection));
-            }
+            set { SetProperty(ref cubeBaseCollection, value); }
         }
 
         public TabItem SelectedTab
         {
             get { return selectedTab; }
-            set
-            {
-                if (selectedTab == value) { return; }
-                selectedTab = value;
-                NotifyPropertyChanged(nameof(SelectedTab));
-                NotifyPropertyChanged(nameof(CurrentMetadata));
-            }
+            set { SetProperty(ref selectedTab, value, nameof(SelectedTab), nameof(CurrentMetadata)); }
         }
 
         public bool IsTopSubLevel
         {
             get { return isTopSubLevel; }
-            set
-            {
-                isTopSubLevel = value;
-                NotifyPropertyChanged(nameof(IsSubLevel));
-                NotifyPropertyChanged(nameof(IsAnimationComboBoxEnabled));
-            }
+            set { SetProperty(ref isTopSubLevel, value, nameof(IsSubLevel), nameof(IsAnimationComboBoxEnabled)); }
         }
 
         public bool IsBaseSubLevel
         {
             get { return isBaseSubLevel; }
-            set
-            {
-                isBaseSubLevel = value;
-                NotifyPropertyChanged(nameof(IsSubLevel));
-                NotifyPropertyChanged(nameof(IsAnimationComboBoxEnabled));
-            }
+            set { SetProperty(ref isBaseSubLevel, value, nameof(IsSubLevel), nameof(IsAnimationComboBoxEnabled)); }
         }
 
         public CubeMetadata CurrentMetadata
@@ -141,12 +104,7 @@ namespace SunbirdMB.Gui
         {
             MainGame = mainGame;
             C_Import = new RelayCommand((o) => Import());
-            C_Sort = new RelayCommand((o) => Uncache());
         }
-
-        private void Uncache() { }
-
-        internal void OnBeforeContentBuild() { }
 
         internal void OnAfterContentBuild()
         {
@@ -180,37 +138,36 @@ namespace SunbirdMB.Gui
             {
                 CachedCubeTopCollection = CubeTopCollection;
                 CubeTopCollection = new ObservableCollection<CubeDesignerItem>();
-
-                int count = 0;
-                for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
-                {
-                    for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
-                    {
-                        count++;
-                        SelectionMode selection = cdi.CubeMetadata.ActiveFrames.Contains(count) ? SelectionMode.Active : SelectionMode.None;
-                        CubeTopCollection.Add(new CubeDesignerItem(this, cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75), Selection = selection });
-                    }
-                }
-
+                CreateSubCollection(cdi, CubeTopCollection);
                 IsTopSubLevel = true;
             }
             else if (!IsBaseSubLevel && SelectedTab.Header.ToString() == CubePart.Base.ToString())
             {
                 CachedCubeBaseCollection = CubeBaseCollection;
                 CubeBaseCollection = new ObservableCollection<CubeDesignerItem>();
+                CreateSubCollection(cdi, CubeBaseCollection);
+                IsBaseSubLevel = true;
+            }
+        }
 
-                int count = 0;
-                for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+        private void CreateSubCollection(CubeDesignerItem cdi, ObservableCollection<CubeDesignerItem> collection)
+        {
+            int count = 0;
+            for (int y = 0; y < cdi.CubeMetadata.SheetRows; y++)
+            {
+                for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
                 {
-                    for (int x = 0; x < cdi.CubeMetadata.SheetColumns; x++)
+                    count++;
+                    SelectionMode selection = cdi.CubeMetadata.ActiveFrames.Contains(count) ? SelectionMode.Active : SelectionMode.None;
+                    var newCdi = new CubeDesignerItem(this, cdi.ImagePath, cdi.CubeMetadata);
+                    newCdi.SourceRect = new Int32Rect(newCdi.ItemWidth * x, newCdi.ItemHeight * y, newCdi.ItemWidth, newCdi.ItemHeight);
+                    newCdi.Selection = selection;
+                    collection.Add(newCdi);
+                    if (count == cdi.CubeMetadata.FrameCount)
                     {
-                        count++;
-                        SelectionMode selection = cdi.CubeMetadata.ActiveFrames.Contains(count) ? SelectionMode.Active : SelectionMode.None;
-                        CubeBaseCollection.Add(new CubeDesignerItem(this, cdi.ImagePath, cdi.CubeMetadata) { SourceRect = new Int32Rect(72 * x, 75 * y, 72, 75), Selection = selection });
+                        break;
                     }
                 }
-
-                IsBaseSubLevel = true;
             }
         }
 
@@ -230,36 +187,10 @@ namespace SunbirdMB.Gui
             
         }
 
-        private void Sort(ObservableCollection<CubeDesignerItem> cubePartCollection)
-        {
-            var cache = new List<CubeDesignerItem>();
-            foreach (var item in cubePartCollection)
-            {
-                item.Unregister();
-                cache.Add(item);
-            }
-            cubePartCollection.Clear();
-            cache.Sort((x, y) => string.Compare(x.CubeMetadata.Name, y.CubeMetadata.Name));
-            foreach (var item in cache)
-            {
-                cubePartCollection.Add(item);
-            }
-        }
-
         internal void SortAll()
         {
-            SortTop();
-            SortBase();
-        }
-
-        internal void SortBase()
-        {
-            Sort(CubeBaseCollection);
-        }
-
-        internal void SortTop()
-        {
-            Sort(CubeTopCollection);
+            MetadataItemBase.Sort(CubeTopCollection);
+            MetadataItemBase.Sort(CubeBaseCollection);
         }
 
         private void SelectTop(CubeDesignerItem cubeDesignerItem)
@@ -272,6 +203,23 @@ namespace SunbirdMB.Gui
         {
             CurrentCubeBaseMetadata = cubeDesignerItem.CubeMetadata;
             cubeDesignerItem.Selection = SelectionMode.Selected;
+        }
+
+        /// <summary>
+        /// Import all cube parts into the cube designer from the Content\Cubes folder.
+        /// </summary>
+        private void ImportAll()
+        {
+            var cubeTops = Directory.GetFiles(UriHelper.CubeTopDirectory, "*.png", SearchOption.AllDirectories);
+            foreach (var cubeTop in cubeTops)
+            {
+                Import(cubeTop);
+            }
+            var cubeBases = Directory.GetFiles(UriHelper.CubeBaseDirectory, "*.png", SearchOption.AllDirectories);
+            foreach (var cubeBase in cubeBases)
+            {
+                Import(cubeBase);
+            }
         }
 
         /// <summary> 
@@ -288,37 +236,14 @@ namespace SunbirdMB.Gui
             {
                 importDirectory = UriHelper.CubeBaseDirectory;
             }
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                if (Path.GetExtension(openFileDialog.FileName) == ".png")
-                {
-                    var newFilePath = Path.Combine(importDirectory, Path.GetFileName(openFileDialog.FileName));
-                    if (File.Exists(newFilePath))
-                    {
-                        "Cannot copy to directory, file already exists.".Log();
-                    }
-                    else
-                    {
-                        File.Copy(openFileDialog.FileName, newFilePath);
-                        // We don't need to rebuild everything, only the .png we just imported.
-                        ContentBuilder.BuildFile(newFilePath);
-                        Import(newFilePath);
-                    }
-                }
-                else
-                {
-                    "Incorrect file format".Log();
-                }
-            }
+            Importer.CopyBuildImport(importDirectory, this);
             SortAll();
         }
 
         /// <summary> 
         /// Import a single cube part into the cube designer from the Content\Cubes folder.
         /// </summary>
-        private void Import(string path)
+        public void Import(string path)
         {
             try
             {
@@ -335,7 +260,7 @@ namespace SunbirdMB.Gui
                 }
                 else
                 {
-                    cmd = new CubeMetadata() { ContentPath = contentPath, SheetRows = 1, SheetColumns = 1, FrameCount = 1, AnimState = AnimationState.None };
+                    cmd = new CubeMetadata() { ContentPath = contentPath };
                     cmd.LoadContent(MainGame);
                     cmd.Serialize(metadataPath);
                     $"Creating {Path.GetFileName(metadataPath)}...".Log();
@@ -361,22 +286,6 @@ namespace SunbirdMB.Gui
             }
         }
 
-        /// <summary>
-        /// Import all cube parts into the cube designer from the Content\Cubes folder.
-        /// </summary>
-        private void ImportAll()
-        {
-            var cubeTops = Directory.GetFiles(UriHelper.CubeTopDirectory, "*.png", SearchOption.AllDirectories);
-            foreach (var cubeTop in cubeTops)
-            {
-                Import(cubeTop);
-            }
-            var cubeBases = Directory.GetFiles(UriHelper.CubeBaseDirectory, "*.png", SearchOption.AllDirectories);
-            foreach (var cubeBase in cubeBases)
-            {
-                Import(cubeBase);
-            }
-        }
     }
 
 }

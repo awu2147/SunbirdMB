@@ -108,6 +108,7 @@
     <Compile Include="Core\Deco\DecoMetadata.cs" />
     <Compile Include="Core\GhostMarker.cs" />
     <Compile Include="Core\MetadataBase.cs" />
+    <Compile Include="Framework\Importer.cs" />
     <Compile Include="Framework\Keyboard.cs" />
     <Compile Include="Framework\Mouse.cs" />
     <Compile Include="Framework\UriHelper.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Gui\MainToolbar\MainToolbarViewModel.cs" />
     <Compile Include="Gui\SelectedStyleConverter.cs" />
     <Compile Include="Gui\TextBoxEnterKeyUpdateBehaviour.cs" />
+    <Compile Include="Interfaces\IImporter.cs" />
     <Compile Include="SunbirdMBSplash.xaml.cs">
       <DependentUpon>SunbirdMBSplash.xaml</DependentUpon>
     </Compile>

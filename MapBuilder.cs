@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -112,18 +113,50 @@ namespace SunbirdMB
             var XmlData = Serializer.ReadXML<MapBuilder>(MapBuilderSerializer, saveFilePath);
             Altitude = XmlData.Altitude;
             LayerMap = XmlData.LayerMap;
+            bool createNewGhostMarker = false;
             foreach (var layer in LayerMap)
             {
-                foreach (var sprite in layer.Value)
+                for (int i = 0; i < layer.Value.Count(); i++)
                 {
+                    var sprite = layer.Value[i];
                     // The ghost marker should be somewhere in the serialized collection of sprites.
                     // Find it and set it as our ghost marker instead of creating a new one.
                     if (sprite is GhostMarker)
                     {
                         GhostMarker = sprite as GhostMarker;
                     }
-                    sprite.LoadContent(MainGame);
+
+                    try
+                    {
+                        // Load content can fail if the content file for the sprite no longer exists.
+                        sprite.LoadContent(MainGame);
+                    }
+                    catch (Exception e)
+                    {
+                        e.Message.Log();
+                        if (sprite is GhostMarker)
+                        {
+                            // If the content file was required for the ghost marker, remove the current ghost mark
+                            // and get ready to make a new one.
+                            createNewGhostMarker = true;
+                            layer.Value.Remove(sprite);
+                        }
+                        else
+                        {
+                            // Otherwise if the content file is required by the sprite (Cube/Deco), remove the sprite.
+                            layer.Value.RemoveCheck(sprite, sprite.Altitude);
+                            
+                        }
+                        i--;
+                    }
                 }
+            }
+
+            if (createNewGhostMarker)
+            {
+                // The content file for the ghost marker was removed, so make a new one and add it to the layer map.
+                GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
+                LayerMap[Altitude].Add(GhostMarker);
             }
 
             IsLoading = false;

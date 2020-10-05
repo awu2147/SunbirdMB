@@ -3,6 +3,7 @@ using SunbirdMB.Framework;
 using SunbirdMB.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -75,7 +76,7 @@ namespace SunbirdMB.Gui
         internal abstract int ItemWidth { get; set; } 
         internal abstract int ItemHeight { get; set; }
 
-        private readonly MetadataBase Metadata;
+        internal readonly MetadataBase Metadata;
 
         public MetadataItemBase(string imagePath, MetadataBase md) : base(imagePath)
         {
@@ -103,6 +104,22 @@ namespace SunbirdMB.Gui
             if (Metadata.ActiveFrames.Contains(GetIndex(mib)))
             {
                 Metadata.ActiveFrames.Remove(GetIndex(mib));
+            }
+        }
+
+        internal static void Sort<T>(ObservableCollection<T> cubePartCollection)
+        {
+            var cache = new List<T>();
+            foreach (var item in cubePartCollection)
+            {
+                (item as MetadataItemBase).Unregister();
+                cache.Add(item);
+            }
+            cubePartCollection.Clear();
+            cache.Sort((x, y) => string.CompareOrdinal((x as MetadataItemBase).Metadata.Name, (y as MetadataItemBase).Metadata.Name));
+            foreach (var item in cache)
+            {
+                cubePartCollection.Add(item);
             }
         }
 

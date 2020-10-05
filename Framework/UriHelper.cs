@@ -25,7 +25,7 @@ namespace SunbirdMB.Framework
         public static string Deco1x1x2Directory;
         public static string Deco1x1x3Directory;
 
-        public static void Intiailize()
+        static UriHelper()
         {
             AppPath = Assembly.GetExecutingAssembly().Location;
             Debug.Assert(AppPath == @"D:\SunbirdMB\bin\Debug\SunbirdMB.exe");

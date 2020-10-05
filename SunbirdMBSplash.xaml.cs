@@ -66,7 +66,7 @@ namespace SunbirdMB
 
         internal async void StartPolling(CancellationToken cancelSplashToken)
         {
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 300; i++)
             {
                 if (cancelSplashToken.IsCancellationRequested)
                 {
