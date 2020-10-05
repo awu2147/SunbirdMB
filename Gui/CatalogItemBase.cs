@@ -5,11 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -17,16 +12,33 @@ namespace SunbirdMB.Gui
 {
     public abstract class CatalogItemBase : PropertyChangedBase
     {
-        public PropertyChangedEventHandler PropertyChangedHandler;
-
+        protected int itemWidth;
+        protected int itemHeight;
         private string imagePath;
+        private Int32Rect sourceRect;
+
+        /// <summary>
+        /// The width of the item element when displayed in the gui.
+        /// </summary>
+        public abstract int ItemWidth { get; set; }
+
+        /// <summary>
+        /// The height of the item element when displayed in the gui.
+        /// </summary>
+        public abstract int ItemHeight { get; set; }
+
+        /// <summary>
+        /// The full path to the item element image.
+        /// </summary>
         public string ImagePath
         {
             get { return imagePath; }
             set { SetProperty(ref imagePath, value); }
         }
 
-        private Int32Rect sourceRect;
+        /// <summary>
+        /// The source rectangle used to view the item element image.
+        /// </summary>
         public Int32Rect SourceRect
         {
             get { return sourceRect; }
@@ -49,16 +61,6 @@ namespace SunbirdMB.Gui
             C_RightDoubleClick = new RelayCommand((o) => RightDoubleClick());
         }
 
-        internal void Register()
-        {
-            PropertyChanged += PropertyChangedHandler;
-        }
-
-        internal void Unregister()
-        {
-            PropertyChanged -= PropertyChangedHandler;
-        }
-
         internal virtual void LeftClick() { $"LeftClick".Log(); }
 
         internal virtual void LeftDoubleClick() { $"LeftDoubleClick".Log(); }
@@ -70,65 +72,5 @@ namespace SunbirdMB.Gui
         internal virtual void RightDoubleClick() { $"RightDoubleClick".Log(); }
 
     }
-
-    public abstract class MetadataItemBase : CatalogItemBase
-    {
-        internal virtual int ItemWidth { get; set; } 
-        internal virtual int ItemHeight { get; set; }
-
-        internal readonly MetadataBase Metadata;
-
-        private SelectionMode selection;
-        public SelectionMode Selection
-        {
-            get { return selection; }
-            set { SetProperty(ref selection, value); }
-        }
-
-        public MetadataItemBase(string imagePath, MetadataBase md) : base(imagePath)
-        {
-            Metadata = md;
-        }
-
-        internal int GetIndex()
-        {
-            int xPos = SourceRect.X / ItemWidth;
-            int yPos = SourceRect.Y / ItemHeight;
-            int index = Metadata.SheetColumns * yPos + xPos;
-            return index + 1;
-        }
-
-        internal int GetIndex(MetadataItemBase mib)
-        {
-            int xPos = mib.SourceRect.X / mib.ItemWidth;
-            int yPos = mib.SourceRect.Y / mib.ItemHeight;
-            int index = mib.Metadata.SheetColumns * yPos + xPos;
-            return index + 1;
-        }
-
-        internal void RemoveFromActive(MetadataItemBase mib)
-        {
-            if (Metadata.ActiveFrames.Contains(GetIndex(mib)))
-            {
-                Metadata.ActiveFrames.Remove(GetIndex(mib));
-            }
-        }
-
-        internal static void Sort<T>(ObservableCollection<T> cubePartCollection)
-        {
-            var cache = new List<T>();
-            foreach (var item in cubePartCollection)
-            {
-                (item as MetadataItemBase).Unregister();
-                cache.Add(item);
-            }
-            cubePartCollection.Clear();
-            cache.Sort((x, y) => string.CompareOrdinal((x as MetadataItemBase).Metadata.Name, (y as MetadataItemBase).Metadata.Name));
-            foreach (var item in cache)
-            {
-                cubePartCollection.Add(item);
-            }
-        }
-
-    }
+   
 }

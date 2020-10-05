@@ -27,4 +27,16 @@ namespace SunbirdMB.Framework
             return source.Remove(source.LastIndexOf(value));
         }
     }
+
+    public class StringChangedEventArgs : EventArgs
+    {
+        public string NewString { get; set; }
+
+        public StringChangedEventArgs(string newString)
+        {
+            NewString = newString;
+        }
+    }
+
+    public delegate void StringChangedEventHandler(object sender, StringChangedEventArgs args);
 }

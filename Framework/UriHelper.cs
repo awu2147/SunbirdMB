@@ -24,6 +24,8 @@ namespace SunbirdMB.Framework
         public static string Deco1x1x1Directory;
         public static string Deco1x1x2Directory;
         public static string Deco1x1x3Directory;
+        public static string Deco2x2x2Directory;
+        public static string Deco3x3x3Directory;
 
         static UriHelper()
         {
@@ -56,6 +58,12 @@ namespace SunbirdMB.Framework
 
             Deco1x1x3Directory = Path.Combine(DecoDirectory, "1x1x3");
             Debug.Assert(Deco1x1x3Directory == @"D:\SunbirdMB\bin\Debug\Content\Decos\1x1x3");
+
+            Deco2x2x2Directory = Path.Combine(DecoDirectory, "2x2x2");
+            Debug.Assert(Deco2x2x2Directory == @"D:\SunbirdMB\bin\Debug\Content\Decos\2x2x2");
+
+            Deco3x3x3Directory = Path.Combine(DecoDirectory, "3x3x3");
+            Debug.Assert(Deco3x3x3Directory == @"D:\SunbirdMB\bin\Debug\Content\Decos\3x3x3");
         }
 
         public static string MakeContentRelative(this string path)

@@ -39,26 +39,26 @@ namespace SunbirdMB.Gui
             Args = args;
         }
 
-        private void ViewModel_SelectedTabChanged(object sender, EventArgs e)
+        private void ViewModel_SelectedTabChanged(object sender, StringChangedEventArgs e)
         {
-            if (ViewModel.SelectedTab.Header.ToString() == Args.CatalogName)
+            if (e.NewString == Args.CatalogName)
             {
                 ViewModel.CurrentMetadata = DecoCollection.Where(d => (d.Selection == SelectionMode.Selected) || (d.Selection == SelectionMode.Active)).First().DecoMetadata;
                 ViewModel.C_Import = new RelayCommand((o) => Import());
+                MapBuilder.GhostMarker.MorphCurrentDeco();
             }
-            MapBuilder.GhostMarker.MorphCurrentDeco();
         }
 
         internal void EnterSubLevel(DecoCatalogItem dci)
         {
             cachedDecoCollection = DecoCollection;
-            DecoCollection = new ObservableCollection<DecoCatalogItem>();
-            CreateSubCollection(dci, DecoCollection);
+            CreateSubLevelCollection(dci);
             IsLocalSubLevel = true;
         }
 
-        private void CreateSubCollection(DecoCatalogItem dci, ObservableCollection<DecoCatalogItem> collection)
+        private void CreateSubLevelCollection(DecoCatalogItem dci)
         {
+            DecoCollection = new ObservableCollection<DecoCatalogItem>();
             int count = 0;
             for (int y = 0; y < dci.DecoMetadata.SheetRows; y++)
             {
@@ -69,7 +69,7 @@ namespace SunbirdMB.Gui
                     var newDci = new DecoCatalogItem(this, dci.ImagePath, dci.DecoMetadata, Args.ItemWidth, Args.ItemHeight);
                     newDci.SourceRect = new Int32Rect(newDci.ItemWidth * x, newDci.ItemHeight * y, newDci.ItemWidth, newDci.ItemHeight);
                     newDci.Selection = selection;
-                    collection.Add(newDci);
+                    DecoCollection.Add(newDci);
                     if (count == dci.DecoMetadata.FrameCount)
                     {
                         break;
@@ -97,7 +97,7 @@ namespace SunbirdMB.Gui
             }
         }
 
-        private void Import()
+        internal void Import()
         {            
             Importer.CopyBuildImport(Args.ImportDirectory, this);
             MetadataItemBase.Sort(DecoCollection);
@@ -110,7 +110,6 @@ namespace SunbirdMB.Gui
                 var contentPath = path.MakeContentRelative();
                 if (contentPath == string.Empty) { return; }
 
-                // Find or create cube metadata.
                 var metadataPath = Path.ChangeExtension(path, ".metadata");
                 DecoMetadata dmd;
                 if (File.Exists(metadataPath))
@@ -126,7 +125,6 @@ namespace SunbirdMB.Gui
                     $"Creating {Path.GetFileName(metadataPath)}...".Log();
                 }
 
-                // Add to collection.
                 dmd.Dimensions = Args.DecoDimension;
                 dmd.PositionOffset = Args.DecoPositionOffset;
                 DecoCollection.Add(new DecoCatalogItem(this, path, dmd, Args.ItemWidth, Args.ItemHeight));

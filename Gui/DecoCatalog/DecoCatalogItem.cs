@@ -13,12 +13,22 @@ namespace SunbirdMB.Gui
 {
     public class DecoCatalogItem : MetadataItemBase
     {
-        internal override int ItemWidth { get; set; }
-        internal override int ItemHeight { get; set; }
-
         private readonly DecoCatalogManager CatalogManager;
+        internal readonly DecoMetadata DecoMetadata;
 
-        internal DecoMetadata DecoMetadata { get; set; }
+        public override int ItemWidth
+        {
+            get { return itemWidth; }
+            set { SetProperty(ref itemWidth, value); }
+        }
+
+        public override int ItemHeight
+        {
+            get { return itemHeight; }
+            set { SetProperty(ref itemHeight, value); }
+        }
+
+        internal override MetadataBase Metadata { get { return DecoMetadata; } }
 
         internal DecoCatalogItem(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd, int itemWidth, int itemHeight) : base(imagePath, dmd)
         {
@@ -79,7 +89,7 @@ namespace SunbirdMB.Gui
                 }
                 if (DecoMetadata.ActiveFrames.Count == 1)
                 {
-                    MapBuilder.GhostMarker.MorphImage(DecoFactory.CreateCurrentDeco(Coord.Zero, Coord.Zero, 0));
+                    MapBuilder.GhostMarker.MorphCurrentDeco();
                 }
             }
         }
@@ -105,54 +115,8 @@ namespace SunbirdMB.Gui
                     RemoveFromActive(item);
                 }
             }
-        }
+        }        
 
-        //internal static DecoCatalogItem CreateNew(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd, string dimensions)
-        //{
-        //    switch (dimensions)
-        //    {
-        //        case DecoCatalogViewModel._1x1x1:
-        //            return new DecoCatalogItem1x1x1(collectionManager, imagePath, dmd);
-        //        case DecoCatalogViewModel._1x1x2:
-        //            return new DecoCatalogItem1x1x2(collectionManager, imagePath, dmd);
-        //        case DecoCatalogViewModel._1x1x3:
-        //            return new DecoCatalogItem1x1x3(collectionManager, imagePath, dmd);
-        //        default:
-        //            return null;
-        //    }
-        //}
-
-    }
-
-    //public class DecoCatalogItem1x1x1 : DecoCatalogItem
-    //{
-    //    internal override int ItemWidth { get; set; } = 72;
-    //    internal override int ItemHeight { get; set; } = 75;
-
-    //    internal DecoCatalogItem1x1x1(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd) : base(collectionManager, imagePath, dmd) 
-    //    {
-    //        SourceRect = new Int32Rect(0, 0, 72, 75);
-    //    }
-    //}
-    //public class DecoCatalogItem1x1x2 : DecoCatalogItem
-    //{
-    //    internal override int ItemWidth { get; set; } = 72;
-    //    internal override int ItemHeight { get; set; } = 111;
-
-    //    internal DecoCatalogItem1x1x2(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd) : base(collectionManager, imagePath, dmd)
-    //    {
-    //        SourceRect = new Int32Rect(0, 0, 72, 111);
-    //    }
-    //}
-    //public class DecoCatalogItem1x1x3 : DecoCatalogItem
-    //{
-    //    internal override int ItemWidth { get; set; } = 72;
-    //    internal override int ItemHeight { get; set; } = 147;
-
-    //    internal DecoCatalogItem1x1x3(DecoCatalogManager collectionManager, string imagePath, DecoMetadata dmd) : base(collectionManager, imagePath, dmd)
-    //    {
-    //        SourceRect = new Int32Rect(0, 0, 72, 147);
-    //    }
-    //}
+    }   
 
 }

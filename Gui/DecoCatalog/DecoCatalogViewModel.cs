@@ -16,42 +16,51 @@ namespace SunbirdMB.Gui
 {
     internal class DecoCatalogViewModel : PropertyChangedBase
     {
-        internal const string _1x1x1 = "1x1x1";
-        internal const string _1x1x2 = "1x1x2";
-        internal const string _1x1x3 = "1x1x3";
-
         private DecoCatalogManager decoCatalog1x1x1;
+        private DecoCatalogManager decoCatalog1x1x2;
+        private DecoCatalogManager decoCatalog1x1x3;
+        private DecoCatalogManager decoCatalog2x2x2;
+        private DecoCatalogManager decoCatalog3x3x3;
+        private TabItem selectedTab;
+
+        public static DecoMetadata CurrentDecoMetadata { get; private set; }
+
+        public event StringChangedEventHandler SelectedTabChanged;
+
+        protected virtual void OnSelectedTabChanged(string tabName)
+        {
+            StringChangedEventHandler handler = SelectedTabChanged;
+            handler?.Invoke(this, new StringChangedEventArgs(tabName));
+        }
         public DecoCatalogManager DecoCatalog1x1x1
         {
             get { return decoCatalog1x1x1; }
             set { SetProperty(ref decoCatalog1x1x1, value); }
         }
 
-        private DecoCatalogManager decoCatalog1x1x2;
         public DecoCatalogManager DecoCatalog1x1x2
         {
             get { return decoCatalog1x1x2; }
             set { SetProperty(ref decoCatalog1x1x2, value); }
         }
 
-        private DecoCatalogManager decoCatalog1x1x3;
         public DecoCatalogManager DecoCatalog1x1x3
         {
             get { return decoCatalog1x1x3; }
             set { SetProperty(ref decoCatalog1x1x3, value); }
         }
 
-        public event EventHandler SelectedTabChanged;
-
-        protected virtual void OnSelectedTabChanged()
+        public DecoCatalogManager DecoCatalog2x2x2
         {
-            EventHandler handler = SelectedTabChanged;
-            handler?.Invoke(this, null);
+            get { return decoCatalog2x2x2; }
+            set { SetProperty(ref decoCatalog2x2x2, value); }
         }
 
-        private TabItem selectedTab;
-        internal IMainGame MainGame { get; set; }
-        public static DecoMetadata CurrentDecoMetadata { get; private set; }
+        public DecoCatalogManager DecoCatalog3x3x3
+        {
+            get { return decoCatalog3x3x3; }
+            set { SetProperty(ref decoCatalog3x3x3, value); }
+        }
 
         public TabItem SelectedTab
         {
@@ -61,7 +70,7 @@ namespace SunbirdMB.Gui
                 SetProperty(ref selectedTab, value, nameof(SelectedTab), nameof(CurrentMetadata));
                 if (SelectedTab != null)
                 {
-                    OnSelectedTabChanged();
+                    OnSelectedTabChanged(SelectedTab.Header.ToString());
                 }
             }
         }
@@ -80,13 +89,17 @@ namespace SunbirdMB.Gui
         {
             get
             {
-                return ((DecoCatalog1x1x1.IsLocalSubLevel && SelectedTab.Header.ToString() == _1x1x1) ||
-                        (DecoCatalog1x1x2.IsLocalSubLevel && SelectedTab.Header.ToString() == _1x1x2) ||
-                        (DecoCatalog1x1x3.IsLocalSubLevel && SelectedTab.Header.ToString() == _1x1x3));
+                return ((DecoCatalog1x1x1.IsLocalSubLevel && SelectedTab.Header.ToString() == DecoCatalog1x1x1.Args.CatalogName) ||
+                        (DecoCatalog1x1x2.IsLocalSubLevel && SelectedTab.Header.ToString() == DecoCatalog1x1x2.Args.CatalogName) ||
+                        (DecoCatalog1x1x3.IsLocalSubLevel && SelectedTab.Header.ToString() == DecoCatalog1x1x3.Args.CatalogName) ||
+                        (DecoCatalog2x2x2.IsLocalSubLevel && SelectedTab.Header.ToString() == DecoCatalog2x2x2.Args.CatalogName) ||
+                        (DecoCatalog3x3x3.IsLocalSubLevel && SelectedTab.Header.ToString() == DecoCatalog3x3x3.Args.CatalogName));
             }
         }
 
         public bool IsAnimationComboBoxEnabled { get { return !IsSubLevel; } }
+
+        internal IMainGame MainGame { get; set; }
 
         private ICommand c_Import;
         public ICommand C_Import
@@ -100,7 +113,6 @@ namespace SunbirdMB.Gui
         public DecoCatalogViewModel(IMainGame mainGame)
         {
             MainGame = mainGame;
-            //C_Import = new RelayCommand((o) => Import());
 
             var decoCatalog1x1x1Args = new DecoCatalogArgs()
             {
@@ -134,6 +146,29 @@ namespace SunbirdMB.Gui
                 ItemHeight = 147,
             };
             DecoCatalog1x1x3 = new DecoCatalogManager(this, decoCatalog1x1x3Args);
+
+            var decoCatalog2x2x2Args = new DecoCatalogArgs()
+            {
+                CatalogName = "2x2x2",
+                ImportDirectory = UriHelper.Deco2x2x2Directory,
+                DecoDimension = new Dimension(2, 2, 2),
+                DecoPositionOffset = new Vector2(-36, -72),
+                ItemWidth = 144,
+                ItemHeight = 147,
+            };
+            DecoCatalog2x2x2 = new DecoCatalogManager(this, decoCatalog2x2x2Args);
+
+            var decoCatalog3x3x3Args = new DecoCatalogArgs()
+            {
+                CatalogName = "3x3x3",
+                ImportDirectory = UriHelper.Deco3x3x3Directory,
+                DecoDimension = new Dimension(3, 3, 3),
+                DecoPositionOffset = new Vector2(-72, -108),
+                ItemWidth = 216,
+                ItemHeight = 219,
+            };
+            DecoCatalog3x3x3 = new DecoCatalogManager(this, decoCatalog3x3x3Args);
+
         }
 
         internal void OnAfterContentBuild()
@@ -146,6 +181,8 @@ namespace SunbirdMB.Gui
             SelectDeco(DecoCatalog1x1x1.DecoCollection[0]);
             SelectDeco(DecoCatalog1x1x2.DecoCollection[0]);
             SelectDeco(DecoCatalog1x1x3.DecoCollection[0]);
+            SelectDeco(DecoCatalog2x2x2.DecoCollection[0]);
+            SelectDeco(DecoCatalog3x3x3.DecoCollection[0]);
             // Current metadata to display in the deco catalog properties window.
             CurrentMetadata = DecoCatalog1x1x1.DecoCollection[0].DecoMetadata;
         }
@@ -162,6 +199,8 @@ namespace SunbirdMB.Gui
             DecoCatalog1x1x1.ImportAll();
             DecoCatalog1x1x2.ImportAll();
             DecoCatalog1x1x3.ImportAll();
+            DecoCatalog2x2x2.ImportAll();
+            DecoCatalog3x3x3.ImportAll();
         }
 
     }

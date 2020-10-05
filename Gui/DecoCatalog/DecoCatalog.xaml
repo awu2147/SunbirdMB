@@ -85,7 +85,7 @@
                                     <ItemsControl ItemsSource="{Binding DecoCatalog1x1x1.DecoCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button>
+                                                <Button Width="78">
                                                     <Button.InputBindings>
                                                         <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
                                                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
@@ -101,7 +101,7 @@
                                                             <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
                                                         </MultiBinding>
                                                     </Button.Style>
-                                                    <Image Height="75">
+                                                    <Image Height="{Binding ItemHeight}" Width="{Binding ItemWidth}">
                                                         <Image.Source>
                                                             <CroppedBitmap Source="{Binding ImagePath}" 
                                                                            SourceRect="{Binding SourceRect}"/>
@@ -126,7 +126,7 @@
                                     <ItemsControl ItemsSource="{Binding DecoCatalog1x1x2.DecoCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button>
+                                                <Button Width="78">
                                                     <Button.InputBindings>
                                                         <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
                                                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
@@ -142,7 +142,7 @@
                                                             <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
                                                         </MultiBinding>
                                                     </Button.Style>
-                                                    <Image Height="111">
+                                                    <Image Height="{Binding ItemHeight}" Width="{Binding ItemWidth}">
                                                         <Image.Source>
                                                             <CroppedBitmap Source="{Binding ImagePath}" 
                                                                            SourceRect="{Binding SourceRect}"/>
@@ -167,7 +167,7 @@
                                     <ItemsControl ItemsSource="{Binding DecoCatalog1x1x3.DecoCollection}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button>
+                                                <Button Width="78">
                                                     <Button.InputBindings>
                                                         <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
                                                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
@@ -183,7 +183,89 @@
                                                             <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
                                                         </MultiBinding>
                                                     </Button.Style>
-                                                    <Image Height="147">
+                                                    <Image Height="{Binding ItemHeight}" Width="{Binding ItemWidth}">
+                                                        <Image.Source>
+                                                            <CroppedBitmap Source="{Binding ImagePath}" 
+                                                                           SourceRect="{Binding SourceRect}"/>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem Header="2x2x2" 
+                                     Foreground="{StaticResource VSTextBrush}"
+                                     Width="78" Height="22"
+                                     Style="{StaticResource TabItemHorizontal}">
+                                <ScrollViewer Style="{StaticResource DarkScrollViewer}">
+                                    <ItemsControl ItemsSource="{Binding DecoCatalog2x2x2.DecoCollection}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Width="156">
+                                                    <Button.InputBindings>
+                                                        <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
+                                                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
+                                                        <MouseBinding Gesture="Shift+LeftClick" Command="{Binding C_ShiftLeftClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                        <MouseBinding Gesture="RightDoubleClick" Command="{Binding C_RightDoubleClick}" />
+                                                    </Button.InputBindings>
+                                                    <Button.Style>
+                                                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
+                                                            <Binding Path="Selection"/>
+                                                            <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
+                                                        </MultiBinding>
+                                                    </Button.Style>
+                                                    <Image Height="{Binding ItemHeight}" Width="{Binding ItemWidth}">
+                                                        <Image.Source>
+                                                            <CroppedBitmap Source="{Binding ImagePath}" 
+                                                                           SourceRect="{Binding SourceRect}"/>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem Header="3x3x3" 
+                                     Foreground="{StaticResource VSTextBrush}"
+                                     Width="78" Height="22"
+                                     Style="{StaticResource TabItemHorizontal}">
+                                <ScrollViewer Style="{StaticResource DarkScrollViewer}">
+                                    <ItemsControl ItemsSource="{Binding DecoCatalog3x3x3.DecoCollection}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Width="312">
+                                                    <Button.InputBindings>
+                                                        <MouseBinding Gesture="LeftClick" Command="{Binding C_LeftClick}" />
+                                                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding C_LeftDoubleClick}" />
+                                                        <MouseBinding Gesture="Shift+LeftClick" Command="{Binding C_ShiftLeftClick}" />
+                                                        <MouseBinding Gesture="RightClick" Command="{Binding C_RightClick}" />
+                                                        <MouseBinding Gesture="RightDoubleClick" Command="{Binding C_RightDoubleClick}" />
+                                                    </Button.InputBindings>
+                                                    <Button.Style>
+                                                        <MultiBinding Converter="{StaticResource SelectedStyleConverter}">
+                                                            <Binding Path="Selection"/>
+                                                            <Binding Source="{StaticResource CubeDesignerItemDefaultStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemSelectedStyle}" />
+                                                            <Binding Source="{StaticResource CubeDesignerItemActiveStyle}" />
+                                                        </MultiBinding>
+                                                    </Button.Style>
+                                                    <Image Height="{Binding ItemHeight}" Width="{Binding ItemWidth}">
                                                         <Image.Source>
                                                             <CroppedBitmap Source="{Binding ImagePath}" 
                                                                            SourceRect="{Binding SourceRect}"/>

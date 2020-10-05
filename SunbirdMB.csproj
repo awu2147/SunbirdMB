@@ -132,6 +132,7 @@
       <DependentUpon>MainToolbar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\MainToolbar\MainToolbarViewModel.cs" />
+    <Compile Include="Gui\MetadataItemBase.cs" />
     <Compile Include="Gui\SelectedStyleConverter.cs" />
     <Compile Include="Gui\TextBoxEnterKeyUpdateBehaviour.cs" />
     <Compile Include="Interfaces\IImporter.cs" />

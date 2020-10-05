@@ -10,10 +10,11 @@ namespace SunbirdMB.Gui
     public class CubeDesignerItem : MetadataItemBase
     {
         private CubeDesignerViewModel ViewModel;
-        internal override int ItemWidth { get; set; } = 72;
-        internal override int ItemHeight { get; set; } = 75;
+        internal readonly CubeMetadata CubeMetadata;
 
-        public readonly CubeMetadata CubeMetadata;
+        public override int ItemWidth { get; set; } = 72;
+        public override int ItemHeight { get; set; } = 75;
+        internal override MetadataBase Metadata { get { return CubeMetadata; } }
 
         public CubeDesignerItem(CubeDesignerViewModel viewModel, string imagePath, CubeMetadata cmd) : base(imagePath, cmd)
         {
