@@ -138,7 +138,7 @@ namespace SunbirdMB
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            IntPtr _wParam = (IntPtr)(wParam.ToInt32() & 0xFFF0);
+            IntPtr _wParam = (IntPtr)(wParam.ToInt64() & 0xFFF0);
             if (msg == WM_SIZING && gameLoaded)
             {
                 if (IsResizing == false)

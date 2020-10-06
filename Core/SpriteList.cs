@@ -17,7 +17,7 @@ using SunbirdMB.Framework;
 namespace SunbirdMB.Core
 {
     public class SpriteList<T> : List<T>, IXmlSerializable
-    {
+    {   
         public static readonly XmlSerializer SpriteListSerializer = Serializer.CreateNew(typeof(T));
 
         /// <summary>

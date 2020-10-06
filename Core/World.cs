@@ -222,10 +222,12 @@ namespace SunbirdMB.Core
             return new Point(x, y) * new Point(scale, scale);
         }
 
+        public static IOrderedEnumerable<Sprite> OrderedLayerMap;
+
         /// <summary>
         /// The master sorting algorithm for any collection sprites.
         /// </summary>
-        public static IOrderedEnumerable<Sprite> Sort(XDictionary<int, SpriteList<Sprite>> layerMap)
+        public static void Sort(XDictionary<int, SpriteList<Sprite>> layerMap)
         {
             var SL = new List<Sprite>() { };
             foreach (var layer in layerMap)
@@ -235,8 +237,9 @@ namespace SunbirdMB.Core
                     SL.Add(sprite);
                 }
             }
-            return SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
+            OrderedLayerMap =  SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
         }
+
     }
 }
 

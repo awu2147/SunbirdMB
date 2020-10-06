@@ -263,6 +263,14 @@ namespace SunbirdMB
                         {
                             var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
                             LayerMap[Altitude].AddCheck(deco, Altitude);
+                            //for (int i = 0; i < 10; i ++)
+                            //{
+                            //    for (int j = 0; j < 10; j++)
+                            //    {
+                            //        var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord + new Coord(i, j), mouseIsoCoord + new Coord(i, j), Altitude);
+                            //        LayerMap[Altitude].AddCheck(deco, Altitude);
+                            //    }
+                            //}
                         }
                     }
 
@@ -389,52 +397,46 @@ namespace SunbirdMB
 
                 #region Main Loop
 
-                ShadowDict = new Dictionary<Coord, List<Sprite>>();
-                OrderedLayerMap = World.Sort(LayerMap);
-                foreach (var sprite in OrderedLayerMap)
+                World.Sort(LayerMap);
+                foreach (var sprite in World.OrderedLayerMap)
                 {
                     sprite.Update(gameTime);
-                    // Create dict: Key = coords, Value = column (list) of sprites with same coord different altitude.
-                    if (ShadowDict.ContainsKey(sprite.Coords) == false)
-                    {
-                        ShadowDict.Add(sprite.Coords, new List<Sprite>() { });
-                    }
-                    else
-                    {
-                        ShadowDict[sprite.Coords].Add(sprite);
-                    }
                 }
 
                 #endregion
             }
         }
 
-        IOrderedEnumerable<Sprite> OrderedLayerMap;
+        
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (!IsLoading)
             {
+                var rect = new Rectangle((int)MainGame.Camera.DragTargetPosition.X - 2000, (int)MainGame.Camera.DragTargetPosition.Y - 2000, 4000, 4000);
                 #region Main Loop
 
                 // Draw sorted sprites;
-                foreach (var sprite in OrderedLayerMap)
+                foreach (var sprite in World.OrderedLayerMap)
                 {
-                    // Game
-                    if (Altitude != sprite.Altitude && sprite is IWorldObject && Authorization == Authorization.Builder)
+                    if (rect.Contains(sprite.Position))
                     {
-                        sprite.Alpha = 0.1f;
-                        sprite.Draw(gameTime, spriteBatch);
+                        // Game
+                        if (Altitude != sprite.Altitude && sprite is IWorldObject && Authorization == Authorization.Builder)
+                        {
+                            sprite.Alpha = 0.15f;
+                            sprite.Draw(gameTime, spriteBatch);
+                        }
+                        else if ((Altitude == sprite.Altitude || Authorization == Authorization.None) && sprite is IWorldObject)
+                        {
+                            sprite.Alpha = 1f;
+                            sprite.Draw(gameTime, spriteBatch);
+                        }
+                        else
+                        {
+                            sprite.Draw(gameTime, spriteBatch);
+                        }
                     }
-                    else if ((Altitude == sprite.Altitude || Authorization == Authorization.None) && sprite is IWorldObject)
-                    {
-                        sprite.Alpha = 1f;
-                        sprite.Draw(gameTime, spriteBatch);
-                    }
-                    else
-                    {
-                        sprite.Draw(gameTime, spriteBatch);
-                    }                  
                 }
                 #endregion
             }

@@ -17,7 +17,7 @@ namespace SunbirdMB.Core
 
         // Drag
         public Matrix DragTransform { get; set; } = Matrix.Identity;
-        private Vector2 DragTargetPosition { get; set; }
+        public Vector2 DragTargetPosition { get; set; }
         private Point DragPositionChange { get; set; }
         private Point Anchor { get; set; }
 
