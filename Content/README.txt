@@ -1,0 +1,1 @@
+The content folder should go in the same directory as the application.

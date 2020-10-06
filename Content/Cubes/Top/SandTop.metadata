@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CubeMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ContentPath>Cubes\Top\SandTop</ContentPath>
+  <SheetRows>2</SheetRows>
+  <SheetColumns>4</SheetColumns>
+  <FrameCount>8</FrameCount>
+  <StartFrame>1</StartFrame>
+  <CurrentFrame>1</CurrentFrame>
+  <FrameSpeed>0.133</FrameSpeed>
+  <AnimState>None</AnimState>
+</CubeMetadata>

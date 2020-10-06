@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DecoMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ContentPath>Decos\1x1x3\TreeCon</ContentPath>
+  <SheetRows>1</SheetRows>
+  <SheetColumns>2</SheetColumns>
+  <FrameCount>2</FrameCount>
+  <StartFrame>1</StartFrame>
+  <CurrentFrame>1</CurrentFrame>
+  <FrameSpeed>0.133</FrameSpeed>
+  <AnimState>None</AnimState>
+  <TypeName>SunbirdMB.Core.Deco</TypeName>
+  <PositionOffset>
+    <X>0</X>
+    <Y>-72</Y>
+  </PositionOffset>
+  <Dimensions>
+    <X>1</X>
+    <Y>1</Y>
+    <Z>3</Z>
+  </Dimensions>
+</DecoMetadata>
