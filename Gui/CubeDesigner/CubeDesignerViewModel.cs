@@ -21,6 +21,7 @@ namespace SunbirdMB.Gui
 
         private TabItem selectedTab;
         private IMainGame MainGame { get; set; }
+        public static bool IsCurrentCubeWalkable { get; set; } = true;
         public static CubeMetadata CurrentCubeTopMetadata { get; private set; }
         public static CubeMetadata CurrentCubeBaseMetadata { get; private set; }
         public ObservableCollection<CubeDesignerItem> CachedCubeBaseCollection { get; set; }

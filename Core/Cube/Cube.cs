@@ -23,6 +23,7 @@ namespace SunbirdMB.Core
     /// </summary>
     public class Cube : Sprite, IWorldObject
     {
+        public bool IsWalkable = true;
         public Animator AnimatorTop { get; set; }
         public Animator AnimatorBase { get; set; }
 

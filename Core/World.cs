@@ -210,6 +210,11 @@ namespace SunbirdMB.Core
             return new Vector2(TopFaceGridWidth / 2, TopFaceGridHeight / 2) * isoFlatCoord.X + new Vector2(TopFaceGridWidth / 2, -TopFaceGridHeight / 2) * isoFlatCoord.Y;
         }
 
+        public static Coord WorldPositionToIsoCoord(Vector2 point, int altitude)
+        {
+            return WorldPositionToIsoCoord(point.ToPoint(), altitude);
+        }
+
         public static Point ZoomScaledPoint(Point point)
         {
             float x = point.X;
@@ -237,7 +242,7 @@ namespace SunbirdMB.Core
                     SL.Add(sprite);
                 }
             }
-            OrderedLayerMap =  SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
+            OrderedLayerMap = SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
         }
 
     }

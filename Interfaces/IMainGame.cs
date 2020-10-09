@@ -14,6 +14,7 @@ namespace SunbirdMB.Interfaces
         GraphicsDevice GraphicsDevice { get; }
         ContentManager Content { get; set; }
         Mouse Mouse { get; set; }
-        Keyboard Keyboard { get; set; }
+        Keyboard Keyboard { get; set; }        
+        bool IsActive { get; }
     }
 }

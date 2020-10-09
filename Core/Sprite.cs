@@ -134,10 +134,6 @@ namespace SunbirdMB.Core
             MainGame = mainGame;
             if (Animator != null)
             {
-                if (this == null)
-                {
-
-                }
                 Animator.LoadContent(mainGame);
                 Animator.Sprite = this;
             }
