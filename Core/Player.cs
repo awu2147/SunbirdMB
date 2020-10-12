@@ -15,8 +15,6 @@ namespace SunbirdMB.Core
     {
         private Player() { }
 
-        private Timer walkTimer = new Timer();
-
         public Player(IMainGame mainGame, SpriteSheet spriteSheet, AnimArgs switchAnimArgs) : base(mainGame, spriteSheet, switchAnimArgs)
         {
             PositionOffset = new Vector2(0, -54);
@@ -25,15 +23,6 @@ namespace SunbirdMB.Core
         public override void LoadContent(IMainGame mainGame)
         {
             base.LoadContent(mainGame);
-            walkTimer.OnCompleted = () =>
-            {
-                if (pathList.Count() != 0)
-                {
-                    Position = World.IsoFlatCoordToWorldPosition(pathList[pathList.Count() - 1]);
-                    pathList.RemoveAt(pathList.Count() - 1);
-                    Coords = World.WorldPositionToIsoCoord(Position + new Vector2(36, -18), Altitude);
-                }
-            };
         }
 
         public override void Update(GameTime gameTime)
@@ -50,6 +39,7 @@ namespace SunbirdMB.Core
         int walkTicks = 0;
         Vector2 increment;
         Direction direction;
+        int velocity = 3;
 
         private void MoveUpdate(GameTime gameTime)
         {
@@ -95,8 +85,26 @@ namespace SunbirdMB.Core
                         {
                             if (!coordsVisited.Contains(coord) && !coordsToVisit.Contains(coord))
                             {
-                                CoordDistances.Add(coord, CoordDistances[nextCoord] + 1);
-                                coordsToVisit.Add(coord);
+                                // identify if coord is a diagonal of nextCoord.
+                                var diff = coord - nextCoord;
+                                if (diff.X == 0 || diff.Y == 0)
+                                {
+                                    // coord is not a diagonal, so it's fine to add it without additional checks.
+                                    CoordDistances.Add(coord, CoordDistances[nextCoord] + 1);
+                                    coordsToVisit.Add(coord);
+
+                                }
+                                else
+                                {
+                                    var xDiff = new Coord(nextCoord.X + diff.X, nextCoord.Y);
+                                    var yDiff = new Coord(nextCoord.X, nextCoord.Y + diff.Y);
+                                    if (mapBuilder.WalkableTileTable[Altitude][nextCoord].Contains(xDiff) &&
+                                        mapBuilder.WalkableTileTable[Altitude][nextCoord].Contains(yDiff))
+                                    {
+                                        CoordDistances.Add(coord, CoordDistances[nextCoord] + 1);
+                                        coordsToVisit.Add(coord);
+                                    }
+                                }
                             }                            
                         }
                         coordsVisited.Add(nextCoord);
@@ -156,12 +164,12 @@ namespace SunbirdMB.Core
                 cachedPathList = null;
                 var nextCoord = pathList[pathList.Count() - 1];
                 var diff = !isWalking ? nextCoord - Coords : nextCoord - EffectiveCoord;
-                increment = diff.X * new Vector2(1 / 0.5f, 0.5f / 0.5f) + diff.Y * new Vector2(1 / 0.5f, -0.5f / 0.5f);
-                EffectiveCoord = World.WorldPositionToIsoCoord(Position + (increment * 36 * 0.5f) + new Vector2(36, -18), Altitude);
-                walkTicks = 17;
-                if ((int)Math.Abs(Math.Round(increment.X, 0)) == 4)
+                increment = diff.X * new Vector2(1f * velocity, 0.5f * velocity) + diff.Y * new Vector2(1f * velocity, -0.5f * velocity);
+                EffectiveCoord = World.WorldPositionToIsoCoord(Position + (increment * (36f / velocity)) + new Vector2(36, -18), Altitude);
+                walkTicks = (36 / velocity) - 1;
+                if ((int)Math.Abs(Math.Round(increment.X, 0)) == (2 * velocity))
                 {
-                    walkTicks = 35;
+                    walkTicks = (72 / velocity) - 1;
                     increment = new Vector2(increment.X / 2f, increment.Y);
                 }
                 isWalking = true;
@@ -186,19 +194,19 @@ namespace SunbirdMB.Core
 
                 if (direction == Direction.North)
                 {
-                    Animator.Reconfigure(new AnimArgs(1, 4, 0.133f, AnimationState.Loop));
+                    Animator.Reconfigure(new AnimArgs(1, 4, 0.1f, AnimationState.Loop));
                 }
                 else if (direction == Direction.East || direction == Direction.NorthEast || direction == Direction.SouthEast)
                 {
-                    Animator.Reconfigure(new AnimArgs(5, 4, 0.133f, AnimationState.Loop));
+                    Animator.Reconfigure(new AnimArgs(5, 4, 0.1f, AnimationState.Loop));
                 }
                 else if (direction == Direction.South)
                 {
-                    Animator.Reconfigure(new AnimArgs(9, 4, 0.133f, AnimationState.Loop));
+                    Animator.Reconfigure(new AnimArgs(9, 4, 0.1f, AnimationState.Loop));
                 }
                 else if (direction == Direction.West || direction == Direction.NorthWest || direction == Direction.SouthWest)
                 {
-                    Animator.Reconfigure(new AnimArgs(13, 4, 0.133f, AnimationState.Loop));
+                    Animator.Reconfigure(new AnimArgs(13, 4, 0.1f, AnimationState.Loop));
                 }
 
                 //Position = World.IsoFlatCoordToWorldPosition(pathList[pathList.Count() - 1]);
@@ -209,12 +217,12 @@ namespace SunbirdMB.Core
             {
                 var nextCoord = pathList[pathList.Count() - 1];
                 var diff = !isWalking ? nextCoord - Coords : nextCoord - EffectiveCoord;
-                increment = diff.X * new Vector2(1 / 0.5f, 0.5f / 0.5f) + diff.Y * new Vector2(1 / 0.5f, -0.5f / 0.5f);
-                EffectiveCoord = World.WorldPositionToIsoCoord(Position + (increment * 36 * 0.5f) + new Vector2(36, -18), Altitude);
-                walkTicks = 17;
-                if ((int)Math.Abs(Math.Round(increment.X, 0)) == 4)
+                increment = diff.X * new Vector2(1f * velocity, 0.5f * velocity) + diff.Y * new Vector2(1f * velocity, -0.5f * velocity);
+                EffectiveCoord = World.WorldPositionToIsoCoord(Position + (increment * (36f / velocity)) + new Vector2(36, -18), Altitude);
+                walkTicks = (36 / velocity) - 1;
+                if ((int)Math.Abs(Math.Round(increment.X, 0)) == (2 * velocity))
                 {
-                    walkTicks = 35;
+                    walkTicks = (72 / velocity) - 1;
                     increment = new Vector2(increment.X / 2f, increment.Y);
                 }
                 isWalking = true;
@@ -239,7 +247,7 @@ namespace SunbirdMB.Core
                     {
                         var nextCoord = pathList[pathList.Count() - 1];
                         var diff = nextCoord - Coords;
-                        var inc = diff.X * new Vector2(1 / 0.5f, 0.5f / 0.5f) + diff.Y * new Vector2(1 / 0.5f, -0.5f / 0.5f);
+                        var inc = diff.X * new Vector2(1f * velocity, 0.5f * velocity) + diff.Y * new Vector2(1f * velocity, -0.5f * velocity);
                         if (increment != inc)
                         {
                             increment = inc;
@@ -264,19 +272,19 @@ namespace SunbirdMB.Core
 
                             if (direction == Direction.North)
                             {
-                                Animator.Reconfigure(new AnimArgs(1, 4, 0.133f, AnimationState.Loop));
+                                Animator.Reconfigure(new AnimArgs(1, 4, 0.1f, AnimationState.Loop));
                             }
                             else if (direction == Direction.East || direction == Direction.NorthEast || direction == Direction.SouthEast)
                             {
-                                Animator.Reconfigure(new AnimArgs(5, 4, 0.133f, AnimationState.Loop));
+                                Animator.Reconfigure(new AnimArgs(5, 4, 0.1f, AnimationState.Loop));
                             }
                             else if (direction == Direction.South)
                             {
-                                Animator.Reconfigure(new AnimArgs(9, 4, 0.133f, AnimationState.Loop));
+                                Animator.Reconfigure(new AnimArgs(9, 4, 0.1f, AnimationState.Loop));
                             }
                             else if (direction == Direction.West || direction == Direction.NorthWest || direction == Direction.SouthWest)
                             {
-                                Animator.Reconfigure(new AnimArgs(13, 4, 0.133f, AnimationState.Loop));
+                                Animator.Reconfigure(new AnimArgs(13, 4, 0.1f, AnimationState.Loop));
                             }
                             direction.ToString().Log();
                         }
@@ -285,27 +293,24 @@ namespace SunbirdMB.Core
                     {
                         if (direction == Direction.North)
                         {
-                            Animator.Reconfigure(new AnimArgs(1, 4, 0.133f, AnimationState.None));
+                            Animator.Reconfigure(new AnimArgs(1, 4, 0.1f, AnimationState.None));
                         }
                         else if (direction == Direction.East || direction == Direction.NorthEast || direction == Direction.SouthEast)
                         {
-                            Animator.Reconfigure(new AnimArgs(5, 4, 0.133f, AnimationState.None));
+                            Animator.Reconfigure(new AnimArgs(5, 4, 0.1f, AnimationState.None));
                         }
                         else if (direction == Direction.South)
                         {
-                            Animator.Reconfigure(new AnimArgs(9, 4, 0.133f, AnimationState.None));
+                            Animator.Reconfigure(new AnimArgs(9, 4, 0.1f, AnimationState.None));
                         }
                         else if (direction == Direction.West || direction == Direction.NorthWest || direction == Direction.SouthWest)
                         {
-                            Animator.Reconfigure(new AnimArgs(13, 4, 0.133f, AnimationState.None));
+                            Animator.Reconfigure(new AnimArgs(13, 4, 0.1f, AnimationState.None));
                         }
                     }
-                    //walkTicks = 0;
-                    SunbirdMBGame.SamplerState = SamplerState.PointClamp;
                     Coords = World.WorldPositionToIsoCoord(Position + new Vector2(36, -18), Altitude);
                 }
             }
-            //walkTimer.WaitForSeconds(gameTime, 0.1f);
         }
     }
 }
