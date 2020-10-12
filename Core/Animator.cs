@@ -57,7 +57,9 @@ namespace SunbirdMB.Core
         public int FrameCounter { get; set; }
         public float FrameSpeed { get; set; } = 0.133f;
         public AnimationState AnimState { get; set; } = AnimationState.None;
-        public Timer Timer { get; set; } = new Timer();
+        public LoopTimer Timer { get; set; } = new LoopTimer();
+
+        public bool AnimationFinished { get; set; }
 
 
         private Animator() { }
@@ -74,16 +76,17 @@ namespace SunbirdMB.Core
             FramesInLoop = frameCount;
             FrameSpeed = frameSpeed;
             AnimState = animState;
-            Timer.OnCompleted = () =>
-            {
-                CurrentFrame++;
-                FrameCounter++;
-            };
+            CreateTimerEvent();
         }
 
         public virtual void LoadContent(IMainGame mainGame)
         {
             SpriteSheet.LoadContent(mainGame);
+            CreateTimerEvent();
+        }
+
+        private void CreateTimerEvent()
+        {
             Timer.OnCompleted = () =>
             {
                 CurrentFrame++;
@@ -146,11 +149,22 @@ namespace SunbirdMB.Core
             FrameSpeed = frameSpeed;
             AnimState = animState;
             Timer.Reset();
+            CreateTimerEvent();
         }
 
         public void Update(GameTime gameTime)
         {
-            if (AnimState == AnimationState.Loop)
+            if (AnimState == AnimationState.Once && !AnimationFinished)
+            {
+                Timer.WaitForSeconds(gameTime, FrameSpeed);
+                if (FrameCounter >= FramesInLoop)
+                {
+                    CurrentFrame = StartFrame;
+                    FrameCounter = 0;
+                    AnimationFinished = true;
+                }
+            }
+            else if (AnimState == AnimationState.Loop)
             {
                 Timer.WaitForSeconds(gameTime, FrameSpeed);
                 if (FrameCounter >= FramesInLoop)
@@ -158,7 +172,7 @@ namespace SunbirdMB.Core
                     CurrentFrame = StartFrame;
                     FrameCounter = 0;
                 }
-            }
+            }            
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, float alpha)

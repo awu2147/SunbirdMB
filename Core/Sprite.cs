@@ -143,9 +143,7 @@ namespace SunbirdMB.Core
         {
             EventHandler handler = Clicked;
             handler?.Invoke(this, null);
-        }
-
-       
+        }       
 
         public virtual void Update(GameTime gameTime)
         {

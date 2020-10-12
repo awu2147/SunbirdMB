@@ -13,7 +13,10 @@ namespace SunbirdMB.Core
 
         private GhostMarker() { }
 
-        public GhostMarker(IMainGame mainGame, SpriteSheet spriteSheet) : base(mainGame, spriteSheet) { Alpha = 0.3f; }
+        public GhostMarker(IMainGame mainGame, SpriteSheet spriteSheet) : base(mainGame, spriteSheet) 
+        { 
+            Alpha = 0.3f;
+        }
 
         public void MorphImage(Sprite image)
         {
@@ -44,7 +47,9 @@ namespace SunbirdMB.Core
 
         public override void Update(GameTime gameTime)
         {
-            //base.Update(gameTime); // This is not really needed since animator position updated through getter, and TopFaceMarker is not animated.
+            
+
+            base.Update(gameTime); // This is not really needed since animator position updated through getter, and TopFaceMarker is not animated.
             Image.Update(gameTime);
             Image.IsHidden = IsHidden;
             Image.Position = Position;

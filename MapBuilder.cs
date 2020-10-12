@@ -49,6 +49,7 @@ namespace SunbirdMB
         public bool IsLoading { get; set; }
         public int Altitude { get; set; }
         public Player Player { get; set; }
+        public Sprite ClickAnimation { get; set; }
 
         [XmlIgnore]
         public Authorization Authorization 
@@ -110,6 +111,9 @@ namespace SunbirdMB
             GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
             LayerMap[Altitude].Add(GhostMarker);
 
+            ClickAnimation = new Sprite(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/WalkTargetAnimation")) { Alpha = 0.8f };
+            LayerMap[Altitude].Add(ClickAnimation);
+
             IsLoading = false;
             MainGame.CurrentState = this;
 
@@ -132,15 +136,19 @@ namespace SunbirdMB
                 for (int i = 0; i < layer.Value.Count(); i++)
                 {
                     var sprite = layer.Value[i];
-                    if (sprite is Player)
+                    if (sprite is Player player)
                     {
-                        Player = sprite as Player;
+                        Player = player;
                     }
-                    // The ghost marker should be somewhere in the serialized collection of sprites.
-                    // Find it and set it as our ghost marker instead of creating a new one.
-                    if (sprite is GhostMarker)
+                    else if (sprite is GhostMarker ghostMarker)
                     {
-                        GhostMarker = sprite as GhostMarker;
+                        // The ghost marker should be somewhere in the serialized collection of sprites.
+                        // Find it and set it as our ghost marker instead of creating a new one.
+                        GhostMarker = ghostMarker;
+                    }
+                    else if (sprite.Animator?.SpriteSheet?.TexturePath == "Temp/WalkTargetAnimation")
+                    {
+                        ClickAnimation = sprite;
                     }
 
                     try
@@ -151,18 +159,17 @@ namespace SunbirdMB
                     catch (Exception e)
                     {
                         e.Message.Log();
-                        if (sprite is GhostMarker)
+                        if (sprite is GhostMarker ghostMarker)
                         {
                             // If the content file was required for the ghost marker, remove the current ghost mark
                             // and get ready to make a new one.
                             createNewGhostMarker = true;
-                            layer.Value.Remove(sprite);
+                            layer.Value.Remove(ghostMarker);
                         }
                         else
                         {
                             // Otherwise if the content file is required by the sprite (Cube/Deco), remove the sprite.
-                            layer.Value.RemoveCheck(sprite, sprite.Altitude);
-                            
+                            layer.Value.RemoveCheck(sprite, sprite.Altitude);                            
                         }
                         i--;
                     }
@@ -191,7 +198,6 @@ namespace SunbirdMB
                 if (Peripherals.KeyPressed(Keys.LeftControl) && World.Zoom > 1)
                 {
                     World.Zoom--;
-                    //.ReconstructTopFaceArea();
                     if (MainGame.Camera.CurrentMode == CameraMode.Drag)
                     {
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
@@ -216,7 +222,6 @@ namespace SunbirdMB
                 if (Peripherals.KeyPressed(Keys.LeftControl) && World.Zoom < 5)
                 {
                     World.Zoom++;
-                    //World.ReconstructTopFaceArea();
                     if (MainGame.Camera.CurrentMode == CameraMode.Drag)
                     {
                         MainGame.Camera.DragTransform = MainGame.Camera.CreateDragTransform();
@@ -307,30 +312,6 @@ namespace SunbirdMB
                                     WalkableTileTable[altitude][coord].Add(mouseIsoCoord);
                                 }
                             }
-                            //// The following coords are diagonally adjacent to the selected coord, and will only allow walking from said coord to selected coord
-                            //// IF it forms a "square".
-                            //List<Coord> adjacentDiagCoords = new List<Coord>()
-                            //{
-                            //    mouseIsoCoord + new Coord(1, 1),
-                            //    mouseIsoCoord + new Coord(1, -1),
-                            //    mouseIsoCoord + new Coord(-1, -1),
-                            //    mouseIsoCoord + new Coord(-1, 1),
-                            //};
-                            //foreach (var coord in adjacentDiagCoords)
-                            //{
-                            //    // Get the coords of the square.
-                            //    var x = mouseIsoCoord + new Coord(coord.X, 0);
-                            //    var y = mouseIsoCoord + new Coord(0, coord.Y);
-                            //    // If we can walk from our selected coord to both of the above, then we can also walk to the corresponding diagonal.
-                            //    if (WalkableTileTable[altitude].ContainsKey(mouseIsoCoord) && cube.IsWalkable)
-                            //    {
-                            //        if (WalkableTileTable[altitude][mouseIsoCoord].Contains(x) && WalkableTileTable[altitude][mouseIsoCoord].Contains(y))
-                            //        {
-                            //            WalkableTileTable[altitude][coord].Add(mouseIsoCoord);
-                            //        }
-                            //    }
-                            //}
-
                         }
                         else if (BuildMode == BuildMode.Deco)
                         {
@@ -452,11 +433,27 @@ namespace SunbirdMB
                 }
                 else if (Authorization == Authorization.None)
                 {
-                    // Why?
+                    // !LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord), we are in empty space
+                    // and always draw last.
                     GhostMarker.DrawPriority = -1000;
                 }
 
                 GhostMarker.IsHidden = !MainGame.IsMouseOver;
+
+
+                if (Authorization == Authorization.None)
+                {
+                    if (Peripherals.LeftButtonTapped())
+                    {
+                        ClickAnimation.Position = GhostMarker.Position;
+                        ClickAnimation.Coords = GhostMarker.Coords;
+                        ClickAnimation.Altitude = GhostMarker.Altitude;
+                        ClickAnimation.DrawPriority = GhostMarker.DrawPriority;
+                        ClickAnimation.Animator.AnimationFinished = false;
+                        ClickAnimation.Animator.Reconfigure(new AnimArgs(1, 7, 0.066f, AnimationState.Once));
+                    }
+                }
+                ClickAnimation.Update(gameTime);
 
                 // Player management.
                 //Player.Altitude = 1;
