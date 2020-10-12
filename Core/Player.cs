@@ -49,6 +49,7 @@ namespace SunbirdMB.Core
         bool isWalking = false;
         int walkTicks = 0;
         Vector2 increment;
+        Direction direction;
 
         private void MoveUpdate(GameTime gameTime)
         {
@@ -165,6 +166,40 @@ namespace SunbirdMB.Core
                 }
                 isWalking = true;
 
+                direction = Direction.None;
+                if (increment.X > 0)
+                {
+                    direction |= Direction.East;
+                }
+                else if (increment.X < 0)
+                {
+                    direction |= Direction.West;
+                }
+                if (increment.Y > 0)
+                {
+                    direction |= Direction.South;
+                }
+                else if (increment.Y < 0)
+                {
+                    direction |= Direction.North;
+                }
+
+                if (direction == Direction.North)
+                {
+                    Animator.Reconfigure(new AnimArgs(1, 4, 0.133f, AnimationState.Loop));
+                }
+                else if (direction == Direction.East || direction == Direction.NorthEast || direction == Direction.SouthEast)
+                {
+                    Animator.Reconfigure(new AnimArgs(5, 4, 0.133f, AnimationState.Loop));
+                }
+                else if (direction == Direction.South)
+                {
+                    Animator.Reconfigure(new AnimArgs(9, 4, 0.133f, AnimationState.Loop));
+                }
+                else if (direction == Direction.West || direction == Direction.NorthWest || direction == Direction.SouthWest)
+                {
+                    Animator.Reconfigure(new AnimArgs(13, 4, 0.133f, AnimationState.Loop));
+                }
 
                 //Position = World.IsoFlatCoordToWorldPosition(pathList[pathList.Count() - 1]);
                 //pathList.RemoveAt(pathList.Count() - 1);
@@ -183,6 +218,7 @@ namespace SunbirdMB.Core
                     increment = new Vector2(increment.X / 2f, increment.Y);
                 }
                 isWalking = true;
+
             }
             if (isWalking)
             {
@@ -198,6 +234,72 @@ namespace SunbirdMB.Core
                     Position = World.IsoFlatCoordToWorldPosition(pathList[pathList.Count() - 1]);
                     pathList.RemoveAt(pathList.Count() - 1);
                     isWalking = false;
+                    //reconfigure direction
+                    if (pathList.Count() != 0)
+                    {
+                        var nextCoord = pathList[pathList.Count() - 1];
+                        var diff = nextCoord - Coords;
+                        var inc = diff.X * new Vector2(1 / 0.5f, 0.5f / 0.5f) + diff.Y * new Vector2(1 / 0.5f, -0.5f / 0.5f);
+                        if (increment != inc)
+                        {
+                            increment = inc;
+                            "reconfig".Log();
+                            direction = Direction.None;
+                            if (increment.X > 0)
+                            {
+                                direction |= Direction.East;
+                            }
+                            else if (increment.X < 0)
+                            {
+                                direction |= Direction.West;
+                            }
+                            if (increment.Y > 0)
+                            {
+                                direction |= Direction.South;
+                            }
+                            else if (increment.Y < 0)
+                            {
+                                direction |= Direction.North;
+                            }
+
+                            if (direction == Direction.North)
+                            {
+                                Animator.Reconfigure(new AnimArgs(1, 4, 0.133f, AnimationState.Loop));
+                            }
+                            else if (direction == Direction.East || direction == Direction.NorthEast || direction == Direction.SouthEast)
+                            {
+                                Animator.Reconfigure(new AnimArgs(5, 4, 0.133f, AnimationState.Loop));
+                            }
+                            else if (direction == Direction.South)
+                            {
+                                Animator.Reconfigure(new AnimArgs(9, 4, 0.133f, AnimationState.Loop));
+                            }
+                            else if (direction == Direction.West || direction == Direction.NorthWest || direction == Direction.SouthWest)
+                            {
+                                Animator.Reconfigure(new AnimArgs(13, 4, 0.133f, AnimationState.Loop));
+                            }
+                            direction.ToString().Log();
+                        }
+                    }
+                    if (pathList.Count() == 0)
+                    {
+                        if (direction == Direction.North)
+                        {
+                            Animator.Reconfigure(new AnimArgs(1, 4, 0.133f, AnimationState.None));
+                        }
+                        else if (direction == Direction.East || direction == Direction.NorthEast || direction == Direction.SouthEast)
+                        {
+                            Animator.Reconfigure(new AnimArgs(5, 4, 0.133f, AnimationState.None));
+                        }
+                        else if (direction == Direction.South)
+                        {
+                            Animator.Reconfigure(new AnimArgs(9, 4, 0.133f, AnimationState.None));
+                        }
+                        else if (direction == Direction.West || direction == Direction.NorthWest || direction == Direction.SouthWest)
+                        {
+                            Animator.Reconfigure(new AnimArgs(13, 4, 0.133f, AnimationState.None));
+                        }
+                    }
                     //walkTicks = 0;
                     SunbirdMBGame.SamplerState = SamplerState.PointClamp;
                     Coords = World.WorldPositionToIsoCoord(Position + new Vector2(36, -18), Altitude);

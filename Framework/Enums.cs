@@ -8,15 +8,15 @@ namespace SunbirdMB.Framework
 {
     public enum Direction
     {
-        None,
-        North,
-        NorthEast,
-        East,
-        SouthEast,
-        South,
-        SouthWest,
-        West,
-        NorthWest
+        None = 0,
+        North = 1,
+        East = 2,
+        South = 4,
+        West = 8,
+        NorthEast = 3,
+        SouthEast = 6,
+        NorthWest = 9,
+        SouthWest = 12,
     }
 
     public enum BuildMode
