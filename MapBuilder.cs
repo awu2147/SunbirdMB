@@ -459,7 +459,7 @@ namespace SunbirdMB
                 GhostMarker.IsHidden = !MainGame.IsMouseOver;
 
                 // Player management.
-                Player.Altitude = 1;
+                //Player.Altitude = 1;
 
                 #region Pre Loop
 
