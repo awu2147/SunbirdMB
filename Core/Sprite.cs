@@ -42,7 +42,7 @@ namespace SunbirdMB.Core
         public int Altitude { get; set; }
         public int DrawPriority { get; set; }
         public bool IsHidden { get; set; }
-        public bool IsSolid { get; set; }
+        public bool IsSolid { get; set; } = true;
 
         [XmlIgnore]
         public Texture2D Light;

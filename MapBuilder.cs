@@ -233,40 +233,49 @@ namespace SunbirdMB
             Coord3D mouseIsoCoord3D = new Coord3D(mouseIsoCoord, Altitude);
             if (BuildMode == BuildMode.Cube)
             {
+                // Create cube and add it to the layer map.
                 var cube = CubeFactory.CreateCurrentCube(mouseIsoFlatCoord, mouseIsoCoord3D);
                 if (!LayerMap.ContainsKey(mouseIsoCoord3D))
                 {
                     LayerMap.Add(mouseIsoCoord3D, cube);
                 }
-
+                // Deal with the walkable tile table.
                 foreach (var coord in mouseIsoCoord.AdjacentCoords())
                 {
-                    // If there is nothing above us.
-                    if (!LayerMap.ContainsKey(new Coord3D(mouseIsoCoord, Altitude + 1))) // not- contains key and sprite is solid
+                    // If there are no solid objects above us,
+                    if (!(LayerMap.ContainsKey(new Coord3D(mouseIsoCoord, Altitude + 1)) && LayerMap[new Coord3D(mouseIsoCoord, Altitude + 1)].IsSolid)) // not- contains key and sprite is solid
                     {
                         WalkableTileTable.Add(Altitude + 1, coord, mouseIsoCoord);
                     }
                     // Assuming the added cube is solid, the tile under us is no longer walkable.
-                    WalkableTileTable.Remove(Altitude, coord, mouseIsoCoord);
+                    if (cube.IsSolid)
+                    {
+                        WalkableTileTable.Remove(Altitude, coord, mouseIsoCoord);
+                    }
                 }
 
             }
             else if (BuildMode == BuildMode.Deco)
             {
+                // Create deco and add it to the layer map.
                 var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
                 if (deco.OccupiedCoords.Any((c) => LayerMap.ContainsKey(c)) == false)
                 {
                     LayerMap.Add(mouseIsoCoord3D, deco);
                     foreach (var coord in deco.OccupiedCoords)
                     {
-                        if (coord == mouseIsoCoord3D) { continue; }
-                        // add dummy sprite instead
-                        LayerMap.Add(coord, new DecoReference(deco, mouseIsoCoord3D));
+                        if (coord != mouseIsoCoord3D)
+                        {
+                            LayerMap.Add(coord, new DecoReference(deco, mouseIsoCoord3D));
+                        }
 
                         foreach (var _coord in new Coord2D(coord.X, coord.Y).AdjacentCoords())
                         {
                             // Assuming the added deco is solid, the tiles under us are no longer walkable.
-                            WalkableTileTable.Remove(Altitude, _coord, new Coord2D(coord.X, coord.Y));
+                            if (deco.IsSolid)
+                            {
+                                WalkableTileTable.Remove(Altitude, _coord, new Coord2D(coord.X, coord.Y));
+                            }
                         }
                     }
                 }

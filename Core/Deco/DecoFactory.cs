@@ -19,6 +19,7 @@ namespace SunbirdMB.Core
             deco.PositionOffset = decoMD.PositionOffset;
             deco.Coords = relativeCoords;
             deco.Altitude = altitude;
+            deco.IsSolid = decoMD.IsSolid == BooleanEnum.True ? true : false;
             // Odd NxN takes priority over even NxN when coords along same horizontal line.
             deco.Dimensions = decoMD.Dimensions;
             if (deco.Dimensions.X % 2 == 0)

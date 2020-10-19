@@ -64,4 +64,10 @@ namespace SunbirdMB.Framework
         Active    
     }
 
+    public enum BooleanEnum
+    {
+        True,
+        False
+    }
+
 }

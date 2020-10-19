@@ -134,6 +134,13 @@ namespace SunbirdMB.Core
             set { SetProperty(ref animState, value); }
         }
 
+        private BooleanEnum isSolid;
+        public BooleanEnum IsSolid
+        {
+            get { return isSolid; }
+            set { SetProperty(ref isSolid, value); }
+        }
+
         public MetadataBase() { }
 
         internal virtual void Register() { }
