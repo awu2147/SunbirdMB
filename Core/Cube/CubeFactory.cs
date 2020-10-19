@@ -11,13 +11,13 @@ namespace SunbirdMB.Core
 {
     public static class CubeFactory
     {
-        public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord2D coords, Coord2D relativeCoords, int altitude)
+        public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord2D isoFlatCoord, Coord3D isoCoord3D)
         {
             var cube = new Cube() 
             { 
-                Position = World.IsoFlatCoordToWorldPosition(coords), 
-                Coords = relativeCoords, 
-                Altitude = altitude 
+                Position = World.IsoFlatCoordToWorldPosition(isoFlatCoord), 
+                Coords = new Coord2D(isoCoord3D.X, isoCoord3D.Y), 
+                Altitude = isoCoord3D.Z
             };
             var rand = new Random();
 
@@ -52,9 +52,9 @@ namespace SunbirdMB.Core
             return cube;
         }
 
-        public static Cube CreateCurrentCube(Coord2D coords, Coord2D relativeCoords, int altitude)
+        public static Cube CreateCurrentCube(Coord2D isoFlatCoord, Coord3D isoCoord3D)
         {
-            return CreateCube(CubeDesignerViewModel.CurrentCubeTopMetadata, CubeDesignerViewModel.CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
+            return CreateCube(CubeDesignerViewModel.CurrentCubeTopMetadata, CubeDesignerViewModel.CurrentCubeBaseMetadata, isoFlatCoord, isoCoord3D);
         }
 
     }

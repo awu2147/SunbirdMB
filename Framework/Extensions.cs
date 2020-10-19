@@ -44,6 +44,23 @@ namespace SunbirdMB.Framework
                 layerMap[coord].Remove(item);
             }
         }
+
+        public static List<Coord2D> AdjacentCoords(this Coord2D walkableCoord)
+        {
+            List<Coord2D> adjacentCoords = new List<Coord2D>()
+            {
+                walkableCoord + new Coord2D(0, 1),
+                walkableCoord + new Coord2D(0, -1),
+                walkableCoord + new Coord2D(1, 0),
+                walkableCoord + new Coord2D(-1, 0),
+                walkableCoord + new Coord2D(1, 1),
+                walkableCoord + new Coord2D(1, -1),
+                walkableCoord + new Coord2D(-1, -1),
+                walkableCoord + new Coord2D(-1, 1),
+            };
+            return adjacentCoords;
+        }
+
     }
 
     public class StringChangedEventArgs : EventArgs

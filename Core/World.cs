@@ -227,36 +227,36 @@ namespace SunbirdMB.Core
             return new Point(x, y) * new Point(scale, scale);
         }
 
-        public static IOrderedEnumerable<Sprite> OrderedLayerMap;
+        //public static IOrderedEnumerable<Sprite> OrderedLayerMap;
 
-        /// <summary>
-        /// The master sorting algorithm for any collection sprites.
-        /// </summary>
-        public static void Sort(XDictionary<int, SpriteList<Sprite>> layerMap)
-        {
-            var SL = new List<Sprite>() { };
-            foreach (var layer in layerMap)
-            {
-                foreach (var sprite in layer.Value)
-                {
-                    SL.Add(sprite);
-                }
-            }
-            OrderedLayerMap = SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
-        }
+        ///// <summary>
+        ///// The master sorting algorithm for any collection sprites.
+        ///// </summary>
+        //public static void Sort(XDictionary<int, SpriteList<Sprite>> layerMap)
+        //{
+        //    var SL = new List<Sprite>() { };
+        //    foreach (var layer in layerMap)
+        //    {
+        //        foreach (var sprite in layer.Value)
+        //        {
+        //            SL.Add(sprite);
+        //        }
+        //    }
+        //    OrderedLayerMap = SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
+        //}
 
-        public static void Sort(XDictionary<Coord3D, SpriteList<Sprite>> layerMap)
-        {
-            var SL = new List<Sprite>() { };
-            foreach (var layerBlock in layerMap)
-            {
-                foreach (var sprite in layerBlock.Value)
-                {
-                    SL.Add(sprite);
-                }
-            }
-            OrderedLayerMap = SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
-        }
+        //public static void Sort(XDictionary<Coord3D, List<Sprite>> layerMap)
+        //{
+        //    var SL = new List<Sprite>() { };
+        //    foreach (var layerBlock in layerMap)
+        //    {
+        //        foreach (var sprite in layerBlock.Value)
+        //        {
+        //            SL.Add(sprite);
+        //        }
+        //    }
+        //    OrderedLayerMap = SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
+        //}
 
     }
 }

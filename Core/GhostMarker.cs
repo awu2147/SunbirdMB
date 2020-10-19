@@ -36,7 +36,7 @@ namespace SunbirdMB.Core
 
         public void MorphCurrentCube()
         {
-            MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
+            MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord3D.Zero));
         }
 
         public override void LoadContent(IMainGame mainGame)

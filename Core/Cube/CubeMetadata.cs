@@ -28,7 +28,7 @@ namespace SunbirdMB.Core
         {
             var metadataPath = Path.ChangeExtension(Path.Combine(UriHelper.ContentDirectory, ContentPath), ".metadata");
             Serialize(metadataPath);
-            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
+            MapBuilder.GhostMarker.MorphCurrentCube();
         }
 
         public void Serialize(string path)

@@ -255,7 +255,7 @@ namespace SunbirdMB.Core
                         var nextCoord = pathList[pathList.Count() - 1];
                         var diff = nextCoord - Coords;
                         var inc = diff.X * new Vector2(1f * velocity, 0.5f * velocity) + diff.Y * new Vector2(1f * velocity, -0.5f * velocity);
-                        if (increment != inc)
+                        if (increment != inc && (increment * new Vector2(2,1)) != inc)
                         {
                             increment = inc;
                             "reconfig".Log();

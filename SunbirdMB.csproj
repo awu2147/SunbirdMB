@@ -109,6 +109,8 @@
     <Compile Include="Core\GhostMarker.cs" />
     <Compile Include="Core\MetadataBase.cs" />
     <Compile Include="Core\Player.cs" />
+    <Compile Include="Core\DecoReference.cs" />
+    <Compile Include="Core\WalkableTileTable.cs" />
     <Compile Include="Framework\Coord3D.cs" />
     <Compile Include="Framework\Importer.cs" />
     <Compile Include="Framework\Keyboard.cs" />

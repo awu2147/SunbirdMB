@@ -75,7 +75,7 @@ namespace SunbirdMB.Gui
         {
             BuildMode = BuildMode.Cube;
             SunbirdMBWindowViewModel.CubeDecoSelectedIndex = 0;
-            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
+            MapBuilder.GhostMarker.MorphCurrentCube();
         }
         private void ShowDecoCatalog()
         {

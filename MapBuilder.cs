@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
@@ -23,61 +24,34 @@ namespace SunbirdMB
     public class MapBuilder : State
     {
         private readonly string saveFilePath;
+        private static readonly XmlSerializer MapBuilderSerializer = Serializer.CreateNew(typeof(MapBuilder));
 
-        public static readonly XmlSerializer MapBuilderSerializer = Serializer.CreateNew(typeof(MapBuilder));
+        public WalkableTileTable WalkableTileTable { get; set; } = new WalkableTileTable();
+        public XDictionary<Coord3D, Sprite> LayerMap { get; set; } = new XDictionary<Coord3D, Sprite>();
+        [XmlIgnore] public IOrderedEnumerable<Sprite> OrderedLayerMap { get; set; }
+        public SpriteList<Sprite> DynamicSprites { get; set; } = new SpriteList<Sprite>();
 
-        /// <summary>
-        /// For optimization reasons, create and assign value to this field during an update() loop so it is ready to be used in the draw() loop.
-        /// </summary>
-        private Dictionary<Coord2D, List<Sprite>> ShadowDict = new Dictionary<Coord2D, List<Sprite>>();
-
-        public XDictionary<int, XDictionary<Coord2D, HashSet<Coord2D>>> WalkableTileTable { get; set; } = new XDictionary<int, XDictionary<Coord2D, HashSet<Coord2D>>>();
-
-        public XDictionary<Coord3D, SpriteList<Sprite>> LayerMap { get; set; } = new XDictionary<Coord3D, SpriteList<Sprite>>();
-
-        public HashSet<Coord3D> OccupiedCoords { get; set; } = new HashSet<Coord3D>();
-
-        [XmlIgnore]
-        public List<Sprite> Overlay { get; set; } = new List<Sprite>();
-
-        /// <summary>
-        /// When adding or removing sprites from the Overlay during runtime, move them here first. 
-        /// This ensures that addition or removal occurs before enumeration over Overlay begins.
-        /// </summary>
-        [XmlIgnore]
-        public List<KeyValuePair<Sprite, DeferAction>> DeferredOverlay { get; set; } = new List<KeyValuePair<Sprite, DeferAction>>();
-
-        public bool InFocus;
         public bool IsLoading { get; set; }
         public int Altitude { get; set; }
+        public static GhostMarker GhostMarker { get; set; }
         public Player Player { get; set; }
         public Sprite ClickAnimation { get; set; }
-
-        [XmlIgnore]
-        public Authorization Authorization 
+        
+        [XmlIgnore] public Authorization Authorization 
         { 
             get { return MainToolbarViewModel.Authorization; }
             set { MainToolbarViewModel.Authorization = value; } 
-        }
+        }        
 
-        [XmlIgnore]
-        public BuildMode BuildMode
+        [XmlIgnore] public BuildMode BuildMode
         {
             get { return MainToolbarViewModel.BuildMode; }
             set { MainToolbarViewModel.BuildMode = value; }
         }
 
-        public static GhostMarker GhostMarker { get; set; }
+        [XmlIgnore] internal SunbirdMBGame SunbirdMBGame { get; set; }
 
-        public static string ClickedSpriteName = string.Empty;
-
-        [XmlIgnore]
-        internal SunbirdMBGame SunbirdMBGame { get; set; }
-
-        public MapBuilder()
-        {
-
-        }
+        public MapBuilder() { }
 
         public MapBuilder(SunbirdMBGame mainGame, string path) : base(mainGame)
         {
@@ -99,20 +73,20 @@ namespace SunbirdMB
         {
             IsLoading = true;
 
-            // Create the player and add to the layer map.
+            // Create the player and add to the DynamicSprites.
             var playerSheet = SpriteSheet.CreateNew(MainGame, "Temp/PirateGirlSheet", 1, 16);
             var playerAnimArgs = new AnimArgs(9, 1, 0.2f, AnimationState.None);
             Player = new Player(MainGame, playerSheet, playerAnimArgs);
             Player.Altitude = 1;
-            LayerMap.Add(new Coord3D(Coord2D.Zero, 1), Player);
+            DynamicSprites.Add(Player);
 
-            // Instantiate ghost marker with its default texture and add it to the layer map. Image is null at this point, but will be set
+            // Instantiate ghost marker with its default texture and add it to DynamicSprites. Image is null at this point, but will be set
             // by CubeDesignerViewModel.OnMainGameLoaded() as soon as SunbirdMBGame's constructor resolves.
             GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
-            LayerMap.Add(Coord3D.Zero, GhostMarker);
+            DynamicSprites.Add(GhostMarker);
 
             ClickAnimation = new Sprite(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/WalkTargetAnimation", 1, 7)) { Alpha = 0.8f };
-            LayerMap.Add(Coord3D.Zero, ClickAnimation);
+            DynamicSprites.Add(ClickAnimation);
 
             IsLoading = false;
             MainGame.CurrentState = this;
@@ -132,57 +106,28 @@ namespace SunbirdMB
             Altitude = XmlData.Altitude;
             WalkableTileTable = XmlData.WalkableTileTable;
             LayerMap = XmlData.LayerMap;
-            OccupiedCoords = XmlData.OccupiedCoords;
+            DynamicSprites = XmlData.DynamicSprites;
 
             bool createNewGhostMarker = false;
-            foreach (var layerBlock in LayerMap)
+            for (int i = 0; i < DynamicSprites.Count(); i++)
             {
-                for (int i = 0; i < layerBlock.Value.Count(); i++)
-                {
-                    var sprite = layerBlock.Value[i];
-                    if (sprite is Player player)
-                    {
-                        Player = player;
-                    }
-                    else if (sprite is GhostMarker ghostMarker)
-                    {
-                        // The ghost marker should be somewhere in the serialized collection of sprites.
-                        // Find it and set it as our ghost marker instead of creating a new one.
-                        GhostMarker = ghostMarker;
-                    }
-                    else if (sprite.Animator?.SpriteSheet?.TexturePath == "Temp/WalkTargetAnimation")
-                    {
-                        ClickAnimation = sprite;
-                    }
+                Sprite sprite = DynamicSprites[i];
+                if (sprite is Player player) { Player = player; }
+                else if (sprite is GhostMarker ghostMarker) { GhostMarker = ghostMarker; }
+                else if (sprite.Animator?.SpriteSheet?.TexturePath == "Temp/WalkTargetAnimation") { ClickAnimation = sprite; }
 
-                    try
+                // Load content can fail if the content file for the sprite no longer exists.
+                try { sprite.LoadContent(MainGame); }
+                catch (Exception e)
+                {
+                    e.Message.Log();
+                    if (sprite is GhostMarker ghostMarker)
                     {
-                        // Load content can fail if the content file for the sprite no longer exists.
-                        sprite.LoadContent(MainGame);
+                        // If the content file was required for the ghost marker, remove the current ghost marker and get ready to make a new one.
+                        createNewGhostMarker = true;
+                        DynamicSprites.Remove(ghostMarker);
                     }
-                    catch (Exception e)
-                    {
-                        e.Message.Log();
-                        if (sprite is GhostMarker ghostMarker)
-                        {
-                            // If the content file was required for the ghost marker, remove the current ghost mark
-                            // and get ready to make a new one.
-                            createNewGhostMarker = true;
-                            layerBlock.Value.Remove(ghostMarker);
-                        }
-                        else if (sprite is Cube || sprite is Deco)
-                        {
-                            // Otherwise if the content file is required by the sprite (Cube/Deco), remove the sprite.
-                            layerBlock.Value.Remove(sprite); 
-                            // Occupied coords . remove
-                        }
-                        else
-                        {
-                            // Otherwise if the content file is required by the sprite, remove the sprite.
-                            layerBlock.Value.Remove(sprite);
-                        }
-                        i--;
-                    }
+                    i--;
                 }
             }
 
@@ -190,7 +135,44 @@ namespace SunbirdMB
             {
                 // The content file for the ghost marker was removed, so make a new one and add it to the layer map.
                 GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
-                LayerMap.Add(Coord3D.Zero, GhostMarker);
+                DynamicSprites.Add(GhostMarker);
+            }
+
+            List<Coord3D> purgedSprites = new List<Coord3D>();
+            List<Coord3D> decoReferences = new List<Coord3D>();
+            foreach (var layerMapItem in LayerMap)
+            {
+                var sprite = layerMapItem.Value;
+                if (sprite is DecoReference)
+                {
+                    decoReferences.Add(layerMapItem.Key);
+                }
+                // Load content can fail if the content file for the sprite no longer exists.
+                try { sprite.LoadContent(MainGame); }
+                catch (Exception e)
+                {
+                    e.Message.Log();
+                    if (sprite is Deco deco)
+                    {
+                        foreach (var coord in deco.OccupiedCoords)
+                        {
+                            purgedSprites.Add(coord);
+                        }
+                    }
+                    else
+                    {
+                        purgedSprites.Add(layerMapItem.Key);
+                    }
+                }
+            }
+            foreach (var coord in purgedSprites)
+            {
+                LayerMap.Remove(coord);
+            }
+            foreach (var coord in decoReferences)
+            {
+                DecoReference decoReference = LayerMap[coord] as DecoReference;
+                decoReference.Reference = LayerMap[decoReference.ReferenceCoord];
             }
 
             IsLoading = false;
@@ -245,13 +227,107 @@ namespace SunbirdMB
             Serializer.WriteXML<MapBuilder>(MapBuilderSerializer, this, saveFilePath);
         }
 
+
+        public void BuildWorldObject(Coord2D mouseIsoFlatCoord, Coord2D mouseIsoCoord)
+        {
+            Coord3D mouseIsoCoord3D = new Coord3D(mouseIsoCoord, Altitude);
+            if (BuildMode == BuildMode.Cube)
+            {
+                var cube = CubeFactory.CreateCurrentCube(mouseIsoFlatCoord, mouseIsoCoord3D);
+                if (!LayerMap.ContainsKey(mouseIsoCoord3D))
+                {
+                    LayerMap.Add(mouseIsoCoord3D, cube);
+                }
+
+                foreach (var coord in mouseIsoCoord.AdjacentCoords())
+                {
+                    // If there is nothing above us.
+                    if (!LayerMap.ContainsKey(new Coord3D(mouseIsoCoord, Altitude + 1))) // not- contains key and sprite is solid
+                    {
+                        WalkableTileTable.Add(Altitude + 1, coord, mouseIsoCoord);
+                    }
+                    // Assuming the added cube is solid, the tile under us is no longer walkable.
+                    WalkableTileTable.Remove(Altitude, coord, mouseIsoCoord);
+                }
+
+            }
+            else if (BuildMode == BuildMode.Deco)
+            {
+                var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
+                if (deco.OccupiedCoords.Any((c) => LayerMap.ContainsKey(c)) == false)
+                {
+                    LayerMap.Add(mouseIsoCoord3D, deco);
+                    foreach (var coord in deco.OccupiedCoords)
+                    {
+                        if (coord == mouseIsoCoord3D) { continue; }
+                        // add dummy sprite instead
+                        LayerMap.Add(coord, new DecoReference(deco, mouseIsoCoord3D));
+
+                        foreach (var _coord in new Coord2D(coord.X, coord.Y).AdjacentCoords())
+                        {
+                            // Assuming the added deco is solid, the tiles under us are no longer walkable.
+                            WalkableTileTable.Remove(Altitude, _coord, new Coord2D(coord.X, coord.Y));
+                        }
+                    }
+                }
+            }
+        }
+
+        public void RemoveWorldObject(Coord2D mouseIsoFlatCoord, Coord2D mouseIsoCoord)
+        {
+            Coord3D mouseIsoCoord3D = new Coord3D(mouseIsoCoord, Altitude);
+            if (BuildMode == BuildMode.Cube && LayerMap.ContainsKey(mouseIsoCoord3D))
+            {
+                var sprite = LayerMap[mouseIsoCoord3D];
+                if (sprite is Cube)
+                {
+                    LayerMap.Remove(mouseIsoCoord3D);
+
+                    foreach (var coord in mouseIsoCoord.AdjacentCoords())
+                    {
+                        WalkableTileTable.Remove(Altitude + 1, coord, mouseIsoCoord);
+                    }
+
+                    // If there is a cube below,
+                    if (LayerMap.ContainsKey(new Coord3D(mouseIsoCoord, Altitude - 1)) && LayerMap[new Coord3D(mouseIsoCoord, Altitude - 1)] is Cube)
+                    {
+                        foreach (var coord in mouseIsoCoord.AdjacentCoords())
+                        {
+                            WalkableTileTable.Add(Altitude, coord, mouseIsoCoord);
+                        }
+                    }
+                }
+            }
+            else if (BuildMode == BuildMode.Deco && LayerMap.ContainsKey(mouseIsoCoord3D))
+            {
+                var sprite = LayerMap[mouseIsoCoord3D];
+                if (sprite is Deco deco)
+                {
+                    foreach (var coord in deco.OccupiedCoords)
+                    {
+                        LayerMap.Remove(coord);
+
+                        // If there are cubes below,
+                        var c = new Coord3D(new Coord2D(coord.X, coord.Y), Altitude - 1);
+                        if (LayerMap.ContainsKey(c) && LayerMap[c] is Cube)
+                        {
+                            foreach (var _coord in new Coord2D(coord.X, coord.Y).AdjacentCoords())
+                            {
+                                WalkableTileTable.Add(Altitude, _coord, new Coord2D(coord.X, coord.Y));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             if (!IsLoading)
             {
                 // Defined with respect to current mouse position.
-                Coord2D mouseIsoCoord = World.MousePositionToIsoCoord(MainGame, Altitude);
                 Coord2D mouseIsoFlatCoord = World.MousePositionToIsoFlatCoord(MainGame);
+                Coord2D mouseIsoCoord = World.MousePositionToIsoCoord(MainGame, Altitude);
 
                 // User input actions.
                 if (Peripherals.KeyTapped(Keys.Q) && MainGame.IsActive)
@@ -271,123 +347,12 @@ namespace SunbirdMB
                 {
                     if (Peripherals.LeftButtonPressed() && MainGame.IsActive)
                     {
-                        Coord3D clickedCoord = new Coord3D(mouseIsoCoord, Altitude);
-                        if (BuildMode == BuildMode.Cube)
-                        {
-                            var cube = CubeFactory.CreateCurrentCube(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
-                            if (!OccupiedCoords.Contains(clickedCoord))
-                            {
-                                LayerMap.Add(clickedCoord, cube);
-                                OccupiedCoords.Add(clickedCoord);
-                            }
-
-                            var altitude = Altitude + 1;
-
-                            // If table doesnt contain entry for altiude, add it.
-                            if (!WalkableTileTable.ContainsKey(altitude))
-                            {
-                                WalkableTileTable.Add(altitude, new XDictionary<Coord2D, HashSet<Coord2D>>());
-                            }
-                            // The following coords are adjacent to the selected coord, and need to be dealt with.
-                            List<Coord2D> adjacentCoords = new List<Coord2D>() 
-                            { 
-                                mouseIsoCoord + new Coord2D(0, 1),
-                                mouseIsoCoord + new Coord2D(0, -1),
-                                mouseIsoCoord + new Coord2D(1, 0),
-                                mouseIsoCoord + new Coord2D(-1, 0),
-                                mouseIsoCoord + new Coord2D(1, 1),
-                                mouseIsoCoord + new Coord2D(1, -1),
-                                mouseIsoCoord + new Coord2D(-1, -1),
-                                mouseIsoCoord + new Coord2D(-1, 1),
-                            };
-                            foreach (var coord in adjacentCoords)
-                            {
-                                // If table doesnt contain entry for coord, add it, and add the selected coord to its set (because we can walk from the former to the latter).
-                                if (!WalkableTileTable[altitude].ContainsKey(coord) && cube.IsWalkable)
-                                {
-                                    WalkableTileTable[altitude].Add(coord, new HashSet<Coord2D>() { mouseIsoCoord });
-                                }
-                                // If table DOES contain entry for coord, go ahead and add the selected coord to its set (because we can walk from the former to the latter).
-                                else if (!WalkableTileTable[altitude][coord].Contains(mouseIsoCoord) && cube.IsWalkable)
-                                {                                  
-                                    WalkableTileTable[altitude][coord].Add(mouseIsoCoord);
-                                }
-                            }
-                        }
-                        else if (BuildMode == BuildMode.Deco)
-                        {
-                            var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
-                            if (deco.OccupiedCoords.Any((c) => OccupiedCoords.Contains(c)) == false)
-                            {
-                                LayerMap.Add(new Coord3D(mouseIsoCoord, Altitude), deco);
-                                foreach (var coord in deco.OccupiedCoords)
-                                {
-                                    OccupiedCoords.Add(coord);
-                                }
-                            }
-                        }
+                        BuildWorldObject(mouseIsoFlatCoord, mouseIsoCoord);
                     }
 
                     if (Peripherals.RightButtonPressed() && MainGame.IsActive)
                     {
-                        Coord3D clickedCoord = new Coord3D(mouseIsoCoord, Altitude);
-                        if (BuildMode == BuildMode.Cube && LayerMap.ContainsKey(clickedCoord))
-                        {
-                            for (int i = 0; i < LayerMap[clickedCoord].Count(); i++)
-                            {
-                                var sprite = LayerMap[clickedCoord][i];
-                                if (sprite is Cube)
-                                {
-                                    LayerMap.Remove(clickedCoord, sprite);
-                                    i--;
-                                    if (OccupiedCoords.Contains(clickedCoord))
-                                    {
-                                        OccupiedCoords.Remove(clickedCoord);
-                                    }
-                                    var altitude = Altitude + 1;
-                                    List<Coord2D> adjacentCoords = new List<Coord2D>()
-                                    {
-                                        mouseIsoCoord + new Coord2D(0, 1),
-                                        mouseIsoCoord + new Coord2D(0, -1),
-                                        mouseIsoCoord + new Coord2D(1, 0),
-                                        mouseIsoCoord + new Coord2D(-1, 0),
-                                        mouseIsoCoord + new Coord2D(1, 1),
-                                        mouseIsoCoord + new Coord2D(1, -1),
-                                        mouseIsoCoord + new Coord2D(-1, -1),
-                                        mouseIsoCoord + new Coord2D(-1, 1)
-                                    };
-
-                                    foreach (var coord in adjacentCoords)
-                                    {
-                                        if (WalkableTileTable[altitude].ContainsKey(coord) && WalkableTileTable[altitude][coord].Contains(mouseIsoCoord))
-                                        {
-                                            WalkableTileTable[altitude][coord].Remove(mouseIsoCoord);
-                                            if (WalkableTileTable[altitude][coord].Count() == 0)
-                                            {
-                                                WalkableTileTable[altitude].Remove(coord);
-                                            }
-                                        }
-                                    }
-                                }
-                            }                            
-                        }
-                        else if (BuildMode == BuildMode.Deco && LayerMap.ContainsKey(clickedCoord))
-                        {
-                            foreach (var sprite in LayerMap[clickedCoord])
-                            {
-                                if (sprite is Deco deco)
-                                {
-                                    LayerMap.Remove(clickedCoord, sprite);
-                                    if (OccupiedCoords.Contains(clickedCoord))
-                                    {
-                                        foreach (var coord in deco.OccupiedCoords)
-                                        {
-                                            OccupiedCoords.Remove(coord);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        RemoveWorldObject(mouseIsoFlatCoord, mouseIsoCoord);
                     }
                 }
 
@@ -403,7 +368,7 @@ namespace SunbirdMB
                     for (int i = 30; i > -30; i--)
                     {
                         var targetedCoord = World.GetIsoCoord(mouseIsoFlatCoord, i);
-                        if (OccupiedCoords.Contains(new Coord3D(targetedCoord, i)))
+                        if (LayerMap.ContainsKey(new Coord3D(targetedCoord, i)) && !(LayerMap[new Coord3D(targetedCoord, i)] is Deco))
                         {
                             Altitude = i;
                             GhostMarker.Altitude = Altitude;
@@ -416,7 +381,7 @@ namespace SunbirdMB
                 // Test
                 GhostMarker.Position = World.IsoFlatCoordToWorldPosition(mouseIsoFlatCoord);
 
-                if (OccupiedCoords.Contains(new Coord3D(mouseIsoCoord, Altitude)) || Authorization == Authorization.None)
+                if (LayerMap.ContainsKey(new Coord3D(mouseIsoCoord, Altitude)) || Authorization == Authorization.None)
                 {
                     GhostMarker.DrawDefaultMarker = true;
                 }
@@ -425,7 +390,7 @@ namespace SunbirdMB
                     GhostMarker.DrawDefaultMarker = false;
                 }
 
-                if (OccupiedCoords.Contains(new Coord3D(mouseIsoCoord, Altitude)))
+                if (LayerMap.ContainsKey(new Coord3D(mouseIsoCoord, Altitude)))
                 {
                     GhostMarker.DrawPriority = 1;
                 }
@@ -497,8 +462,8 @@ namespace SunbirdMB
 
                 #region Main Loop
 
-                World.Sort(LayerMap);
-                foreach (var sprite in World.OrderedLayerMap)
+                Sort();
+                foreach (var sprite in OrderedLayerMap)
                 {
                     sprite.Update(gameTime);
                 }
@@ -507,7 +472,22 @@ namespace SunbirdMB
             }
         }
 
-        
+        /// <summary>
+        /// The master sorting algorithm for any collection sprites.
+        /// </summary>
+        public void Sort()
+        {
+            var SL = new List<Sprite>() { };
+            foreach (var layerMapItem in LayerMap)
+            {
+                SL.Add(layerMapItem.Value);
+            }
+            foreach (var sprite in DynamicSprites)
+            {
+                SL.Add(sprite);
+            }
+            OrderedLayerMap = SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
+        }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -517,7 +497,7 @@ namespace SunbirdMB
                 #region Main Loop
 
                 // Draw sorted sprites;
-                foreach (var sprite in World.OrderedLayerMap)
+                foreach (var sprite in OrderedLayerMap)
                 {
                     if (rect.Contains(sprite.Position))
                     {

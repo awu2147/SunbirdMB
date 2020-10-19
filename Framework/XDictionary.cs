@@ -22,8 +22,8 @@ namespace SunbirdMB.Framework
 
         public void ReadXml(System.Xml.XmlReader reader)
         {
-            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
-            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
+            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey), Serializer.ExtraTypes);
+            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue), Serializer.ExtraTypes);
 
             bool wasEmpty = reader.IsEmptyElement;
             reader.Read();
@@ -53,8 +53,8 @@ namespace SunbirdMB.Framework
 
         public void WriteXml(System.Xml.XmlWriter writer)
         {
-            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
-            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
+            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey), Serializer.ExtraTypes);
+            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue), Serializer.ExtraTypes);
 
             foreach (TKey key in this.Keys)
             {

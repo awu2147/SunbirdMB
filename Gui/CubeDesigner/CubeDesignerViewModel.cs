@@ -130,7 +130,7 @@ namespace SunbirdMB.Gui
         {
             // Now that a current cube and ghost marker exists go ahead and create a ghost marker image from it. It is important that this gets done
             // before the first update and draw calls.
-            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
+            MapBuilder.GhostMarker?.MorphCurrentCube();
         }
 
         internal void EnterSubLevel(CubeDesignerItem cdi)
