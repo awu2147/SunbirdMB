@@ -1,4 +1,5 @@
-﻿using SunbirdMB.Gui;
+﻿using SunbirdMB.Core;
+using SunbirdMB.Gui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,23 @@ namespace SunbirdMB.Framework
                 return source;
 
             return source.Remove(source.LastIndexOf(value));
+        }
+
+        public static void Add(this XDictionary<Coord3D, SpriteList<Sprite>> layerMap, Coord3D coord, Sprite item)
+        {
+            if (!layerMap.ContainsKey(coord))
+            {
+                layerMap.Add(coord, new SpriteList<Sprite>());
+            }
+            layerMap[coord].Add(item);
+        }
+
+        public static void Remove(this XDictionary<Coord3D, SpriteList<Sprite>> layerMap, Coord3D coord, Sprite item)
+        {
+            if (layerMap[coord].Contains(item))
+            {
+                layerMap[coord].Remove(item);
+            }
         }
     }
 

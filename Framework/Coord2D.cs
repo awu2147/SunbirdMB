@@ -3,14 +3,14 @@ using System.Globalization;
 
 namespace SunbirdMB.Framework
 {
-    public struct Coord
+    public struct Coord2D
     {
-        public static Coord Zero { get; }
+        public static Coord2D Zero { get; }
 
         private int x;
         private int y;
 
-        public Coord(int x, int y)
+        public Coord2D(int x, int y)
         {
             this.x = x;
             this.y = y;
@@ -40,37 +40,37 @@ namespace SunbirdMB.Framework
             }
         }
 
-        public static Coord operator +(Coord c1, Coord c2)
+        public static Coord2D operator +(Coord2D c1, Coord2D c2)
         {
-            return new Coord(c1.X + c2.X, c1.Y + c2.Y);
+            return new Coord2D(c1.X + c2.X, c1.Y + c2.Y);
         }
 
-        public static Coord operator -(Coord c1, Coord c2)
+        public static Coord2D operator -(Coord2D c1, Coord2D c2)
         {
-            return new Coord(c1.X - c2.X, c1.Y - c2.Y);
+            return new Coord2D(c1.X - c2.X, c1.Y - c2.Y);
         }
 
-        public static Coord operator *(Coord c1, Coord c2)
+        public static Coord2D operator *(Coord2D c1, Coord2D c2)
         {
-            return new Coord(c1.X * c2.X, c1.Y * c2.Y);
+            return new Coord2D(c1.X * c2.X, c1.Y * c2.Y);
         }
 
-        public static Coord operator *(Coord c1, int i)
+        public static Coord2D operator *(Coord2D c1, int i)
         {
-            return new Coord(c1.X * i, c1.Y * i);
+            return new Coord2D(c1.X * i, c1.Y * i);
         }
 
-        public static Coord operator /(Coord c1, Coord c2)
+        public static Coord2D operator /(Coord2D c1, Coord2D c2)
         {
-            return new Coord(c1.X / c2.X, c1.Y / c2.Y);
+            return new Coord2D(c1.X / c2.X, c1.Y / c2.Y);
         }
 
-        public static bool operator ==(Coord left, Coord right)
+        public static bool operator ==(Coord2D left, Coord2D right)
         {
             return left.X == right.X && left.Y == right.Y;
         }
 
-        public static bool operator !=(Coord left, Coord right)
+        public static bool operator !=(Coord2D left, Coord2D right)
         {
             return !(left == right);
         }
@@ -82,8 +82,8 @@ namespace SunbirdMB.Framework
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Coord)) return false;
-            Coord comp = (Coord)obj;
+            if (!(obj is Coord2D)) return false;
+            Coord2D comp = (Coord2D)obj;
             return comp.X == this.X && comp.Y == this.Y;
         }
 

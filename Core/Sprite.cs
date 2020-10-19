@@ -38,10 +38,11 @@ namespace SunbirdMB.Core
         public float Alpha { get; set; } = 1f;
         public Vector2 Position { get; set; }
         public Vector2 PositionOffset { get; set; }
-        public Coord Coords { get; set; }
+        public Coord2D Coords { get; set; }
         public int Altitude { get; set; }
         public int DrawPriority { get; set; }
         public bool IsHidden { get; set; }
+        public bool IsSolid { get; set; }
 
         [XmlIgnore]
         public Texture2D Light;

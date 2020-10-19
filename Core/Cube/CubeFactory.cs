@@ -11,7 +11,7 @@ namespace SunbirdMB.Core
 {
     public static class CubeFactory
     {
-        public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord coords, Coord relativeCoords, int altitude)
+        public static Cube CreateCube(CubeMetadata cubeTopMD, CubeMetadata cubeBaseMD, Coord2D coords, Coord2D relativeCoords, int altitude)
         {
             var cube = new Cube() 
             { 
@@ -52,7 +52,7 @@ namespace SunbirdMB.Core
             return cube;
         }
 
-        public static Cube CreateCurrentCube(Coord coords, Coord relativeCoords, int altitude)
+        public static Cube CreateCurrentCube(Coord2D coords, Coord2D relativeCoords, int altitude)
         {
             return CreateCube(CubeDesignerViewModel.CurrentCubeTopMetadata, CubeDesignerViewModel.CurrentCubeBaseMetadata, coords, relativeCoords, altitude);
         }

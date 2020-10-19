@@ -31,12 +31,12 @@ namespace SunbirdMB.Core
 
         public void MorphCurrentDeco()
         {
-            MorphImage(DecoFactory.CreateCurrentDeco(Coord.Zero, Coord.Zero, 0));
+            MorphImage(DecoFactory.CreateCurrentDeco(Coord2D.Zero, Coord2D.Zero, 0));
         }
 
         public void MorphCurrentCube()
         {
-            MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
+            MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
         }
 
         public override void LoadContent(IMainGame mainGame)

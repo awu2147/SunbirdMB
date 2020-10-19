@@ -13,10 +13,10 @@ namespace SunbirdMB.Framework
         East = 2,
         South = 4,
         West = 8,
-        NorthEast = 3,
-        SouthEast = 6,
-        NorthWest = 9,
-        SouthWest = 12,
+        NorthEast = North | East,
+        SouthEast = South | East,
+        NorthWest = North | West,
+        SouthWest = South | West,
     }
 
     public enum BuildMode

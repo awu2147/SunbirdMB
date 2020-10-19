@@ -31,10 +31,10 @@ namespace SunbirdMB.Core
             base.Update(gameTime);
         }
 
-        private Dictionary<Coord, int> CoordDistances = new Dictionary<Coord, int>();
-        List<Coord> pathList = null;
-        List<Coord> cachedPathList = null;
-        Coord EffectiveCoord;
+        private Dictionary<Coord2D, int> CoordDistances = new Dictionary<Coord2D, int>();
+        List<Coord2D> pathList = null;
+        List<Coord2D> cachedPathList = null;
+        Coord2D EffectiveCoord;
         bool isWalking = false;
         int walkTicks = 0;
         Vector2 increment;
@@ -43,13 +43,13 @@ namespace SunbirdMB.Core
 
         private void MoveUpdate(GameTime gameTime)
         {
-            Coord mouseIsoFlatCoord = World.MousePositionToIsoFlatCoord((SunbirdMBGame)MainGame);
+            Coord2D mouseIsoFlatCoord = World.MousePositionToIsoFlatCoord((SunbirdMBGame)MainGame);
             if (Peripherals.LeftButtonTapped() && MainGame.IsActive)
             {
                 if (MainToolbarViewModel.Authorization == Authorization.None)
                 {
-                    Coord target = mouseIsoFlatCoord;
-                    Coord current;
+                    Coord2D target = mouseIsoFlatCoord;
+                    Coord2D current;
                     if (isWalking)
                     {
                         current = EffectiveCoord;
@@ -62,8 +62,8 @@ namespace SunbirdMB.Core
                     MapBuilder mapBuilder = (MainGame as SunbirdMBGame).MapBuilder;
                     CoordDistances.Clear();
                     CoordDistances.Add(current, 0);
-                    List<Coord> coordsToVisit = new List<Coord>() { current };
-                    List<Coord> coordsVisited = new List<Coord>();
+                    List<Coord2D> coordsToVisit = new List<Coord2D>() { current };
+                    List<Coord2D> coordsVisited = new List<Coord2D>();
 
                     int visitedCoordsCount = 0;
                     bool reachedTarget = false;
@@ -81,35 +81,42 @@ namespace SunbirdMB.Core
                             reachedTarget = true;
                             break;
                         }
-                        foreach (var coord in mapBuilder.WalkableTileTable[Altitude][nextCoord])
+                        if (mapBuilder.WalkableTileTable.ContainsKey(Altitude))
                         {
-                            if (!coordsVisited.Contains(coord) && !coordsToVisit.Contains(coord))
+                            foreach (var coord in mapBuilder.WalkableTileTable[Altitude][nextCoord])
                             {
-                                // identify if coord is a diagonal of nextCoord.
-                                var diff = coord - nextCoord;
-                                if (diff.X == 0 || diff.Y == 0)
+                                if (!coordsVisited.Contains(coord) && !coordsToVisit.Contains(coord))
                                 {
-                                    // coord is not a diagonal, so it's fine to add it without additional checks.
-                                    CoordDistances.Add(coord, CoordDistances[nextCoord] + 1);
-                                    coordsToVisit.Add(coord);
-
-                                }
-                                else
-                                {
-                                    var xDiff = new Coord(nextCoord.X + diff.X, nextCoord.Y);
-                                    var yDiff = new Coord(nextCoord.X, nextCoord.Y + diff.Y);
-                                    if (mapBuilder.WalkableTileTable[Altitude][nextCoord].Contains(xDiff) &&
-                                        mapBuilder.WalkableTileTable[Altitude][nextCoord].Contains(yDiff))
+                                    // identify if coord is a diagonal of nextCoord.
+                                    var diff = coord - nextCoord;
+                                    if (diff.X == 0 || diff.Y == 0)
                                     {
+                                        // coord is not a diagonal, so it's fine to add it without additional checks.
                                         CoordDistances.Add(coord, CoordDistances[nextCoord] + 1);
                                         coordsToVisit.Add(coord);
+
+                                    }
+                                    else
+                                    {
+                                        var xDiff = new Coord2D(nextCoord.X + diff.X, nextCoord.Y);
+                                        var yDiff = new Coord2D(nextCoord.X, nextCoord.Y + diff.Y);
+                                        if (mapBuilder.WalkableTileTable[Altitude][nextCoord].Contains(xDiff) &&
+                                            mapBuilder.WalkableTileTable[Altitude][nextCoord].Contains(yDiff))
+                                        {
+                                            CoordDistances.Add(coord, CoordDistances[nextCoord] + 1);
+                                            coordsToVisit.Add(coord);
+                                        }
                                     }
                                 }
-                            }                            
+                            }
+                            coordsVisited.Add(nextCoord);
+                            visitedCoordsCount++;
+                            coordsToVisit.RemoveAt(0);
                         }
-                        coordsVisited.Add(nextCoord);
-                        visitedCoordsCount++;
-                        coordsToVisit.RemoveAt(0);
+                        else
+                        {
+                            break;
+                        }
                     }
 
                     if (reachedTarget)
@@ -117,23 +124,23 @@ namespace SunbirdMB.Core
                         var _nextCoord = target;
                         if (cachedPathList == null)
                         {
-                            cachedPathList = new List<Coord>();
+                            cachedPathList = new List<Coord2D>();
                         }
                         cachedPathList.Clear();
                         cachedPathList.Add(_nextCoord);
                         while (_nextCoord != current)
                         {
-                            List<Coord> adjacentCoords = new List<Coord>() 
+                            List<Coord2D> adjacentCoords = new List<Coord2D>() 
                             {
 
-                                _nextCoord + new Coord(0, 1), 
-                                _nextCoord + new Coord(0, -1), 
-                                _nextCoord + new Coord(1, 0), 
-                                _nextCoord + new Coord(-1, 0),
-                                _nextCoord + new Coord(1, 1),
-                                _nextCoord + new Coord(1, -1),
-                                _nextCoord + new Coord(-1, -1),
-                                _nextCoord + new Coord(-1, 1),
+                                _nextCoord + new Coord2D(0, 1), 
+                                _nextCoord + new Coord2D(0, -1), 
+                                _nextCoord + new Coord2D(1, 0), 
+                                _nextCoord + new Coord2D(-1, 0),
+                                _nextCoord + new Coord2D(1, 1),
+                                _nextCoord + new Coord2D(1, -1),
+                                _nextCoord + new Coord2D(-1, -1),
+                                _nextCoord + new Coord2D(-1, 1),
                             };
                             foreach (var coord in adjacentCoords)
                             {
@@ -160,7 +167,7 @@ namespace SunbirdMB.Core
             //Coords = World.WorldPositionToIsoCoord(Position + new Vector2(36, -18), Altitude);
             if (cachedPathList != null && cachedPathList.Count() != 0 && isWalking == false)
             {
-                pathList = new List<Coord>(cachedPathList);
+                pathList = new List<Coord2D>(cachedPathList);
                 cachedPathList = null;
                 var nextCoord = pathList[pathList.Count() - 1];
                 var diff = !isWalking ? nextCoord - Coords : nextCoord - EffectiveCoord;

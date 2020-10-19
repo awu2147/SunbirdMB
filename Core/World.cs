@@ -90,7 +90,7 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Get the coordinate of the top face that the mouse is currently over, taking into account altitude.
         /// </summary>
-        public static Coord MousePositionToIsoCoord(SunbirdMBGame mainGame, int altitude)
+        public static Coord2D MousePositionToIsoCoord(SunbirdMBGame mainGame, int altitude)
         {
             return WorldPositionToIsoCoord(Peripherals.GetScaledMouseWorldPosition(mainGame, mainGame.Camera), altitude);
         }
@@ -98,16 +98,16 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Get the coordinate of the top face that the mouse is currently over.
         /// </summary>
-        public static Coord MousePositionToIsoFlatCoord(SunbirdMBGame mainGame)
+        public static Coord2D MousePositionToIsoFlatCoord(SunbirdMBGame mainGame)
         {
             return WorldPositionToIsoCoord(Peripherals.GetScaledMouseWorldPosition(mainGame, mainGame.Camera), 0);
         }
 
-        public static Coord WorldPositionToIsoCoord(Point point, int altitude)
+        public static Coord2D WorldPositionToIsoCoord(Point point, int altitude)
         {
-            Coord gridCoord = WorldPositionToGridCoord(point);
-            Coord isoCoord = GridCoordToIsoCoord(gridCoord);
-            Coord isoCoordoffset = IsoCoordOffset(WorldPositionToNormalizedGridPosition(point), point);
+            Coord2D gridCoord = WorldPositionToGridCoord(point);
+            Coord2D isoCoord = GridCoordToIsoCoord(gridCoord);
+            Coord2D isoCoordoffset = IsoCoordOffset(WorldPositionToNormalizedGridPosition(point), point);
 
             return GetIsoCoord(isoCoord, altitude) + isoCoordoffset;
         }
@@ -133,27 +133,27 @@ namespace SunbirdMB.Core
         /// <summary>
         /// Find the offset needed to be applied to the isometric coordinate if the position was outside the actual diamond face and in the corner regions instead.
         /// </summary>
-        private static Coord IsoCoordOffset(Point point, Point worldPoint)
+        private static Coord2D IsoCoordOffset(Point point, Point worldPoint)
         {
             if (TopFaceAreaC.Any(rect => rect.Contains(point)))
             {
-                return new Coord(0, 0);
+                return new Coord2D(0, 0);
             }
             else if (TopFaceAreaTL.Any(rect => rect.Contains(point)))
             {
-                return new Coord(-1, 0);
+                return new Coord2D(-1, 0);
             }
             else if (TopFaceAreaTR.Any(rect => rect.Contains(point)))
             {
-                return new Coord(0, 1);
+                return new Coord2D(0, 1);
             }
             else if (TopFaceAreaBL.Any(rect => rect.Contains(point)))
             {
-                return new Coord(0, -1);
+                return new Coord2D(0, -1);
             }
             else if (TopFaceAreaBR.Any(rect => rect.Contains(point)))
             {
-                return new Coord(1, 0);
+                return new Coord2D(1, 0);
             }
             else
             {
@@ -166,7 +166,7 @@ namespace SunbirdMB.Core
         /// </summary>
         /// <param name="point">World position as a point.</param>
         /// <returns></returns>
-        public static Coord WorldPositionToGridCoord(Point point)
+        public static Coord2D WorldPositionToGridCoord(Point point)
         {
             var x = point.X / TopFaceGridWidth;
             var xRem = point.X % TopFaceGridWidth; // We need remainder check to preserve grid edge schema after translation.
@@ -180,7 +180,7 @@ namespace SunbirdMB.Core
             {
                 y -= 1;
             }
-            return new Coord(x, y);
+            return new Coord2D(x, y);
         }
 
         /// <summary>
@@ -188,29 +188,29 @@ namespace SunbirdMB.Core
         /// </summary>
         /// <param name="gridCoord">Grid coord</param>
         /// <returns>World coord</returns>
-        private static Coord GridCoordToIsoCoord(Coord gridCoord)
+        private static Coord2D GridCoordToIsoCoord(Coord2D gridCoord)
         {
             // This is where the magic happens.
-            return new Coord(gridCoord.Y + gridCoord.X, gridCoord.Y * -1 + gridCoord.X);
+            return new Coord2D(gridCoord.Y + gridCoord.X, gridCoord.Y * -1 + gridCoord.X);
         }
 
         /// <summary>
         /// Find the coord in the altitude plane.
         /// </summary>
-        public static Coord GetIsoCoord(Coord coord, int altitude)
+        public static Coord2D GetIsoCoord(Coord2D coord, int altitude)
         {
-            return coord + (new Coord(1, -1) * altitude);
+            return coord + (new Coord2D(1, -1) * altitude);
         }
 
         /// <summary>
         /// Return grid quadrant top left corner world position from isometric flat coord.
         /// </summary>
-        public static Vector2 IsoFlatCoordToWorldPosition(Coord isoFlatCoord)
+        public static Vector2 IsoFlatCoordToWorldPosition(Coord2D isoFlatCoord)
         {
             return new Vector2(TopFaceGridWidth / 2, TopFaceGridHeight / 2) * isoFlatCoord.X + new Vector2(TopFaceGridWidth / 2, -TopFaceGridHeight / 2) * isoFlatCoord.Y;
         }
 
-        public static Coord WorldPositionToIsoCoord(Vector2 point, int altitude)
+        public static Coord2D WorldPositionToIsoCoord(Vector2 point, int altitude)
         {
             return WorldPositionToIsoCoord(point.ToPoint(), altitude);
         }
@@ -238,6 +238,19 @@ namespace SunbirdMB.Core
             foreach (var layer in layerMap)
             {
                 foreach (var sprite in layer.Value)
+                {
+                    SL.Add(sprite);
+                }
+            }
+            OrderedLayerMap = SL.OrderBy(x => (x.Coords.X - x.Coords.Y)).ThenBy(x => x.Altitude).ThenBy(x => x.DrawPriority);
+        }
+
+        public static void Sort(XDictionary<Coord3D, SpriteList<Sprite>> layerMap)
+        {
+            var SL = new List<Sprite>() { };
+            foreach (var layerBlock in layerMap)
+            {
+                foreach (var sprite in layerBlock.Value)
                 {
                     SL.Add(sprite);
                 }

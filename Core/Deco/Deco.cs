@@ -10,7 +10,7 @@ namespace SunbirdMB.Core
 {
     public class Deco : Sprite, IWorldObject
     {
-        public XDictionary<int, HashSet<Coord>> OccupiedCoords { get; set; } = new XDictionary<int, HashSet<Coord>>();
+        public HashSet<Coord3D> OccupiedCoords { get; set; } = new HashSet<Coord3D>();
         public Dimension Dimensions { get; set; }
 
         public Deco() { }

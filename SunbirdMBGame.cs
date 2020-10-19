@@ -81,7 +81,7 @@ namespace SunbirdMB
                 typeof(Cube),
                 typeof(Deco),
                 typeof(GhostMarker),
-                typeof(Player),
+                typeof(Core.Player),
             };
 
             Camera = new Camera(this);

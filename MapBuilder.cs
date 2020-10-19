@@ -29,11 +29,13 @@ namespace SunbirdMB
         /// <summary>
         /// For optimization reasons, create and assign value to this field during an update() loop so it is ready to be used in the draw() loop.
         /// </summary>
-        private Dictionary<Coord, List<Sprite>> ShadowDict = new Dictionary<Coord, List<Sprite>>();
+        private Dictionary<Coord2D, List<Sprite>> ShadowDict = new Dictionary<Coord2D, List<Sprite>>();
 
-        public XDictionary<int, XDictionary<Coord, HashSet<Coord>>> WalkableTileTable { get; set; } = new XDictionary<int, XDictionary<Coord, HashSet<Coord>>>();
+        public XDictionary<int, XDictionary<Coord2D, HashSet<Coord2D>>> WalkableTileTable { get; set; } = new XDictionary<int, XDictionary<Coord2D, HashSet<Coord2D>>>();
 
-        public XDictionary<int, SpriteList<Sprite>> LayerMap { get; set; } = new XDictionary<int, SpriteList<Sprite>>();
+        public XDictionary<Coord3D, SpriteList<Sprite>> LayerMap { get; set; } = new XDictionary<Coord3D, SpriteList<Sprite>>();
+
+        public HashSet<Coord3D> OccupiedCoords { get; set; } = new HashSet<Coord3D>();
 
         [XmlIgnore]
         public List<Sprite> Overlay { get; set; } = new List<Sprite>();
@@ -96,23 +98,21 @@ namespace SunbirdMB
         private void CreateContent()
         {
             IsLoading = true;
-            // Create first layer at 0 Altitude.
-            LayerMap.Add(Altitude, new SpriteList<Sprite>());
 
-            // Create the player and add to this layer.
+            // Create the player and add to the layer map.
             var playerSheet = SpriteSheet.CreateNew(MainGame, "Temp/PirateGirlSheet", 1, 16);
             var playerAnimArgs = new AnimArgs(9, 1, 0.2f, AnimationState.None);
             Player = new Player(MainGame, playerSheet, playerAnimArgs);
-            // Should this be Add or AddCheck?
-            LayerMap[Altitude].Add(Player);
+            Player.Altitude = 1;
+            LayerMap.Add(new Coord3D(Coord2D.Zero, 1), Player);
 
             // Instantiate ghost marker with its default texture and add it to the layer map. Image is null at this point, but will be set
             // by CubeDesignerViewModel.OnMainGameLoaded() as soon as SunbirdMBGame's constructor resolves.
             GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
-            LayerMap[Altitude].Add(GhostMarker);
+            LayerMap.Add(Coord3D.Zero, GhostMarker);
 
-            ClickAnimation = new Sprite(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/WalkTargetAnimation")) { Alpha = 0.8f };
-            LayerMap[Altitude].Add(ClickAnimation);
+            ClickAnimation = new Sprite(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/WalkTargetAnimation", 1, 7)) { Alpha = 0.8f };
+            LayerMap.Add(Coord3D.Zero, ClickAnimation);
 
             IsLoading = false;
             MainGame.CurrentState = this;
@@ -127,15 +127,19 @@ namespace SunbirdMB
             IsLoading = true;
             // Most time is spent here...
             var XmlData = Serializer.ReadXML<MapBuilder>(MapBuilderSerializer, saveFilePath);
+
+            // Variable assignment here:
             Altitude = XmlData.Altitude;
             WalkableTileTable = XmlData.WalkableTileTable;
             LayerMap = XmlData.LayerMap;
+            OccupiedCoords = XmlData.OccupiedCoords;
+
             bool createNewGhostMarker = false;
-            foreach (var layer in LayerMap)
+            foreach (var layerBlock in LayerMap)
             {
-                for (int i = 0; i < layer.Value.Count(); i++)
+                for (int i = 0; i < layerBlock.Value.Count(); i++)
                 {
-                    var sprite = layer.Value[i];
+                    var sprite = layerBlock.Value[i];
                     if (sprite is Player player)
                     {
                         Player = player;
@@ -164,12 +168,18 @@ namespace SunbirdMB
                             // If the content file was required for the ghost marker, remove the current ghost mark
                             // and get ready to make a new one.
                             createNewGhostMarker = true;
-                            layer.Value.Remove(ghostMarker);
+                            layerBlock.Value.Remove(ghostMarker);
+                        }
+                        else if (sprite is Cube || sprite is Deco)
+                        {
+                            // Otherwise if the content file is required by the sprite (Cube/Deco), remove the sprite.
+                            layerBlock.Value.Remove(sprite); 
+                            // Occupied coords . remove
                         }
                         else
                         {
-                            // Otherwise if the content file is required by the sprite (Cube/Deco), remove the sprite.
-                            layer.Value.RemoveCheck(sprite, sprite.Altitude);                            
+                            // Otherwise if the content file is required by the sprite, remove the sprite.
+                            layerBlock.Value.Remove(sprite);
                         }
                         i--;
                     }
@@ -180,7 +190,7 @@ namespace SunbirdMB
             {
                 // The content file for the ghost marker was removed, so make a new one and add it to the layer map.
                 GhostMarker = new GhostMarker(MainGame, SpriteSheet.CreateNew(MainGame, "Temp/TopFaceSelectionMarker")) { DrawPriority = 1 };
-                LayerMap[Altitude].Add(GhostMarker);
+                LayerMap.Add(Coord3D.Zero, GhostMarker);
             }
 
             IsLoading = false;
@@ -206,10 +216,6 @@ namespace SunbirdMB
                 else if (!Peripherals.KeyPressed(Keys.LeftControl) && Authorization == Authorization.Builder)
                 {
                     Altitude--;
-                    if (LayerMap.ContainsKey(Altitude) == false)
-                    {
-                        LayerMap.Add(Altitude, new SpriteList<Sprite>());
-                    }
                 }
             }
 
@@ -230,10 +236,6 @@ namespace SunbirdMB
                 else if (!Peripherals.KeyPressed(Keys.LeftControl) && Authorization == Authorization.Builder)
                 {
                     Altitude++;
-                    if (LayerMap.ContainsKey(Altitude) == false)
-                    {
-                        LayerMap.Add(Altitude, new SpriteList<Sprite>());
-                    }
                 }
             }
         }
@@ -248,8 +250,8 @@ namespace SunbirdMB
             if (!IsLoading)
             {
                 // Defined with respect to current mouse position.
-                Coord mouseIsoCoord = World.MousePositionToIsoCoord(MainGame, Altitude);
-                Coord mouseIsoFlatCoord = World.MousePositionToIsoFlatCoord(MainGame);
+                Coord2D mouseIsoCoord = World.MousePositionToIsoCoord(MainGame, Altitude);
+                Coord2D mouseIsoFlatCoord = World.MousePositionToIsoFlatCoord(MainGame);
 
                 // User input actions.
                 if (Peripherals.KeyTapped(Keys.Q) && MainGame.IsActive)
@@ -261,14 +263,7 @@ namespace SunbirdMB
 
                 if (Peripherals.KeyTapped(Keys.L) && MainGame.IsActive)
                 {
-                    //$"Window Position = {Peripherals.GetMouseWindowPosition(MainGame)}".Log();
-                    //$"World Position = {Peripherals.GetMouseWorldPosition(MainGame, MainGame.Camera)}".Log();
                     $"Altitude = {Altitude}".Log();
-                    //var scale = Vector3.Zero;
-                    //var rotation = Quaternion.Identity;
-                    //var translation = Vector3.Zero;
-                    //SunbirdMBGame.Camera.CurrentTransform.Decompose(out scale, out rotation, out translation);
-                    //$"{scale} {rotation} {translation }".Log();
                     mouseIsoCoord.ToString().Log();
                 }
 
@@ -276,35 +271,41 @@ namespace SunbirdMB
                 {
                     if (Peripherals.LeftButtonPressed() && MainGame.IsActive)
                     {
+                        Coord3D clickedCoord = new Coord3D(mouseIsoCoord, Altitude);
                         if (BuildMode == BuildMode.Cube)
                         {
                             var cube = CubeFactory.CreateCurrentCube(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
-                            LayerMap[Altitude].AddCheck(cube, Altitude);
+                            if (!OccupiedCoords.Contains(clickedCoord))
+                            {
+                                LayerMap.Add(clickedCoord, cube);
+                                OccupiedCoords.Add(clickedCoord);
+                            }
+
                             var altitude = Altitude + 1;
 
                             // If table doesnt contain entry for altiude, add it.
                             if (!WalkableTileTable.ContainsKey(altitude))
                             {
-                                WalkableTileTable.Add(altitude, new XDictionary<Coord, HashSet<Coord>>());
+                                WalkableTileTable.Add(altitude, new XDictionary<Coord2D, HashSet<Coord2D>>());
                             }
-                            // The following coords are adjacent to the selected coord, and will ALWAYS allow walking from said coord to selected coord.
-                            List<Coord> adjacentCoords = new List<Coord>() 
+                            // The following coords are adjacent to the selected coord, and need to be dealt with.
+                            List<Coord2D> adjacentCoords = new List<Coord2D>() 
                             { 
-                                mouseIsoCoord + new Coord(0, 1),
-                                mouseIsoCoord + new Coord(0, -1),
-                                mouseIsoCoord + new Coord(1, 0),
-                                mouseIsoCoord + new Coord(-1, 0),
-                                mouseIsoCoord + new Coord(1, 1),
-                                mouseIsoCoord + new Coord(1, -1),
-                                mouseIsoCoord + new Coord(-1, -1),
-                                mouseIsoCoord + new Coord(-1, 1),
+                                mouseIsoCoord + new Coord2D(0, 1),
+                                mouseIsoCoord + new Coord2D(0, -1),
+                                mouseIsoCoord + new Coord2D(1, 0),
+                                mouseIsoCoord + new Coord2D(-1, 0),
+                                mouseIsoCoord + new Coord2D(1, 1),
+                                mouseIsoCoord + new Coord2D(1, -1),
+                                mouseIsoCoord + new Coord2D(-1, -1),
+                                mouseIsoCoord + new Coord2D(-1, 1),
                             };
                             foreach (var coord in adjacentCoords)
                             {
                                 // If table doesnt contain entry for coord, add it, and add the selected coord to its set (because we can walk from the former to the latter).
                                 if (!WalkableTileTable[altitude].ContainsKey(coord) && cube.IsWalkable)
                                 {
-                                    WalkableTileTable[altitude].Add(coord, new HashSet<Coord>() { mouseIsoCoord });
+                                    WalkableTileTable[altitude].Add(coord, new HashSet<Coord2D>() { mouseIsoCoord });
                                 }
                                 // If table DOES contain entry for coord, go ahead and add the selected coord to its set (because we can walk from the former to the latter).
                                 else if (!WalkableTileTable[altitude][coord].Contains(mouseIsoCoord) && cube.IsWalkable)
@@ -316,42 +317,46 @@ namespace SunbirdMB
                         else if (BuildMode == BuildMode.Deco)
                         {
                             var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord, mouseIsoCoord, Altitude);
-                            LayerMap[Altitude].AddCheck(deco, Altitude);
-                            //for (int i = 0; i < 10; i ++)
-                            //{
-                            //    for (int j = 0; j < 10; j++)
-                            //    {
-                            //        var deco = DecoFactory.CreateCurrentDeco(mouseIsoFlatCoord + new Coord(i, j), mouseIsoCoord + new Coord(i, j), Altitude);
-                            //        LayerMap[Altitude].AddCheck(deco, Altitude);
-                            //    }
-                            //}
+                            if (deco.OccupiedCoords.Any((c) => OccupiedCoords.Contains(c)) == false)
+                            {
+                                LayerMap.Add(new Coord3D(mouseIsoCoord, Altitude), deco);
+                                foreach (var coord in deco.OccupiedCoords)
+                                {
+                                    OccupiedCoords.Add(coord);
+                                }
+                            }
                         }
                     }
 
                     if (Peripherals.RightButtonPressed() && MainGame.IsActive)
                     {
-                        //var rect = new Rectangle(Peripherals.GetScaledMouseWorldPosition(MainGame.Camera), new Point(200,200));
-                        if (BuildMode == BuildMode.Cube)
+                        Coord3D clickedCoord = new Coord3D(mouseIsoCoord, Altitude);
+                        if (BuildMode == BuildMode.Cube && LayerMap.ContainsKey(clickedCoord))
                         {
-                            for (int i = 0; i < LayerMap[Altitude].Count(); i++)
+                            for (int i = 0; i < LayerMap[clickedCoord].Count(); i++)
                             {
-                                var sprite = LayerMap[Altitude][i];
-                                if (sprite is Cube cube && sprite.Coords == mouseIsoCoord)
+                                var sprite = LayerMap[clickedCoord][i];
+                                if (sprite is Cube)
                                 {
-                                    LayerMap[Altitude].RemoveCheck(sprite, Altitude); i--;
-
+                                    LayerMap.Remove(clickedCoord, sprite);
+                                    i--;
+                                    if (OccupiedCoords.Contains(clickedCoord))
+                                    {
+                                        OccupiedCoords.Remove(clickedCoord);
+                                    }
                                     var altitude = Altitude + 1;
-                                    List<Coord> adjacentCoords = new List<Coord>() 
-                                    { 
-                                        mouseIsoCoord + new Coord(0, 1), 
-                                        mouseIsoCoord + new Coord(0, -1), 
-                                        mouseIsoCoord + new Coord(1, 0), 
-                                        mouseIsoCoord + new Coord(-1, 0),
-                                        mouseIsoCoord + new Coord(1, 1),
-                                        mouseIsoCoord + new Coord(1, -1),
-                                        mouseIsoCoord + new Coord(-1, -1),
-                                        mouseIsoCoord + new Coord(-1, 1)
+                                    List<Coord2D> adjacentCoords = new List<Coord2D>()
+                                    {
+                                        mouseIsoCoord + new Coord2D(0, 1),
+                                        mouseIsoCoord + new Coord2D(0, -1),
+                                        mouseIsoCoord + new Coord2D(1, 0),
+                                        mouseIsoCoord + new Coord2D(-1, 0),
+                                        mouseIsoCoord + new Coord2D(1, 1),
+                                        mouseIsoCoord + new Coord2D(1, -1),
+                                        mouseIsoCoord + new Coord2D(-1, -1),
+                                        mouseIsoCoord + new Coord2D(-1, 1)
                                     };
+
                                     foreach (var coord in adjacentCoords)
                                     {
                                         if (WalkableTileTable[altitude].ContainsKey(coord) && WalkableTileTable[altitude][coord].Contains(mouseIsoCoord))
@@ -364,20 +369,21 @@ namespace SunbirdMB
                                         }
                                     }
                                 }
-
-                            }
+                            }                            
                         }
-                        else if (BuildMode == BuildMode.Deco)
+                        else if (BuildMode == BuildMode.Deco && LayerMap.ContainsKey(clickedCoord))
                         {
-                            for (int i = 0; i < LayerMap[Altitude].Count(); i++)
+                            foreach (var sprite in LayerMap[clickedCoord])
                             {
-                                var sprite = LayerMap[Altitude][i];
-                                if (sprite is Deco)
+                                if (sprite is Deco deco)
                                 {
-                                    var mc = sprite as Deco;
-                                    if (mc.OccupiedCoords[Altitude].Contains(mouseIsoCoord))
+                                    LayerMap.Remove(clickedCoord, sprite);
+                                    if (OccupiedCoords.Contains(clickedCoord))
                                     {
-                                        LayerMap[Altitude].RemoveCheck(mc, Altitude); i--;
+                                        foreach (var coord in deco.OccupiedCoords)
+                                        {
+                                            OccupiedCoords.Remove(coord);
+                                        }
                                     }
                                 }
                             }
@@ -394,16 +400,12 @@ namespace SunbirdMB
                 else if (Authorization == Authorization.None)
                 {
                     // Top down look.
-                    var l = LayerMap.Keys.ToList();
-                    l.Sort();
-                    l.Reverse();
-
-                    foreach (var key in l)
+                    for (int i = 30; i > -30; i--)
                     {
-                        var targetedCoord = World.GetIsoCoord(mouseIsoFlatCoord, key);
-                        if (LayerMap[key].OccupiedCoords.Contains(targetedCoord))
+                        var targetedCoord = World.GetIsoCoord(mouseIsoFlatCoord, i);
+                        if (OccupiedCoords.Contains(new Coord3D(targetedCoord, i)))
                         {
-                            Altitude = key;
+                            Altitude = i;
                             GhostMarker.Altitude = Altitude;
                             break;
                         }
@@ -414,7 +416,7 @@ namespace SunbirdMB
                 // Test
                 GhostMarker.Position = World.IsoFlatCoordToWorldPosition(mouseIsoFlatCoord);
 
-                if (LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord) || Authorization == Authorization.None)
+                if (OccupiedCoords.Contains(new Coord3D(mouseIsoCoord, Altitude)) || Authorization == Authorization.None)
                 {
                     GhostMarker.DrawDefaultMarker = true;
                 }
@@ -423,7 +425,7 @@ namespace SunbirdMB
                     GhostMarker.DrawDefaultMarker = false;
                 }
 
-                if (LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord))
+                if (OccupiedCoords.Contains(new Coord3D(mouseIsoCoord, Altitude)))
                 {
                     GhostMarker.DrawPriority = 1;
                 }
@@ -433,7 +435,7 @@ namespace SunbirdMB
                 }
                 else if (Authorization == Authorization.None)
                 {
-                    // !LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord), we are in empty space
+                    // If !LayerMap[Altitude].OccupiedCoords.Contains(mouseIsoCoord), we are in empty space
                     // and always draw last.
                     GhostMarker.DrawPriority = -1000;
                 }
@@ -461,35 +463,35 @@ namespace SunbirdMB
                 #region Pre Loop
 
                 // Rearrange sprites into their correct altitude layer.
-                var altitudeList = LayerMap.Keys.ToList();
-                altitudeList.Sort();
+                //var altitudeList = LayerMap.Keys.ToList();
+                //altitudeList.Sort();
 
-                foreach (var altitude in altitudeList)
-                {
-                    for (int i = 0; i < LayerMap[altitude].Count(); i++)
-                    {
-                        var sprite = LayerMap[altitude][i];
-                        if (sprite.Altitude != altitude)
-                        {
-                            LayerMap[altitude].Remove(sprite); i--;
-                            if (!LayerMap.ContainsKey(sprite.Altitude))
-                            {
-                                LayerMap.Add(sprite.Altitude, new SpriteList<Sprite>() { sprite });
-                            }
-                            else
-                            {
-                                if (!(sprite is IWorldObject))
-                                {
-                                    LayerMap[sprite.Altitude].Add(sprite);
-                                }
-                                else
-                                {
-                                    throw new NotImplementedException("Cube/Deco trying to move between layers, is this correct? Use AddCheck if so.");
-                                }
-                            }
-                        }
-                    }
-                }
+                //foreach (var altitude in altitudeList)
+                //{
+                //    for (int i = 0; i < LayerMap[altitude].Count(); i++)
+                //    {
+                //        var sprite = LayerMap[altitude][i];
+                //        if (sprite.Altitude != altitude)
+                //        {
+                //            LayerMap[altitude].Remove(sprite); i--;
+                //            if (!LayerMap.ContainsKey(sprite.Altitude))
+                //            {
+                //                LayerMap.Add(sprite.Altitude, new SpriteList<Sprite>() { sprite });
+                //            }
+                //            else
+                //            {
+                //                if (!(sprite is IWorldObject))
+                //                {
+                //                    LayerMap[sprite.Altitude].Add(sprite);
+                //                }
+                //                else
+                //                {
+                //                    throw new NotImplementedException("Cube/Deco trying to move between layers, is this correct? Use AddCheck if so.");
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
 
                 #endregion
 
@@ -522,7 +524,7 @@ namespace SunbirdMB
                         // Game
                         if (Altitude != sprite.Altitude && sprite is IWorldObject && Authorization == Authorization.Builder)
                         {
-                            sprite.Alpha = 0.15f;
+                            sprite.Alpha = 0.1f;
                             sprite.Draw(gameTime, spriteBatch);
                         }
                         else if ((Altitude == sprite.Altitude || Authorization == Authorization.None) && sprite is IWorldObject)

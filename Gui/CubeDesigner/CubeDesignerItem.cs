@@ -37,7 +37,7 @@ namespace SunbirdMB.Gui
                 CubeMetadata.ActiveFrames.Add(GetIndex());
                 DeactivateAllButThis();                
             }
-            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
+            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
         }
 
         internal override void RightClick() { }
@@ -73,7 +73,7 @@ namespace SunbirdMB.Gui
                 }
                 if (CubeMetadata.ActiveFrames.Count == 1)
                 {
-                    MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
+                    MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
                 }
             }
         }

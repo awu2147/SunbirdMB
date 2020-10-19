@@ -75,13 +75,13 @@ namespace SunbirdMB.Gui
         {
             BuildMode = BuildMode.Cube;
             SunbirdMBWindowViewModel.CubeDecoSelectedIndex = 0;
-            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord.Zero, Coord.Zero, 0));
+            MapBuilder.GhostMarker.MorphImage(CubeFactory.CreateCurrentCube(Coord2D.Zero, Coord2D.Zero, 0));
         }
         private void ShowDecoCatalog()
         {
             BuildMode = BuildMode.Deco;
             SunbirdMBWindowViewModel.CubeDecoSelectedIndex = 1;
-            MapBuilder.GhostMarker.MorphImage(DecoFactory.CreateCurrentDeco(Coord.Zero, Coord.Zero, 0));
+            MapBuilder.GhostMarker.MorphImage(DecoFactory.CreateCurrentDeco(Coord2D.Zero, Coord2D.Zero, 0));
         }
 
     }

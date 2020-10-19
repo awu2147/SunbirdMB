@@ -11,7 +11,7 @@ namespace SunbirdMB.Core
 {
     public static class DecoFactory
     {
-        public static Deco CreateDeco(DecoMetadata decoMD, Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateDeco(DecoMetadata decoMD, Coord2D coords, Coord2D relativeCoords, int altitude)
         {
             Type type = Type.GetType(decoMD.TypeName);
             var deco = Activator.CreateInstance(type) as Deco;
@@ -31,18 +31,13 @@ namespace SunbirdMB.Core
             var spriteSheet = SpriteSheet.CreateNew(decoMD.Texture, decoMD.ContentPath, decoMD.SheetRows, decoMD.SheetColumns);
             deco.Animator = new Animator(deco, spriteSheet, decoMD.StartFrame, decoMD.CurrentFrame, decoMD.FrameCount, decoMD.FrameSpeed, decoMD.AnimState);
 
-            for (int k = 0; k < decoMD.Dimensions.Z; k++)
+            for (int i = 0; i < decoMD.Dimensions.X; i++)
             {
-                deco.OccupiedCoords.Add(altitude + k, new HashSet<Coord>() { });
-                for (int i = 0; i < decoMD.Dimensions.X; i++)
+                for (int j = 0; j < decoMD.Dimensions.Y; j++)
                 {
-                    for (int j = 0; j < decoMD.Dimensions.Y; j++)
+                    for (int k = 0; k < decoMD.Dimensions.Z; k++)
                     {
-
-                        Debug.Assert(decoMD.Dimensions.X == decoMD.Dimensions.Y);
-
-                        int offset = decoMD.Dimensions.Y / 2;
-                        deco.OccupiedCoords[altitude + k].Add(deco.Coords + new Coord(i - offset, -j + offset));
+                        deco.OccupiedCoords.Add(new Coord3D(deco.Coords, deco.Altitude) + new Coord3D(i - decoMD.Dimensions.X / 2, -j + decoMD.Dimensions.Y / 2, k));
                     }
                 }
             }
@@ -61,7 +56,7 @@ namespace SunbirdMB.Core
             return deco;
         }
 
-        public static Deco CreateCurrentDeco(Coord coords, Coord relativeCoords, int altitude)
+        public static Deco CreateCurrentDeco(Coord2D coords, Coord2D relativeCoords, int altitude)
         {
             return CreateDeco(DecoCatalogViewModel.CurrentDecoMetadata, coords, relativeCoords, altitude);
         }        

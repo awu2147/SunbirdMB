@@ -109,6 +109,7 @@
     <Compile Include="Core\GhostMarker.cs" />
     <Compile Include="Core\MetadataBase.cs" />
     <Compile Include="Core\Player.cs" />
+    <Compile Include="Framework\Coord3D.cs" />
     <Compile Include="Framework\Importer.cs" />
     <Compile Include="Framework\Keyboard.cs" />
     <Compile Include="Framework\Mouse.cs" />
@@ -222,7 +223,7 @@
     <Compile Include="Core\Peripherals.cs" />
     <Compile Include="Core\SpriteList.cs" />
     <Compile Include="Core\World.cs" />
-    <Compile Include="Framework\Coord.cs" />
+    <Compile Include="Framework\Coord2D.cs" />
     <Compile Include="Framework\Dimension.cs" />
     <Compile Include="Core\GraphicsHelper.cs" />
     <Compile Include="Framework\Enums.cs" />
