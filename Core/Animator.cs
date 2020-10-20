@@ -181,6 +181,14 @@ namespace SunbirdMB.Core
             new Rectangle(PositionMap[CurrentFrame - 1].X, PositionMap[CurrentFrame - 1].Y,
             SpriteSheet.FrameWidth, SpriteSheet.FrameHeight), Color.White * alpha);
         }
+
+        public void Draw3x3Patch(GameTime gameTime, SpriteBatch spriteBatch, float alpha, int slice, int totalSlices)
+        {
+            var xOffset = 36;
+            spriteBatch.Draw(SpriteSheet.Texture, Position + new Vector2(xOffset, (int)(SpriteSheet.FrameHeight * (slice / (float)totalSlices))),
+            new Rectangle(PositionMap[CurrentFrame - 1].X + xOffset, PositionMap[CurrentFrame - 1].Y + (int)(SpriteSheet.FrameHeight * (slice / (float)totalSlices)) ,
+            SpriteSheet.FrameWidth - xOffset * 2, (int)(SpriteSheet.FrameHeight / (float)totalSlices)), Color.White * alpha);
+        }
     }
 }
 

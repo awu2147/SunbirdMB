@@ -158,6 +158,14 @@ namespace SunbirdMB.Core
                 Animator.Draw(gameTime, spriteBatch, Alpha);
             }
         }
+
+        public void Draw3x3Patch(GameTime gameTime, SpriteBatch spriteBatch, int slice, int totalSlices)
+        {
+            if (IsHidden == false)
+            {
+                Animator.Draw3x3Patch(gameTime, spriteBatch, Alpha, slice, totalSlices);
+            }
+        }
     }
 }
 

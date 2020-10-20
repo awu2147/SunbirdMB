@@ -61,6 +61,11 @@ namespace SunbirdMB.Framework
             return adjacentCoords;
         }
 
+        public static Coord2D To2D(this Coord3D coord)
+        {
+            return new Coord2D(coord.X, coord.Y);
+        }
+
     }
 
     public class StringChangedEventArgs : EventArgs

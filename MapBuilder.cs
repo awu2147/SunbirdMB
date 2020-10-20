@@ -114,7 +114,10 @@ namespace SunbirdMB
                 Sprite sprite = DynamicSprites[i];
                 if (sprite is Player player) { Player = player; }
                 else if (sprite is GhostMarker ghostMarker) { GhostMarker = ghostMarker; }
-                else if (sprite.Animator?.SpriteSheet?.TexturePath == "Temp/WalkTargetAnimation") { ClickAnimation = sprite; }
+                else if (sprite.Animator?.SpriteSheet?.TexturePath == "Temp/WalkTargetAnimation") 
+                { 
+                    ClickAnimation = sprite; 
+                }
 
                 // Load content can fail if the content file for the sprite no longer exists.
                 try { sprite.LoadContent(MainGame); }
@@ -172,7 +175,7 @@ namespace SunbirdMB
             foreach (var coord in decoReferences)
             {
                 DecoReference decoReference = LayerMap[coord] as DecoReference;
-                decoReference.Reference = LayerMap[decoReference.ReferenceCoord];
+                decoReference.Reference = (Deco)LayerMap[decoReference.ReferenceCoord];
             }
 
             IsLoading = false;
@@ -266,7 +269,7 @@ namespace SunbirdMB
                     {
                         if (coord != mouseIsoCoord3D)
                         {
-                            LayerMap.Add(coord, new DecoReference(deco, mouseIsoCoord3D));
+                            LayerMap.Add(coord, new DecoReference(deco, mouseIsoCoord3D) { Coords = coord.To2D(), Altitude = coord.Z }) ;
                         }
 
                         foreach (var _coord in new Coord2D(coord.X, coord.Y).AdjacentCoords())
@@ -377,7 +380,7 @@ namespace SunbirdMB
                     for (int i = 30; i > -30; i--)
                     {
                         var targetedCoord = World.GetIsoCoord(mouseIsoFlatCoord, i);
-                        if (LayerMap.ContainsKey(new Coord3D(targetedCoord, i)) && !(LayerMap[new Coord3D(targetedCoord, i)] is Deco))
+                        if (LayerMap.ContainsKey(new Coord3D(targetedCoord, i)) && !(LayerMap[new Coord3D(targetedCoord, i)] is Deco) && !(LayerMap[new Coord3D(targetedCoord, i)] is DecoReference))
                         {
                             Altitude = i;
                             GhostMarker.Altitude = Altitude;
@@ -513,7 +516,7 @@ namespace SunbirdMB
                         // Game
                         if (Altitude != sprite.Altitude && sprite is IWorldObject && Authorization == Authorization.Builder)
                         {
-                            sprite.Alpha = 0.1f;
+                            sprite.Alpha = 0.2f;
                             sprite.Draw(gameTime, spriteBatch);
                         }
                         else if ((Altitude == sprite.Altitude || Authorization == Authorization.None) && sprite is IWorldObject)

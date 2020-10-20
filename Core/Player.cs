@@ -154,10 +154,10 @@ namespace SunbirdMB.Core
                             }
                         }
                         cachedPathList.RemoveAt(cachedPathList.Count() - 1);
-                        "pathlist complete".Log();
+                        //"pathlist complete".Log();
                         foreach (var p in cachedPathList)
                         {
-                            p.ToString().Log();
+                            //p.ToString().Log();
                         }
                     }
 
@@ -258,7 +258,7 @@ namespace SunbirdMB.Core
                         if (increment != inc && (increment * new Vector2(2,1)) != inc)
                         {
                             increment = inc;
-                            "reconfig".Log();
+                            //"reconfig".Log();
                             direction = Direction.None;
                             if (increment.X > 0)
                             {
@@ -293,7 +293,7 @@ namespace SunbirdMB.Core
                             {
                                 Animator.Reconfigure(new AnimArgs(13, 4, 0.1f, AnimationState.Loop));
                             }
-                            direction.ToString().Log();
+                            //direction.ToString().Log();
                         }
                     }
                     if (pathList.Count() == 0)
