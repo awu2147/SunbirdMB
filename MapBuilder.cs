@@ -28,8 +28,9 @@ namespace SunbirdMB
 
         public WalkableTileTable WalkableTileTable { get; set; } = new WalkableTileTable();
         public XDictionary<Coord3D, Sprite> LayerMap { get; set; } = new XDictionary<Coord3D, Sprite>();
-        [XmlIgnore] public IOrderedEnumerable<Sprite> OrderedLayerMap { get; set; }
         public SpriteList<Sprite> DynamicSprites { get; set; } = new SpriteList<Sprite>();
+        private IOrderedEnumerable<Sprite> OrderedLayerMap { get; set; }
+        private List<Sprite> SL { get; set; } = new List<Sprite>() { };
 
         public bool IsLoading { get; set; }
         public int Altitude { get; set; }
@@ -380,7 +381,7 @@ namespace SunbirdMB
                     for (int i = 30; i > -30; i--)
                     {
                         var targetedCoord = World.GetIsoCoord(mouseIsoFlatCoord, i);
-                        if (LayerMap.ContainsKey(new Coord3D(targetedCoord, i)) && !(LayerMap[new Coord3D(targetedCoord, i)] is Deco) && !(LayerMap[new Coord3D(targetedCoord, i)] is DecoReference))
+                        if (LayerMap.ContainsKey(new Coord3D(targetedCoord, i)) && !(LayerMap[new Coord3D(targetedCoord, i)] is Deco))
                         {
                             Altitude = i;
                             GhostMarker.Altitude = Altitude;
@@ -489,7 +490,7 @@ namespace SunbirdMB
         /// </summary>
         public void Sort()
         {
-            var SL = new List<Sprite>() { };
+            SL.Clear();
             foreach (var layerMapItem in LayerMap)
             {
                 SL.Add(layerMapItem.Value);

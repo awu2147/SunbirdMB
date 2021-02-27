@@ -43,11 +43,11 @@
                                    Padding="2,1,2,1"
                                    Foreground="{StaticResource VSTextBrush}"/>
                         </MenuItem.Header>
-                        <MenuItem Header="New"/>
-                        <MenuItem Header="Open"/>
-                        <MenuItem Header="Save"/>
-                        <MenuItem Header="Import"/>
-                        <MenuItem Header="Build" Command="{Binding C_Build}"/>
+                        <MenuItem Header="New" IsEnabled="False"/>
+                        <MenuItem Header="Open" IsEnabled="False"/>
+                        <MenuItem Header="Save" Command="{Binding C_Save}"/>
+                        <MenuItem Header="Import" IsEnabled="False"/>
+                        <MenuItem Header="Sort" Command="{Binding C_Sort}"/>
                         <Separator/>
                         <MenuItem Header="Exit" />
                     </MenuItem>

@@ -22,7 +22,8 @@ namespace SunbirdMB
     internal class SunbirdMBWindowViewModel : PropertyChangedBase
     {
         public ICommand C_Import { get; set; }
-        public ICommand C_Build { get; set; }
+        public ICommand C_Sort { get; set; }
+        public ICommand C_Save { get; set; }
 
         private CubeDesignerViewModel cubeDesignerViewModel;
         public CubeDesignerViewModel CubeDesignerViewModel
@@ -79,7 +80,8 @@ namespace SunbirdMB
         {
             SunbirdMBGame = sunbirdMBGame;
 
-            C_Build = new RelayCommand((o) => Build());
+            C_Sort = new RelayCommand((o) => SortCubes());
+            C_Save = new RelayCommand((o) => SaveGame());
 
             CubeDesignerViewModel = new CubeDesignerViewModel(sunbirdMBGame);
             decoCatalogViewModel = new DecoCatalogViewModel(sunbirdMBGame);
@@ -87,7 +89,12 @@ namespace SunbirdMB
             MainToolbarViewModel = new MainToolbarViewModel(this);
         }
 
-        private void Build()
+        private void SaveGame()
+        {
+            SunbirdMBGame.SaveAndSerialize();
+        }
+
+        private void SortCubes()
         {
             CubeDesignerViewModel.SortAll();
         }

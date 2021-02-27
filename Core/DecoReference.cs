@@ -5,7 +5,7 @@ using SunbirdMB.Interfaces;
 
 namespace SunbirdMB.Core
 {
-    public class DecoReference : Sprite, IWorldObject
+    public class DecoReference : Deco
     {
         public Deco Reference { get; set; }
         public Coord3D ReferenceCoord { get; set; }
