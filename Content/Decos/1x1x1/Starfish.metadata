@@ -8,6 +8,7 @@
   <CurrentFrame>1</CurrentFrame>
   <FrameSpeed>0.133</FrameSpeed>
   <AnimState>None</AnimState>
+  <IsSolid>False</IsSolid>
   <TypeName>SunbirdMB.Core.Deco</TypeName>
   <PositionOffset>
     <X>0</X>

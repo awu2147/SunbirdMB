@@ -3,11 +3,12 @@
   <ContentPath>Decos\1x1x1\WallLS</ContentPath>
   <SheetRows>2</SheetRows>
   <SheetColumns>3</SheetColumns>
-  <FrameCount>1</FrameCount>
+  <FrameCount>6</FrameCount>
   <StartFrame>1</StartFrame>
   <CurrentFrame>1</CurrentFrame>
   <FrameSpeed>0.133</FrameSpeed>
   <AnimState>None</AnimState>
+  <IsSolid>True</IsSolid>
   <TypeName>SunbirdMB.Core.Deco</TypeName>
   <PositionOffset>
     <X>0</X>
