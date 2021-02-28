@@ -49,7 +49,7 @@
                         <MenuItem Header="Import" IsEnabled="False"/>
                         <MenuItem Header="Sort" Command="{Binding C_Sort}"/>
                         <Separator/>
-                        <MenuItem Header="Exit" />
+                        <MenuItem Header="Exit" Command="{Binding C_Exit}"/>
                     </MenuItem>
                 </Menu>
             </Border>            

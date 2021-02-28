@@ -24,6 +24,7 @@ namespace SunbirdMB
         public ICommand C_Import { get; set; }
         public ICommand C_Sort { get; set; }
         public ICommand C_Save { get; set; }
+        public ICommand C_Exit { get; set; }
 
         private CubeDesignerViewModel cubeDesignerViewModel;
         public CubeDesignerViewModel CubeDesignerViewModel
@@ -82,11 +83,17 @@ namespace SunbirdMB
 
             C_Sort = new RelayCommand((o) => SortCubes());
             C_Save = new RelayCommand((o) => SaveGame());
+            C_Exit = new RelayCommand((o) => ExitAppWithoutSaving());
 
             CubeDesignerViewModel = new CubeDesignerViewModel(sunbirdMBGame);
             decoCatalogViewModel = new DecoCatalogViewModel(sunbirdMBGame);
             LoggerViewModel = new LoggerViewModel();
             MainToolbarViewModel = new MainToolbarViewModel(this);
+        }
+
+        private void ExitAppWithoutSaving()
+        {
+            Environment.Exit(0);
         }
 
         private void SaveGame()
